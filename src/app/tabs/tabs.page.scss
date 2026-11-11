@@ -1,0 +1,171 @@
+/* =========================================================
+   FINDSTER — BOTTOM NAVIGATION
+   Home | My Reports | Messages | Profile
+   Mobile-first; compatible with Ionic's tab selection
+   Save as: src/app/tabs/tabs.page.scss
+   ========================================================= */
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+
+  --findster-blue: #0758d3;
+  --findster-navy: #092d66;
+  --findster-muted: #69788e;
+  --findster-border: #e2e8f0;
+  --findster-active-bg: #edf4ff;
+}
+
+/* IMPORTANT: Ionic tabs needs a vertical flex layout.
+   display: block moves the bottom tab bar to the top. */
+ion-tabs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+/* The tab bar follows the tab content in Ionic's flex layout. */
+.findster-tab-bar {
+  flex: 0 0 auto;
+}
+
+/* BOTTOM BAR */
+.findster-tab-bar {
+  --background: #ffffff;
+  --color: var(--findster-muted);
+  --color-selected: var(--findster-blue);
+  --border: 0;
+
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  gap: 3px;
+
+  width: 100%;
+  min-height: 62px;
+  padding: 6px 8px max(7px, env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+
+  background: #ffffff;
+  border-top: 1px solid var(--findster-border);
+  box-shadow: 0 -3px 14px rgba(9, 45, 102, 0.045);
+}
+
+/* TAB BUTTONS */
+.findster-tab-bar ion-tab-button.findster-tab-button {
+  --background: transparent;
+  --background-focused: #f2f7ff;
+  --background-focused-opacity: 1;
+  --color: var(--findster-muted);
+  --color-selected: var(--findster-blue);
+  --padding-start: 2px;
+  --padding-end: 2px;
+
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 49px;
+  margin: 0;
+  padding: 3px 1px;
+  box-sizing: border-box;
+
+  border-radius: 12px;
+  text-transform: none;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+/* Ionic controls tab-selected automatically; no manual TS state. */
+.findster-tab-bar ion-tab-button.findster-tab-button.tab-selected {
+  --background: var(--findster-active-bg);
+  --color: var(--findster-blue);
+  --color-selected: var(--findster-blue);
+  background: var(--findster-active-bg);
+}
+
+/* ICONS — the same dimensions on every tab */
+.findster-tab-bar .tab-icon {
+  display: block;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  margin: 0 0 4px;
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* LABELS — uniform line height and centered text */
+.findster-tab-bar .tab-label {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  color: inherit;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: 0;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.findster-tab-bar .tab-selected .tab-label {
+  font-weight: 800;
+}
+
+/* Clear focus indicator for keyboard and accessibility users. */
+.findster-tab-bar ion-tab-button:focus-visible {
+  outline: 2px solid var(--findster-blue);
+  outline-offset: -2px;
+}
+
+/* VERY SMALL PHONES */
+@media (max-width: 360px) {
+  .findster-tab-bar {
+    gap: 1px;
+    padding-left: 3px;
+    padding-right: 3px;
+  }
+
+  .findster-tab-bar ion-tab-button.findster-tab-button {
+    --padding-start: 0;
+    --padding-end: 0;
+    min-height: 47px;
+    padding-inline: 0;
+  }
+
+  .findster-tab-bar .tab-icon {
+    width: 21px;
+    height: 21px;
+    font-size: 21px;
+  }
+
+  .findster-tab-bar .tab-label {
+    font-size: 10px;
+  }
+}
+
+/* TABLETS / DESKTOP */
+@media (min-width: 768px) {
+  .findster-tab-bar {
+    justify-content: center;
+    gap: 8px;
+    padding-top: 8px;
+  }
+
+  .findster-tab-bar ion-tab-button.findster-tab-button {
+    flex: 0 1 150px;
+  }
+}
+
+/* REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  .findster-tab-bar ion-tab-button.findster-tab-button {
+    transition: none;
+  }
+}

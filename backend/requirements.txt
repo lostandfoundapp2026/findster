@@ -1,0 +1,32 @@
+# Findster — FastAPI backend dependencies
+# Direct dependencies pinned to versions from the working Windows venv (2026-11-04).
+# pip will install compatible transitive dependencies on the Railway Linux build.
+
+# API server and request validation
+fastapi==0.162.0
+uvicorn==0.54.0
+pydantic==2.14.1
+email-validator==2.3.0
+python-multipart==0.0.32
+
+# Database and configuration
+mysql-connector-python==26.10.0
+python-dotenv==1.2.4
+
+# Authentication and password hashing
+PyJWT==2.15.1
+pwdlib==0.3.1
+argon2-cffi==25.1.0
+
+# Report image processing
+pillow==13.0.0
+
+# Firebase Cloud Messaging / service credentials
+firebase_admin==7.7.0
+
+# HTTP clients (used by backend integrations)
+httpx==0.28.1
+requests==2.34.2
+
+# Explicit WebSocket support for FastAPI/Uvicorn chat connections
+websockets==17.3

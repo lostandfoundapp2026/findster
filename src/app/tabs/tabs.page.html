@@ -1,0 +1,70 @@
+<!-- Save as: src/app/tabs/tabs.page.html -->
+<!-- FINDSTER | Main bottom navigation -->
+
+<ion-tabs>
+  <ion-tab-bar
+    slot="bottom"
+    class="findster-tab-bar"
+    aria-label="Main navigation"
+  >
+    <!-- HOME -->
+    <ion-tab-button
+      class="findster-tab-button"
+      tab="home"
+      href="/tabs/home"
+      aria-label="Home"
+    >
+      <ion-icon
+        class="tab-icon"
+        name="home-outline"
+        aria-hidden="true"
+      ></ion-icon>
+      <ion-label class="tab-label">Home</ion-label>
+    </ion-tab-button>
+
+    <!-- MY REPORTS -->
+    <ion-tab-button
+      class="findster-tab-button"
+      tab="my-reports"
+      href="/tabs/my-reports"
+      aria-label="My Reports"
+    >
+      <ion-icon
+        class="tab-icon"
+        name="document-text-outline"
+        aria-hidden="true"
+      ></ion-icon>
+      <ion-label class="tab-label">My Reports</ion-label>
+    </ion-tab-button>
+
+    <!-- MESSAGES -->
+    <ion-tab-button
+      class="findster-tab-button"
+      tab="chat"
+      href="/tabs/chat"
+      aria-label="Messages"
+    >
+      <ion-icon
+        class="tab-icon"
+        name="chatbubble-ellipses-outline"
+        aria-hidden="true"
+      ></ion-icon>
+      <ion-label class="tab-label">Messages</ion-label>
+    </ion-tab-button>
+
+    <!-- PROFILE -->
+    <ion-tab-button
+      class="findster-tab-button"
+      tab="profile"
+      href="/tabs/profile"
+      aria-label="Profile"
+    >
+      <ion-icon
+        class="tab-icon"
+        name="person-circle-outline"
+        aria-hidden="true"
+      ></ion-icon>
+      <ion-label class="tab-label">Profile</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

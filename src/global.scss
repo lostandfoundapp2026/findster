@@ -1,0 +1,321 @@
+/* =====================================================
+   FINDSTER — GLOBAL STYLES
+   File: src/global.scss
+   Shared styling only. Feature-specific layouts belong
+   in their respective page SCSS files.
+   ===================================================== */
+
+/* IONIC CORE STYLES */
+@import "@ionic/angular/css/core.css";
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+@import "leaflet/dist/leaflet.css";
+
+/* IONIC UTILITIES */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/* Keep Findster in light mode */
+html {
+  color-scheme: light;
+}
+
+html,
+body,
+ion-app {
+  font-family: var(--ion-font-family);
+}
+
+body {
+  background: var(--findster-background);
+  color: var(--findster-text-primary);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Let Ionic manage scroll height and scrolling.
+   Do not apply fixed viewport height or overflow:hidden here. */
+ion-content {
+  --background: var(--findster-background);
+  --color: var(--findster-text-primary);
+}
+
+ion-content::part(scroll) {
+  scrollbar-width: thin;
+  scrollbar-color: #c8d6eb transparent;
+}
+
+/* TYPOGRAPHY */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+  color: var(--findster-text-primary);
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+h1 {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 750;
+}
+
+h2 {
+  font-size: clamp(1.375rem, 3vw, 1.75rem);
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.125rem;
+  font-weight: 650;
+}
+
+p {
+  line-height: var(--findster-line-height);
+}
+
+small,
+ion-note {
+  line-height: 1.45;
+}
+
+/* SHARED PAGE HEADINGS */
+.page-heading {
+  margin-bottom: 24px;
+}
+
+.page-heading h1,
+.page-heading h2 {
+  margin: 0 0 8px;
+  font-weight: 750;
+}
+
+.page-heading p {
+  margin: 0;
+  max-width: 680px;
+  color: var(--findster-text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+/* IONIC TOOLBARS */
+ion-header {
+  box-shadow: none;
+}
+
+ion-toolbar {
+  --min-height: 60px;
+  --border-width: 0;
+}
+
+ion-toolbar[color="primary"] {
+  --background: var(--findster-blue);
+  --color: #ffffff;
+}
+
+ion-toolbar[color="primary"] ion-title,
+ion-toolbar[color="primary"] ion-button,
+ion-toolbar[color="primary"] ion-icon {
+  color: #ffffff;
+}
+
+ion-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+ion-header ion-button {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: none;
+}
+
+/* SHARED BUTTON BASE */
+ion-button {
+  --border-radius: var(--findster-radius-md);
+  --box-shadow: none;
+
+  min-height: 44px;
+  font-size: 0.9375rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+ion-button[expand="block"] {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+ion-button[fill="outline"] {
+  --border-width: 1.5px;
+}
+
+ion-button::part(native) {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+ion-button:focus-visible::part(native) {
+  outline: 3px solid rgba(7, 88, 211, 0.28);
+  outline-offset: 3px;
+}
+
+/* SHARED CARD BASE */
+ion-card {
+  --background: var(--findster-surface);
+  --color: var(--findster-text-primary);
+
+  margin: 0 0 16px;
+  border: 1px solid var(--findster-border);
+  border-radius: var(--findster-radius-lg);
+  box-shadow: var(--findster-shadow-sm);
+}
+
+ion-card-header {
+  padding: 20px 20px 12px;
+}
+
+ion-card-content {
+  padding: 12px 20px 20px;
+}
+
+ion-card-title {
+  color: var(--findster-text-primary);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+ion-card-subtitle {
+  margin-top: 5px;
+  color: var(--findster-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+ion-card-content p {
+  color: var(--findster-text-secondary);
+  line-height: 1.6;
+}
+
+/* SHARED FORM BASE */
+ion-input,
+ion-textarea,
+ion-select {
+  --color: var(--findster-text-primary);
+  --placeholder-color: #64748b;
+  --highlight-color-focused: var(--findster-blue);
+}
+
+ion-input,
+ion-textarea {
+  font-size: 1rem;
+}
+
+ion-item {
+  --background: var(--findster-surface);
+  --color: var(--findster-text-primary);
+  --border-color: var(--findster-border);
+  font-size: 0.9375rem;
+}
+
+ion-item::part(native) {
+  min-height: 48px;
+}
+
+ion-label {
+  line-height: 1.4;
+}
+
+/* SHARED BADGES AND CHIPS */
+ion-badge {
+  padding: 6px 10px;
+  border-radius: var(--findster-radius-pill);
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  white-space: normal;
+  line-height: 1.35;
+}
+
+ion-chip {
+  border-radius: var(--findster-radius-pill);
+}
+
+/* SHARED SEGMENT CONTROLS */
+ion-segment {
+  --background: #eaf1fa;
+  margin-bottom: 20px;
+  border-radius: var(--findster-radius-md);
+}
+
+ion-segment-button {
+  --color: var(--findster-text-secondary);
+  --color-checked: var(--findster-blue);
+  --indicator-color: #ffffff;
+  --border-radius: 9px;
+
+  min-height: 42px;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* SHARED RESPONSIVE PAGE SPACING */
+ion-content.ion-padding {
+  --padding-top: 20px;
+  --padding-bottom: 28px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+@media (min-width: 768px) {
+  ion-content.ion-padding {
+    --padding-top: 28px;
+    --padding-bottom: 40px;
+    --padding-start: 32px;
+    --padding-end: 32px;
+  }
+
+  .page-heading {
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 380px) {
+  ion-card-header {
+    padding: 16px 16px 10px;
+  }
+
+  ion-card-content {
+    padding: 10px 16px 16px;
+  }
+}
+
+/* REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
