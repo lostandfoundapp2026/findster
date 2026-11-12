@@ -1,0 +1,257 @@
+
+<!-- =====================================================
+     FINDSTER — LOGIN PAGE
+     PREMIUM MINIMALIST
+     IMPROVED VISUAL HIERARCHY
+     Design Only | Functionality Preserved
+     ===================================================== -->
+
+<ion-content
+  [fullscreen]="true"
+  class="login-content"
+>
+  <main class="login-wrapper">
+
+    <div class="login-layout">
+
+      <!-- ==========================================
+           PRIMARY VISUAL LEVEL — BRAND IDENTITY
+           ========================================== -->
+
+      <header
+        class="brand-section"
+        aria-label="Findster branding"
+      >
+
+        <!-- SYMBOL-ONLY LOGO -->
+        <div class="brand-symbol-area">
+
+          <div class="brand-symbol-container">
+            <img
+              src="assets/branding/findster-symbol.png"
+              alt="Findster symbol"
+              class="brand-logo"
+            />
+          </div>
+
+        </div>
+
+        <!-- BRAND NAME AND DESCRIPTION -->
+        <div class="brand-copy">
+
+          <h1 class="brand-name">
+            Findster
+          </h1>
+
+          <p class="brand-tagline">
+            Bringing lost belongings back home.
+          </p>
+
+          <!-- LOCATION -->
+          <div class="brand-location">
+
+            <ion-icon
+              name="location-outline"
+              aria-hidden="true"
+            ></ion-icon>
+
+            <span>
+              San Leonardo, Nueva Ecija
+            </span>
+
+          </div>
+
+        </div>
+
+      </header>
+
+      <!-- ==========================================
+           SECONDARY VISUAL LEVEL — LOGIN CARD
+           ========================================== -->
+
+      <section
+        class="form-section"
+        aria-label="Sign in to Findster"
+      >
+
+        <!-- LOGIN FORM -->
+        <form
+          class="login-form"
+          (ngSubmit)="login()"
+          #loginForm="ngForm"
+        >
+
+          <!-- ========================================
+               EMAIL ADDRESS
+               ======================================== -->
+
+          <div class="field-group">
+
+            <label
+              class="field-label"
+              for="login-email"
+            >
+              Email address
+            </label>
+
+            <div class="form-field email-field">
+
+              <span
+                class="field-icon"
+                aria-hidden="true"
+              >
+                <ion-icon
+                  name="mail-outline"
+                ></ion-icon>
+              </span>
+
+              <ion-input
+                id="login-email"
+                type="email"
+                inputmode="email"
+                name="email"
+                placeholder="Enter your email address"
+                autocomplete="email"
+                [(ngModel)]="email"
+                [disabled]="isLoading"
+                required
+              ></ion-input>
+
+            </div>
+
+          </div>
+
+          <!-- ========================================
+               PASSWORD
+               ======================================== -->
+
+          <div class="field-group">
+
+            <label
+              class="field-label"
+              for="login-password"
+            >
+              Password
+            </label>
+
+            <div class="form-field password-field">
+
+              <span
+                class="field-icon"
+                aria-hidden="true"
+              >
+                <ion-icon
+                  name="lock-closed-outline"
+                ></ion-icon>
+              </span>
+
+              <ion-input
+                id="login-password"
+                [type]="showPassword ? 'text' : 'password'"
+                name="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                [(ngModel)]="password"
+                [disabled]="isLoading"
+                required
+              ></ion-input>
+
+              <!-- PASSWORD VISIBILITY -->
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePasswordVisibility()"
+                [disabled]="isLoading"
+                [attr.aria-label]="
+                  showPassword
+                    ? 'Hide password'
+                    : 'Show password'
+                "
+                [attr.aria-pressed]="showPassword"
+              >
+
+                <ion-icon
+                  [name]="
+                    showPassword
+                      ? 'eye-off-outline'
+                      : 'eye-outline'
+                  "
+                  aria-hidden="true"
+                ></ion-icon>
+
+              </button>
+
+            </div>
+
+          </div>
+
+          <!-- ========================================
+               FORGOT PASSWORD
+               ======================================== -->
+
+          <div class="forgot-password-row">
+
+            <a routerLink="/forgot-password">
+              Forgot password?
+            </a>
+
+          </div>
+
+          <!-- ========================================
+               PRIMARY ACTION — SIGN IN
+               ======================================== -->
+
+          <ion-button
+            expand="block"
+            type="submit"
+            class="login-button"
+            [disabled]="isLoading"
+          >
+
+            @if (isLoading) {
+
+              <ion-spinner
+                name="crescent"
+                aria-hidden="true"
+              ></ion-spinner>
+
+              <span>Signing in...</span>
+
+            } @else {
+
+              <span>Sign In</span>
+
+              <ion-icon
+                name="arrow-forward-outline"
+                slot="end"
+                aria-hidden="true"
+              ></ion-icon>
+
+            }
+
+          </ion-button>
+
+        </form>
+
+        <!-- ==========================================
+             SECONDARY ACTION — CREATE ACCOUNT
+             ========================================== -->
+
+        <div class="register-section">
+
+          <p>
+            Don't have an account?
+
+            <a routerLink="/register">
+              Create an account
+            </a>
+          </p>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+</ion-content>
