@@ -1,0 +1,1016 @@
+
+/* =========================================================
+   FINDSTER — LOGIN PAGE
+   PREMIUM MINIMALIST / VISUAL HIERARCHY V2
+
+   Brand:       Findster
+   Primary:     #0758D3
+   Navy:        #092D66
+   Background:  #F7F9FD
+
+   DESIGN ONLY — No functionality changes
+   ========================================================= */
+
+/* =========================================================
+   01 — DESIGN SYSTEM
+   ========================================================= */
+
+:host {
+  display: block;
+
+  --login-primary: #0758d3;
+  --login-primary-hover: #064fbd;
+  --login-primary-active: #0645a9;
+  --login-primary-soft: #eaf2ff;
+
+  --login-navy: #092d66;
+  --login-text: #24344c;
+  --login-muted: #65758d;
+  --login-placeholder: #94a3b8;
+
+  --login-background: #f7f9fd;
+  --login-surface: #ffffff;
+  --login-field-background: #f9fbfe;
+
+  --login-border: #e4ebf5;
+  --login-field-border: #dce5f1;
+
+  --login-card-radius: 22px;
+  --login-field-radius: 12px;
+
+  --login-card-shadow:
+    0 16px 45px rgba(9, 45, 102, 0.055),
+    0 3px 12px rgba(9, 45, 102, 0.025);
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+}
+
+/* =========================================================
+   02 — PAGE BACKGROUND
+   ========================================================= */
+
+.login-content {
+  --background: var(--login-background);
+  --color: var(--login-text);
+
+  /* Keep the form accessible when the keyboard opens. */
+  --overflow: auto;
+}
+
+/* =========================================================
+   03 — PAGE LAYOUT
+   ========================================================= */
+
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 100%;
+
+  padding:
+    max(24px, env(safe-area-inset-top, 0px))
+    20px
+    max(24px, env(safe-area-inset-bottom, 0px));
+
+  box-sizing: border-box;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f3f7fd 0%,
+      #f9fbff 42%,
+      #f7f9fd 100%
+    );
+}
+
+.login-layout {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-width: 400px;
+
+  margin: 0 auto;
+}
+
+/* =========================================================
+   04 — BRAND SECTION
+   ========================================================= */
+
+.brand-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+  min-width: 0;
+
+  margin: 0 0 29px;
+
+  text-align: center;
+}
+
+/* =========================================================
+   05 — LOGO AREA
+   ========================================================= */
+
+.brand-symbol-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 108px;
+  height: 108px;
+
+  margin: 0 auto 12px;
+}
+
+.brand-symbol-container {
+  display: grid;
+  place-items: center;
+
+  width: 96px;
+  height: 96px;
+
+  padding: 13px;
+
+  border: 1px solid #e5ecf5;
+  border-radius: 26px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 11px 30px rgba(9, 45, 102, 0.065),
+    0 2px 6px rgba(9, 45, 102, 0.025);
+}
+
+.brand-logo {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+  object-position: center;
+}
+
+/* =========================================================
+   06 — BRAND TYPOGRAPHY
+   ========================================================= */
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+  min-width: 0;
+}
+
+/* PRIMARY HIERARCHY: FINDSTER */
+
+.brand-name {
+  margin: 0;
+
+  color: var(--login-navy);
+
+  font-size: 39px;
+  font-weight: 850;
+  line-height: 1.12;
+
+  letter-spacing: -1.65px;
+  text-align: center;
+}
+
+/* SECONDARY HIERARCHY: TAGLINE */
+
+.brand-tagline {
+  max-width: 320px;
+
+  margin: 8px 0 0;
+
+  color: #62748e;
+
+  font-size: 12.5px;
+  font-weight: 450;
+  line-height: 1.55;
+
+  letter-spacing: -0.05px;
+  text-align: center;
+}
+
+/* TERTIARY HIERARCHY: LOCATION */
+
+.brand-location {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  max-width: 100%;
+  min-height: 28px;
+
+  margin-top: 13px;
+  padding: 5px 12px;
+
+  border: 1px solid #e0e9f6;
+  border-radius: 999px;
+
+  box-sizing: border-box;
+
+  background: rgba(255, 255, 255, 0.94);
+
+  color: #647b98;
+
+  font-size: 10.5px;
+  font-weight: 650;
+  line-height: 1.45;
+
+  white-space: normal;
+  text-align: center;
+}
+
+.brand-location ion-icon {
+  flex: 0 0 auto;
+
+  color: var(--login-primary);
+
+  width: 13px;
+  height: 13px;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   07 — LOGIN CARD
+   ========================================================= */
+
+.form-section {
+  position: relative;
+
+  width: 100%;
+  min-width: 0;
+
+  padding: 26px 23px 21px;
+
+  border: 1px solid var(--login-border);
+  border-radius: var(--login-card-radius);
+
+  box-sizing: border-box;
+
+  background: var(--login-surface);
+
+  box-shadow: var(--login-card-shadow);
+}
+
+/* Keep the card simple:
+   no decorative line, floating dots or extra heading. */
+
+/* =========================================================
+   08 — FORM STRUCTURE
+   ========================================================= */
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 15px;
+
+  width: 100%;
+  min-width: 0;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+
+  width: 100%;
+  min-width: 0;
+}
+
+/* =========================================================
+   09 — FIELD LABELS
+   ========================================================= */
+
+.field-label {
+  display: block;
+
+  margin: 0;
+
+  color: #34455f;
+
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.45;
+
+  letter-spacing: 0;
+}
+
+/* =========================================================
+   10 — INPUT CONTAINERS
+   ========================================================= */
+
+.form-field {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+
+  border: 1px solid var(--login-field-border);
+  border-radius: var(--login-field-radius);
+
+  box-sizing: border-box;
+
+  background: var(--login-field-background);
+
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.form-field:hover {
+  border-color: #c6d6ed;
+}
+
+/* KEYBOARD FOCUS */
+
+.form-field:focus-within {
+  border-color: var(--login-primary);
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 3px rgba(7, 88, 211, 0.085);
+}
+
+/* =========================================================
+   11 — INPUT ICONS
+   ========================================================= */
+
+.field-icon {
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 45px;
+
+  width: 45px;
+  height: 50px;
+
+  color: #8293ab;
+
+  transition: color 180ms ease;
+}
+
+.field-icon ion-icon {
+  display: block;
+
+  width: 18px;
+  height: 18px;
+
+  font-size: 18px;
+}
+
+.form-field:focus-within .field-icon {
+  color: var(--login-primary);
+}
+
+/* =========================================================
+   12 — IONIC INPUTS
+   ========================================================= */
+
+.form-field ion-input {
+  --background: transparent;
+  --color: var(--login-text);
+
+  --placeholder-color: var(--login-placeholder);
+  --placeholder-opacity: 1;
+
+  --padding-start: 0px;
+  --padding-end: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+
+  --highlight-height: 0px;
+
+  display: block;
+
+  flex: 1 1 auto;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 50px;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  box-shadow: none;
+
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+/* Avoid password text overlapping the eye button. */
+
+.password-field ion-input {
+  --padding-end: 4px;
+}
+
+/* =========================================================
+   13 — PASSWORD VISIBILITY
+   ========================================================= */
+
+.password-toggle {
+  position: relative;
+  z-index: 1;
+
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 44px;
+
+  width: 44px;
+  height: 44px;
+
+  margin-right: 4px;
+  padding: 0;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: transparent;
+  color: #7f91aa;
+
+  cursor: pointer;
+
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.password-toggle ion-icon {
+  display: block;
+
+  width: 19px;
+  height: 19px;
+
+  font-size: 19px;
+}
+
+.password-toggle:hover:not(:disabled) {
+  color: var(--login-primary);
+
+  background: #edf4ff;
+}
+
+.password-toggle:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid var(--login-primary);
+  outline-offset: -2px;
+}
+
+.password-toggle:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   14 — FORGOT PASSWORD
+   ========================================================= */
+
+.forgot-password-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  margin-top: -5px;
+}
+
+.forgot-password-row a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  min-height: 34px;
+  padding: 3px 0;
+
+  color: var(--login-primary);
+
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.4;
+
+  text-decoration: none;
+
+  transition: color 180ms ease;
+}
+
+.forgot-password-row a:hover {
+  color: var(--login-primary-hover);
+
+  text-decoration: underline;
+}
+
+.forgot-password-row a:focus-visible {
+  outline: 2px solid var(--login-primary);
+  outline-offset: 3px;
+
+  border-radius: 3px;
+}
+
+/* =========================================================
+   15 — PRIMARY ACTION
+   SIGN IN BUTTON
+   ========================================================= */
+
+.login-button {
+  --background: var(--login-primary);
+  --background-hover: var(--login-primary-hover);
+  --background-activated: var(--login-primary-active);
+
+  --color: #ffffff;
+  --border-radius: 12px;
+
+  --box-shadow:
+    0 7px 17px rgba(7, 88, 211, 0.16);
+
+  display: block;
+
+  width: 100%;
+  min-height: 52px;
+
+  margin: 3px 0 0;
+
+  font-size: 13.5px;
+  font-weight: 800;
+
+  line-height: 1.4;
+  letter-spacing: 0.1px;
+
+  text-transform: none;
+
+  transition:
+    transform 180ms ease,
+    filter 180ms ease;
+}
+
+.login-button ion-icon {
+  width: 18px;
+  height: 18px;
+
+  font-size: 18px;
+}
+
+.login-button ion-spinner {
+  width: 18px;
+  height: 18px;
+
+  margin-right: 8px;
+
+  color: #ffffff;
+}
+
+.login-button:active:not([disabled]) {
+  transform: scale(0.99);
+}
+
+.login-button:focus-visible::part(native) {
+  outline: 2px solid var(--login-primary);
+  outline-offset: 3px;
+}
+
+.login-button[disabled] {
+  --box-shadow: none;
+}
+
+/* =========================================================
+   16 — SECONDARY ACTION
+   CREATE ACCOUNT
+   ========================================================= */
+
+.register-section {
+  margin-top: 20px;
+  padding-top: 17px;
+
+  border-top: 1px solid #edf1f6;
+
+  text-align: center;
+}
+
+.register-section p {
+  margin: 0;
+
+  color: #78869a;
+
+  font-size: 12px;
+  font-weight: 450;
+  line-height: 1.7;
+}
+
+.register-section a {
+  display: inline-block;
+
+  min-height: 30px;
+  padding: 4px 2px;
+
+  color: var(--login-primary);
+
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.6;
+
+  text-decoration: none;
+}
+
+.register-section a:hover {
+  color: var(--login-primary-hover);
+
+  text-decoration: underline;
+}
+
+.register-section a:focus-visible {
+  outline: 2px solid var(--login-primary);
+  outline-offset: 3px;
+
+  border-radius: 3px;
+}
+
+/* =========================================================
+   17 — SMALL ANDROID PHONES
+   ========================================================= */
+
+@media (max-width: 360px) {
+  .login-wrapper {
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+
+  .brand-section {
+    margin-bottom: 21px;
+  }
+
+  .brand-symbol-area {
+    width: 88px;
+    height: 88px;
+
+    margin-bottom: 9px;
+  }
+
+  .brand-symbol-container {
+    width: 78px;
+    height: 78px;
+
+    padding: 11px;
+    border-radius: 22px;
+  }
+
+  .brand-name {
+    font-size: 33px;
+    letter-spacing: -1.3px;
+  }
+
+  .brand-tagline {
+    max-width: 270px;
+    font-size: 11.5px;
+  }
+
+  .brand-location {
+    margin-top: 10px;
+    font-size: 10px;
+  }
+
+  .form-section {
+    padding: 22px 17px 17px;
+
+    border-radius: 19px;
+  }
+
+  .login-form {
+    gap: 13px;
+  }
+
+  .field-group {
+    gap: 7px;
+  }
+
+  .form-field ion-input {
+    font-size: 12.5px;
+  }
+
+  .register-section {
+    margin-top: 16px;
+    padding-top: 13px;
+  }
+}
+
+/* =========================================================
+   18 — SHORT PHONE SCREENS
+   ========================================================= */
+
+@media (max-height: 760px) {
+  .login-wrapper {
+    justify-content: flex-start;
+
+    padding-top:
+      max(14px, env(safe-area-inset-top, 0px));
+
+    padding-bottom:
+      max(18px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .brand-section {
+    margin-bottom: 18px;
+  }
+
+  .brand-symbol-area {
+    width: 84px;
+    height: 84px;
+
+    margin-bottom: 8px;
+  }
+
+  .brand-symbol-container {
+    width: 74px;
+    height: 74px;
+
+    padding: 10px;
+    border-radius: 21px;
+  }
+
+  .brand-name {
+    font-size: 32px;
+  }
+
+  .brand-tagline {
+    margin-top: 5px;
+    font-size: 11.5px;
+  }
+
+  .brand-location {
+    margin-top: 9px;
+    padding: 5px 10px;
+  }
+
+  .form-section {
+    padding-top: 21px;
+    padding-bottom: 17px;
+  }
+
+  .login-form {
+    gap: 12px;
+  }
+
+  .register-section {
+    margin-top: 15px;
+    padding-top: 12px;
+  }
+}
+
+/* =========================================================
+   19 — VERY SHORT SCREENS / KEYBOARD
+   ========================================================= */
+
+@media (max-height: 640px) {
+  .login-wrapper {
+    justify-content: flex-start;
+
+    padding-top:
+      max(10px, env(safe-area-inset-top, 0px));
+
+    padding-bottom:
+      max(14px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .brand-section {
+    margin-bottom: 13px;
+  }
+
+  .brand-symbol-area {
+    width: 68px;
+    height: 68px;
+
+    margin-bottom: 4px;
+  }
+
+  .brand-symbol-container {
+    width: 60px;
+    height: 60px;
+
+    padding: 8px;
+    border-radius: 18px;
+  }
+
+  .brand-name {
+    font-size: 28px;
+  }
+
+  .brand-tagline {
+    margin-top: 4px;
+    font-size: 11px;
+  }
+
+  .brand-location {
+    margin-top: 6px;
+
+    padding: 4px 9px;
+
+    font-size: 9.5px;
+  }
+
+  .form-section {
+    padding: 17px 16px 13px;
+
+    border-radius: 18px;
+  }
+
+  .login-form {
+    gap: 10px;
+  }
+
+  .field-group {
+    gap: 5px;
+  }
+
+  .form-field {
+    min-height: 46px;
+  }
+
+  .field-icon {
+    height: 44px;
+  }
+
+  .form-field ion-input {
+    min-height: 44px;
+
+    --padding-top: 9px;
+    --padding-bottom: 9px;
+  }
+
+  .password-toggle {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+
+  .forgot-password-row a {
+    min-height: 29px;
+  }
+
+  .login-button {
+    min-height: 46px;
+  }
+
+  .register-section {
+    margin-top: 12px;
+    padding-top: 10px;
+  }
+}
+
+/* =========================================================
+   20 — TABLETS AND LARGER DEVICES
+   ========================================================= */
+
+@media (min-width: 600px) {
+  .login-wrapper {
+    padding-right: 28px;
+    padding-left: 28px;
+  }
+
+  .login-layout {
+    max-width: 430px;
+  }
+
+  .brand-section {
+    margin-bottom: 33px;
+  }
+
+  .brand-symbol-area {
+    width: 118px;
+    height: 118px;
+
+    margin-bottom: 14px;
+  }
+
+  .brand-symbol-container {
+    width: 104px;
+    height: 104px;
+
+    padding: 15px;
+    border-radius: 29px;
+  }
+
+  .brand-name {
+    font-size: 42px;
+  }
+
+  .brand-tagline {
+    font-size: 13px;
+  }
+
+  .form-section {
+    padding: 30px 28px 24px;
+  }
+
+  .login-form {
+    gap: 17px;
+  }
+}
+
+/* =========================================================
+   21 — LANDSCAPE / LOW HEIGHT
+   ========================================================= */
+
+@media (orientation: landscape) and (max-height: 550px) {
+  .login-wrapper {
+    justify-content: flex-start;
+
+    padding-top: 14px;
+    padding-bottom: 22px;
+  }
+
+  .brand-symbol-area {
+    width: 62px;
+    height: 62px;
+
+    margin-bottom: 4px;
+  }
+
+  .brand-symbol-container {
+    width: 55px;
+    height: 55px;
+
+    padding: 7px;
+    border-radius: 16px;
+  }
+
+  .brand-name {
+    font-size: 26px;
+  }
+
+  .brand-section {
+    margin-bottom: 12px;
+  }
+
+  .brand-location {
+    margin-top: 6px;
+  }
+}
+
+/* =========================================================
+   22 — TOUCH DEVICES
+   ========================================================= */
+
+@media (hover: none) {
+  .form-field:hover {
+    border-color: var(--login-field-border);
+  }
+
+  .form-field:focus-within {
+    border-color: var(--login-primary);
+  }
+
+  .password-toggle:hover:not(:disabled) {
+    background: transparent;
+  }
+
+  .login-button {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* =========================================================
+   23 — REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
