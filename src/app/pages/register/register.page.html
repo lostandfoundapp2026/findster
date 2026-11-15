@@ -1,0 +1,242 @@
+<!-- =====================================================
+     FINDSTER — REGISTRATION
+     Clean, mobile-first layout | Existing behavior preserved
+     ===================================================== -->
+
+<ion-content [fullscreen]="true" class="register-content">
+  <main class="register-wrapper">
+
+    <!-- Back navigation: fixed positioning is handled in SCSS. -->
+    <nav class="register-navigation" aria-label="Registration navigation">
+      <button
+        type="button"
+        class="back-button"
+        (click)="handleRegistrationBack()"
+        [disabled]="isRegistering"
+        [attr.aria-label]="registrationStep === 1 ? 'Back to Login' : 'Back to personal information'"
+      >
+        <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </nav>
+
+    <div class="register-layout">
+      <!-- Compact brand identity -->
+      <header class="brand-section">
+        <img
+          src="assets/branding/findster-logo.png"
+          alt="Findster"
+          class="brand-logo"
+        />
+        <p class="brand-location">San Leonardo, Nueva Ecija</p>
+      </header>
+
+      <section class="form-section" aria-labelledby="register-heading">
+        <div class="form-heading">
+          <h1 id="register-heading">Create an account</h1>
+          <p class="subtitle">Join Findster to report and recover lost belongings.</p>
+        </div>
+
+        <!-- The same readable field sizes, organized into two stages. -->
+        <div class="registration-progress" role="status" aria-live="polite">
+          <span>Step {{ registrationStep }} of 2</span>
+          <div class="registration-progress-track" aria-hidden="true">
+            <span [class.is-complete]="registrationStep === 2"></span>
+          </div>
+        </div>
+
+        @if (registrationStep === 1) {
+          <form (ngSubmit)="nextRegistrationStep()" #personalForm="ngForm">
+            <div class="form-group-heading"><h2>Personal information</h2></div>
+          <div class="form-field">
+            <ion-input
+              label="First name"
+              label-placement="stacked"
+              type="text"
+              name="firstName"
+              placeholder="Enter your first name"
+              autocomplete="given-name"
+              [(ngModel)]="firstName"
+              [disabled]="isRegistering"
+              required
+            ></ion-input>
+          </div>
+
+          <div class="form-field">
+            <ion-input
+              label="Middle name (optional)"
+              label-placement="stacked"
+              type="text"
+              name="middleName"
+              placeholder="Enter your middle name"
+              autocomplete="additional-name"
+              [(ngModel)]="middleName"
+              [disabled]="isRegistering"
+            ></ion-input>
+          </div>
+
+          <div class="form-field">
+            <ion-input
+              label="Last name"
+              label-placement="stacked"
+              type="text"
+              name="lastName"
+              placeholder="Enter your last name"
+              autocomplete="family-name"
+              [(ngModel)]="lastName"
+              [disabled]="isRegistering"
+              required
+            ></ion-input>
+          </div>
+
+          <div class="form-field">
+            <ion-input
+              label="Email address"
+              label-placement="stacked"
+              type="email"
+              inputmode="email"
+              name="email"
+              placeholder="Enter your email"
+              autocomplete="email"
+              [(ngModel)]="email"
+              [disabled]="isRegistering"
+              required
+            ></ion-input>
+          </div>
+
+          <div class="form-field">
+            <ion-input
+              label="Mobile number"
+              label-placement="stacked"
+              type="tel"
+              inputmode="numeric"
+              name="contactNumber"
+              placeholder="09XXXXXXXXX"
+              autocomplete="tel"
+              maxlength="11"
+              [(ngModel)]="contactNumber"
+              [disabled]="isRegistering"
+              required
+            ></ion-input>
+            <p class="field-helper">11 digits, starting with 09.</p>
+          </div>
+
+          <div class="form-field">
+            <ion-select
+              label="Barangay"
+              label-placement="stacked"
+              interface="popover"
+              placeholder="Select your barangay"
+              name="barangay"
+              [(ngModel)]="barangay"
+              [disabled]="isRegistering"
+              required
+            >
+              <ion-select-option value="San Bartolome">San Bartolome</ion-select-option>
+              <ion-select-option value="Burgos">Burgos</ion-select-option>
+              <ion-select-option value="Rizal">Rizal</ion-select-option>
+              <ion-select-option value="Bonifacio">Bonifacio</ion-select-option>
+              <ion-select-option value="Mallorca">Mallorca</ion-select-option>
+              <ion-select-option value="Mambangnan">Mambangnan</ion-select-option>
+              <ion-select-option value="Diversion">Diversion</ion-select-option>
+              <ion-select-option value="Tambo-Adorable">Tambo-Adorable</ion-select-option>
+              <ion-select-option value="Nieves">Nieves</ion-select-option>
+              <ion-select-option value="Tabuating">Tabuating</ion-select-option>
+              <ion-select-option value="Magpapalayoc">Magpapalayoc</ion-select-option>
+              <ion-select-option value="San Anton">San Anton</ion-select-option>
+              <ion-select-option value="Castellano">Castellano</ion-select-option>
+              <ion-select-option value="Tagumpay">Tagumpay</ion-select-option>
+              <ion-select-option value="San Roque">San Roque</ion-select-option>
+            </ion-select>
+          </div>
+
+            <ion-button
+              expand="block"
+              type="submit"
+              class="register-button"
+              [disabled]="isRegistering"
+            >Continue</ion-button>
+          </form>
+        } @else {
+          <form (ngSubmit)="register()" #securityForm="ngForm">
+          <div class="form-group-heading security-heading">
+            <h2>Account security</h2>
+          </div>
+
+          <div class="form-field password-field">
+            <ion-input
+              label="Password"
+              label-placement="stacked"
+              [type]="showPassword ? 'text' : 'password'"
+              name="password"
+              placeholder="Create a password"
+              autocomplete="new-password"
+              [(ngModel)]="password"
+              [disabled]="isRegistering"
+              required
+              minlength="8"
+            ></ion-input>
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+              [disabled]="isRegistering"
+              [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+              [attr.aria-pressed]="showPassword"
+            >
+              <ion-icon
+                [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+                aria-hidden="true"
+              ></ion-icon>
+            </button>
+            <p class="field-helper">Use at least 8 characters.</p>
+          </div>
+
+          <div class="form-field password-field">
+            <ion-input
+              label="Confirm password"
+              label-placement="stacked"
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              name="confirmPassword"
+              placeholder="Re-enter your password"
+              autocomplete="new-password"
+              [(ngModel)]="confirmPassword"
+              [disabled]="isRegistering"
+              required
+            ></ion-input>
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="toggleConfirmPasswordVisibility()"
+              [disabled]="isRegistering"
+              [attr.aria-label]="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
+              [attr.aria-pressed]="showConfirmPassword"
+            >
+              <ion-icon
+                [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"
+                aria-hidden="true"
+              ></ion-icon>
+            </button>
+          </div>
+
+          <ion-button
+            expand="block"
+            type="submit"
+            class="register-button"
+            [disabled]="isRegistering"
+          >
+            @if (isRegistering) {
+              Creating Account...
+            } @else {
+              Create Account
+            }
+          </ion-button>
+          </form>
+        }
+
+        <div class="login-section">
+          <p>Already have an account? <a routerLink="/login">Sign in</a></p>
+        </div>
+      </section>
+    </div>
+  </main>
+</ion-content>
