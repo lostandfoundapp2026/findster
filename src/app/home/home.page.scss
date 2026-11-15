@@ -1,0 +1,992 @@
+/* =========================================================
+   FINDSTER — HOME PAGE
+   Refined Mobile-First Design | Visual Hierarchy | Accessibility
+   ========================================================= */
+
+:host {
+  display: block;
+  --home-blue: #0758d3;
+  --home-navy: #092d66;
+  --home-text: #24344c;
+  --home-muted: #52627a;
+  --home-border: #e2e8f0;
+  --home-bg: #f5f8fc;
+  --home-shadow: 0 4px 18px rgba(9, 45, 102, 0.045);
+}
+
+/* HEADER */
+
+.home-header {
+  box-shadow: none;
+}
+
+.home-header::after {
+  display: none;
+}
+
+.home-toolbar {
+  --background: #fff;
+  --color: var(--home-navy);
+  --min-height: 56px;
+  --padding-start: 14px;
+  --padding-end: 12px;
+  --border-width: 0;
+  border-bottom: 1px solid var(--home-border);
+}
+
+.home-toolbar ion-title {
+  padding-inline: 0;
+}
+
+.header-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+  min-height: 54px;
+}
+
+.header-logo {
+  display: block;
+  width: 37px;
+  height: 37px;
+  flex: 0 0 37px;
+  object-fit: contain;
+}
+
+.brand-name {
+  color: var(--home-navy);
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing: -0.7px;
+  white-space: nowrap;
+}
+
+.notification-button {
+  position: relative;
+  --color: var(--home-navy);
+  --border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  margin: 0;
+}
+
+.notification-button ion-icon {
+  font-size: 24px;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  min-width: 19px;
+  height: 19px;
+  padding: 2px 4px;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* MAIN PAGE */
+
+.home-content {
+  --background: var(--home-bg);
+  --color: var(--home-text);
+}
+
+.home-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+
+  /* Clearance for the app bottom navigation + Android gesture inset. */
+  padding: 14px 14px
+    calc(88px + env(safe-area-inset-bottom, 0px));
+
+  box-sizing: border-box;
+}
+
+/* WELCOME */
+
+.welcome-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  overflow: hidden;
+  margin-bottom: 14px;
+  padding: 20px 18px;
+  border-radius: 20px;
+  background: linear-gradient(
+    132deg,
+    #092d66 0%,
+    #0758d3 68%,
+    #1580e4 100%
+  );
+  color: #fff;
+  box-shadow: 0 7px 22px rgba(7, 88, 211, 0.12);
+}
+
+.welcome-section::after {
+  content: "";
+  position: absolute;
+  top: -100px;
+  right: -112px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.055);
+  pointer-events: none;
+}
+
+.welcome-copy,
+.welcome-actions {
+  position: relative;
+  z-index: 1;
+}
+
+.welcome-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  color: #dbeaff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.welcome-eyebrow ion-icon {
+  font-size: 15px;
+}
+
+.welcome-copy h1 {
+  max-width: 470px;
+  margin: 0 0 8px;
+  color: #fff;
+  font-size: clamp(23px, 5.5vw, 32px);
+  font-weight: 850;
+  line-height: 1.19;
+  letter-spacing: -0.6px;
+}
+
+.welcome-copy p {
+  max-width: 500px;
+  margin: 0;
+  color: #e5f0ff;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.welcome-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.welcome-actions ion-button {
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 750;
+  text-transform: none;
+}
+
+.submit-button {
+  --border-radius: 11px;
+}
+
+.report-action {
+  --background: #fff;
+  --background-hover: #f1f7ff;
+  --background-activated: #e4efff;
+  --color: #0758d3;
+}
+
+.claims-action {
+  --background: transparent;
+  --background-hover: rgba(255, 255, 255, 0.08);
+  --background-activated: rgba(255, 255, 255, 0.13);
+  --color: #fff;
+  --border-color: rgba(255, 255, 255, 0.8);
+  --border-style: solid;
+  --border-width: 1px;
+}
+
+.welcome-actions ion-button ion-icon {
+  font-size: 17px;
+}
+
+/* NEAR ME */
+
+.nearby-section {
+  margin-bottom: 16px;
+}
+
+.near-me-card {
+  margin: 0;
+  border: 1px solid var(--home-border);
+  border-radius: 17px;
+  background: #fff;
+  box-shadow: var(--home-shadow);
+}
+
+.near-me-card ion-card-content {
+  padding: 15px;
+}
+
+.near-me-top {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 12px;
+}
+
+.near-me-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 39px;
+  width: 39px;
+  height: 39px;
+  border-radius: 12px;
+  background: #eaf2ff;
+  color: var(--home-blue);
+}
+
+.near-me-icon ion-icon {
+  font-size: 20px;
+}
+
+.near-me-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.near-me-copy h2 {
+  margin: 0 0 3px;
+  color: var(--home-navy);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.near-me-copy p {
+  margin: 0;
+  color: var(--home-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.near-me-button {
+  --background: var(--home-blue);
+  --background-hover: #064dba;
+  --color: #fff;
+  --border-radius: 11px;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 750;
+  text-transform: none;
+}
+
+.near-me-button ion-icon {
+  font-size: 17px;
+}
+
+.near-me-active {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 11px;
+}
+
+.near-me-info {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: #e9f8ef;
+  color: #176244;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.near-me-info ion-icon {
+  flex-shrink: 0;
+  font-size: 17px;
+}
+
+.radius-select {
+  --background: #f8fbff;
+  --padding-start: 11px;
+  --inner-padding-end: 9px;
+  --min-height: 44px;
+  border: 1px solid #dce7f3;
+  border-radius: 10px;
+}
+
+.radius-select ion-label {
+  color: var(--home-text);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.radius-select ion-select {
+  max-width: 54%;
+  font-size: 12px;
+}
+
+.near-me-clear-button {
+  --border-radius: 10px;
+  min-height: 44px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: none;
+}
+
+.location-error {
+  margin: 10px 0 0;
+  padding: 10px;
+  border: 1px solid #f4c8d0;
+  border-radius: 10px;
+  background: #fff2f4;
+  color: #a32636;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* SECTION HEADINGS */
+
+.discovery-section {
+  margin-bottom: 16px;
+}
+
+.section-heading {
+  margin-bottom: 9px;
+}
+
+.section-heading h2,
+.reports-heading h2 {
+  margin: 0 0 3px;
+  color: var(--home-navy);
+  font-size: 19px;
+  font-weight: 850;
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+}
+
+.section-heading p,
+.reports-heading-copy > p {
+  margin: 0;
+  color: var(--home-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* SEARCH AND FILTERS */
+
+.discovery-panel {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--home-border);
+  border-radius: 17px;
+  background: #fff;
+  box-shadow: var(--home-shadow);
+}
+
+.search-area {
+  margin-bottom: 10px;
+}
+
+.search-area ion-searchbar {
+  --background: #f5f8fc;
+  --color: var(--home-text);
+  --placeholder-color: #7a879a;
+  --icon-color: var(--home-blue);
+  --clear-button-color: var(--home-muted);
+  --border-radius: 11px;
+  --box-shadow: none;
+  min-height: 44px;
+  padding: 0;
+  font-size: 13px;
+}
+
+.type-filter {
+  min-width: 0;
+  margin-bottom: 9px;
+}
+
+.type-filter ion-segment {
+  --background: #eef4fc;
+  width: 100%;
+  margin: 0;
+  padding: 3px;
+  border-radius: 11px;
+}
+
+.type-filter ion-segment-button {
+  --color: var(--home-muted);
+  --color-checked: var(--home-blue);
+  --indicator-color: #fff;
+  --border-radius: 8px;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 44px;
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: none;
+}
+
+.type-filter ion-segment-button ion-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filter-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 9px;
+  min-width: 0;
+}
+
+.filter-section ion-select {
+  --background: #f8fbff;
+  --color: var(--home-text);
+  --placeholder-color: #7b8798;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 59px;
+  padding: 7px 9px;
+  border: 1px solid #dce6f1;
+  border-radius: 11px;
+  box-sizing: border-box;
+  font-size: 12px;
+}
+
+.filter-section ion-select::part(label) {
+  font-size: 11px;
+}
+
+.filter-section ion-select::part(text),
+.filter-section ion-select::part(placeholder) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reset-button {
+  --border-radius: 10px;
+  --color: var(--home-blue);
+  --border-color: #c8dbf3;
+  grid-column: 1 / -1;
+  min-height: 44px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: none;
+}
+
+.reset-button ion-icon {
+  font-size: 15px;
+}
+
+/* REPORTS HEADING */
+
+.reports-section {
+  min-width: 0;
+  padding-bottom: 16px;
+}
+
+.reports-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.reports-heading-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.reports-heading h2 {
+  font-size: 18px;
+}
+
+.reports-heading-copy > p {
+  font-size: 12px;
+}
+
+.sort-select {
+  --background: #fff;
+  --padding-start: 8px;
+  --inner-padding-end: 7px;
+  --min-height: 44px;
+  flex: 0 1 166px;
+  min-width: 0;
+  border: 1px solid #dce6f1;
+  border-radius: 11px;
+}
+
+.sort-select ion-label {
+  color: var(--home-muted);
+  font-size: 12px;
+}
+
+.sort-select ion-select {
+  max-width: 72%;
+  min-width: 0;
+  color: var(--home-text);
+  font-size: 12px;
+}
+
+/* REPORT GRID */
+
+.reports-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.report-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--home-border);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--home-shadow);
+}
+
+.report-image-container {
+  position: relative;
+  width: 100%;
+  height: 168px;
+  overflow: hidden;
+  background: #edf3fa;
+}
+
+.report-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.report-image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  height: 100%;
+  color: #8a97a8;
+  font-size: 12px;
+}
+
+.report-image-placeholder ion-icon {
+  color: #9aacc3;
+  font-size: 30px;
+}
+
+.report-type-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.report-card ion-card-header {
+  padding: 12px 14px 5px;
+}
+
+.report-card ion-card-title {
+  color: var(--home-navy);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.report-card ion-card-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  color: var(--home-muted);
+  font-size: 12px;
+  line-height: 1.4;
+  text-transform: none;
+}
+
+.report-card ion-card-subtitle ion-icon {
+  flex-shrink: 0;
+  color: var(--home-blue);
+  font-size: 14px;
+}
+
+.report-card ion-card-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
+  padding: 0 14px 13px;
+}
+
+.report-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: 0;
+  color: var(--home-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.report-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 13px;
+}
+
+.report-meta p {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  color: #65748a;
+  font-size: 12px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.report-meta ion-icon {
+  flex-shrink: 0;
+  color: var(--home-blue);
+  font-size: 13px;
+}
+
+.report-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid #edf1f7;
+}
+
+.report-status {
+  flex: 0 0 auto;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.details-button {
+  --background: var(--home-blue);
+  --background-hover: #064dba;
+  --color: #fff;
+  --border-radius: 10px;
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: none;
+}
+
+.details-button ion-icon {
+  font-size: 15px;
+}
+
+/* LOADING / EMPTY / ERROR */
+
+.loading-state,
+.error-state,
+.empty-state {
+  max-width: 500px;
+  min-height: 130px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.loading-state ion-spinner {
+  width: 25px;
+  height: 25px;
+  color: var(--home-blue);
+}
+
+.empty-state > ion-icon,
+.error-state > ion-icon {
+  color: var(--home-blue);
+  font-size: 31px;
+}
+
+.empty-state h3,
+.error-state h3 {
+  margin: 9px 0 5px;
+  color: var(--home-navy);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.loading-state p,
+.empty-state p,
+.error-state p {
+  margin: 8px auto 12px;
+  color: var(--home-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* PAGINATION */
+
+.load-more-section {
+  display: flex;
+  justify-content: center;
+  margin: 17px 0 8px;
+}
+
+.load-more-section ion-button {
+  --border-radius: 11px;
+  width: 100%;
+  max-width: 280px;
+  min-height: 44px;
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: none;
+}
+
+/* SMALL PHONES */
+
+@media (max-width: 360px) {
+  .home-container {
+    padding: 11px 10px
+      calc(88px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .welcome-section {
+    padding: 18px 15px;
+    border-radius: 17px;
+  }
+
+  .welcome-copy h1 {
+    font-size: 22px;
+  }
+
+  .welcome-copy p {
+    font-size: 12px;
+  }
+
+  .discovery-panel {
+    padding: 10px;
+  }
+
+  .filter-section {
+    gap: 7px;
+  }
+
+  .filter-section ion-select {
+    padding: 6px 7px;
+    font-size: 12px;
+  }
+
+  .report-image-container {
+    height: 148px;
+  }
+
+  .sort-select {
+    flex-basis: 148px;
+  }
+}
+
+/* TABLETS */
+
+@media (min-width: 600px) {
+  .home-container {
+    padding: 22px 22px 48px;
+  }
+
+  .welcome-section {
+    padding: 27px 29px;
+  }
+
+  .welcome-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filter-section {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) auto;
+    align-items: end;
+  }
+
+  .reset-button {
+    grid-column: auto;
+    min-width: 105px;
+  }
+
+  .reports-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+  }
+
+  .report-image-container {
+    height: 165px;
+  }
+}
+
+/* DESKTOP */
+
+@media (min-width: 960px) {
+  .home-container {
+    padding: 30px 28px 60px;
+  }
+
+  .welcome-section {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    align-items: center;
+    gap: 30px;
+    padding: 34px 38px;
+  }
+
+  .welcome-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .reports-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* =========================================================
+   FINAL POLISH — MOBILE INTERACTION AND ACCESSIBILITY
+   ========================================================= */
+
+/* Prevent long report titles and dropdown values from stretching the viewport. */
+.home-container,
+.welcome-section,
+.discovery-panel,
+.reports-section,
+.report-card,
+.filter-section {
+  min-width: 0;
+}
+
+.home-container {
+  overflow-x: clip;
+}
+
+/* Keep the toolbar brand and notification action properly separated. */
+.home-toolbar ion-buttons[slot="end"] {
+  flex-shrink: 0;
+}
+
+/* Help keyboard and screen-reader users see which controls are focused. */
+.home-content ion-button:focus-visible::part(native),
+.home-toolbar ion-button:focus-visible::part(native) {
+  outline: 2px solid var(--home-blue);
+  outline-offset: 2px;
+}
+
+/* Report text stays compact, but critical actions remain comfortably tappable. */
+.report-card-footer {
+  min-width: 0;
+}
+
+.details-button::part(native),
+.near-me-button::part(native),
+.reset-button::part(native),
+.load-more-section ion-button::part(native),
+.welcome-actions ion-button::part(native) {
+  min-height: 44px;
+}
+
+/* Keep the radius picker readable when the local filter is enabled. */
+.radius-select ion-select,
+.sort-select ion-select {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Small Android devices: avoid crushing the sort control and report heading. */
+@media (max-width: 360px) {
+  .reports-heading {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .sort-select {
+    flex: 1 1 145px;
+    max-width: 100%;
+  }
+  .report-card-footer {
+    gap: 8px;
+  }
+}
+
+/* On extremely narrow devices, filters stack instead of becoming unreadable. */
+@media (max-width: 320px) {
+  .filter-section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .reset-button {
+    grid-column: auto;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .near-me-card,
+  .discovery-panel,
+  .report-card {
+    border-color: #8ca4c1;
+  }
+  .welcome-copy p {
+    color: #fff;
+  }
+}

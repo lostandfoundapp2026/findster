@@ -1,0 +1,605 @@
+<!-- FINDSTER | Clean mobile-first home page | Existing functionality preserved -->
+
+<ion-header class="home-header">
+  <ion-toolbar class="home-toolbar">
+
+    <!-- BRAND -->
+    <ion-title>
+      <span class="header-brand">
+        <img
+          src="assets/branding/findster-symbol.png"
+          alt=""
+          class="header-logo"
+          aria-hidden="true"
+        />
+        <span class="brand-name">Findster</span>
+      </span>
+    </ion-title>
+
+    <!-- NOTIFICATIONS -->
+    <ion-buttons slot="end">
+      <ion-button
+        fill="clear"
+        class="notification-button"
+        (click)="goToNotifications()"
+        [attr.aria-label]="
+          unreadNotificationCount > 0
+            ? 'Notifications, ' + unreadNotificationCount + ' unread'
+            : 'Open notifications'
+        "
+      >
+        <ion-icon
+          name="notifications-outline"
+          aria-hidden="true"
+        ></ion-icon>
+
+        <ion-badge
+          *ngIf="unreadNotificationCount > 0"
+          color="danger"
+          class="notification-badge"
+          aria-hidden="true"
+        >
+          {{ unreadNotificationCount > 99 ? '99+' : unreadNotificationCount }}
+        </ion-badge>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false" class="home-content">
+  <main class="home-container">
+
+    <!-- INTRODUCTION AND PRIMARY ACTIONS -->
+    <section class="welcome-section">
+      <div class="welcome-copy">
+
+        <span class="welcome-eyebrow">
+          <ion-icon
+            name="location-outline"
+            aria-hidden="true"
+          ></ion-icon>
+          San Leonardo, Nueva Ecija
+        </span>
+
+        <h1>Find what matters.</h1>
+        <p>Report an item or explore what your community has found.</p>
+      </div>
+
+      <div class="welcome-actions">
+        <ion-button
+          expand="block"
+          class="submit-button report-action"
+          (click)="goToCreateReport()"
+        >
+          <ion-icon
+            name="add-circle-outline"
+            slot="start"
+            aria-hidden="true"
+          ></ion-icon>
+          Report an Item
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          class="submit-button claims-action"
+          (click)="goToMyClaims()"
+        >
+          <ion-icon
+            name="hand-left-outline"
+            slot="start"
+            aria-hidden="true"
+          ></ion-icon>
+          My Claims
+        </ion-button>
+      </div>
+    </section>
+
+    <!-- NEAR ME -->
+    <section
+      class="nearby-section"
+      aria-labelledby="nearby-heading"
+    >
+      <ion-card class="near-me-card">
+        <ion-card-content>
+
+          <div class="near-me-top">
+            <span class="near-me-icon" aria-hidden="true">
+              <ion-icon name="navigate-outline"></ion-icon>
+            </span>
+
+            <div class="near-me-copy">
+              <h2 id="nearby-heading">Find Reports Near Me</h2>
+              <p>See items reported nearby.</p>
+            </div>
+          </div>
+
+          <ion-button
+            expand="block"
+            class="near-me-button"
+            (click)="useNearMe()"
+            [disabled]="isGettingLocation"
+          >
+            <ion-icon
+              name="location-outline"
+              slot="start"
+              aria-hidden="true"
+            ></ion-icon>
+
+            {{
+              isGettingLocation
+                ? 'Getting Your Location...'
+                : isNearMeActive
+                  ? 'Refresh Location'
+                  : 'Use Near Me'
+            }}
+          </ion-button>
+
+          <div
+            class="near-me-active"
+            *ngIf="isNearMeActive"
+          >
+            <p class="near-me-info">
+              <ion-icon
+                name="checkmark-circle-outline"
+                aria-hidden="true"
+              ></ion-icon>
+              Showing reports within {{ nearbyRadiusKm }} km
+            </p>
+
+            <ion-item class="radius-select" lines="none">
+              <ion-label>Search Radius</ion-label>
+
+              <ion-select
+                interface="popover"
+                [value]="nearbyRadiusKm"
+                (ionChange)="nearbyRadiusKm = $event.detail.value; cdr.detectChanges()"
+              >
+                <ion-select-option [value]="1">1 km</ion-select-option>
+                <ion-select-option [value]="3">3 km</ion-select-option>
+                <ion-select-option [value]="5">5 km</ion-select-option>
+                <ion-select-option [value]="10">10 km</ion-select-option>
+                <ion-select-option [value]="20">20 km</ion-select-option>
+                <ion-select-option [value]="50">50 km</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-button
+              expand="block"
+              fill="outline"
+              color="medium"
+              class="near-me-clear-button"
+              (click)="clearNearMe()"
+            >
+              Turn Off Near Me
+            </ion-button>
+          </div>
+
+          <p
+            class="location-error"
+            role="alert"
+            *ngIf="locationError"
+          >
+            {{ locationError }}
+          </p>
+
+        </ion-card-content>
+      </ion-card>
+    </section>
+
+    <!-- EXPLORE -->
+    <section
+      class="discovery-section"
+      aria-labelledby="discovery-heading"
+    >
+      <div class="section-heading">
+        <div>
+          <h2 id="discovery-heading">Explore Lost &amp; Found</h2>
+
+        </div>
+      </div>
+
+      <div class="discovery-panel">
+
+        <!-- SEARCH -->
+        <div class="search-area">
+          <ion-searchbar
+            placeholder="Search reported items"
+            aria-label="Search reported items"
+            [debounce]="500"
+            [value]="searchTerm"
+            (ionInput)="onSearchChange($event)"
+          ></ion-searchbar>
+        </div>
+
+        <!-- REPORT TYPE -->
+        <div class="type-filter">
+          <ion-segment
+            [value]="selectedType"
+            (ionChange)="onTypeChange($event)"
+          >
+            <ion-segment-button value="all">
+              <ion-label>All</ion-label>
+            </ion-segment-button>
+
+            <ion-segment-button value="lost">
+              <ion-label>Lost</ion-label>
+            </ion-segment-button>
+
+            <ion-segment-button value="found">
+              <ion-label>Found</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filter-section">
+
+          <ion-select
+            label="Category"
+            label-placement="stacked"
+            placeholder="All Categories"
+            interface="popover"
+            [value]="selectedCategory"
+            (ionChange)="onCategoryChange($event)"
+          >
+            <ion-select-option value="all">
+              All Categories
+            </ion-select-option>
+            <ion-select-option value="Electronics">
+              Electronics
+            </ion-select-option>
+            <ion-select-option value="Wallet">
+              Wallet
+            </ion-select-option>
+            <ion-select-option value="ID and Documents">
+              ID and Documents
+            </ion-select-option>
+            <ion-select-option value="Keys">
+              Keys
+            </ion-select-option>
+            <ion-select-option value="Bags">
+              Bags
+            </ion-select-option>
+            <ion-select-option value="Clothing">
+              Clothing
+            </ion-select-option>
+            <ion-select-option value="Accessories">
+              Accessories
+            </ion-select-option>
+            <ion-select-option value="Others">
+              Others
+            </ion-select-option>
+          </ion-select>
+
+          <ion-select
+            label="Barangay"
+            label-placement="stacked"
+            placeholder="All Barangays"
+            interface="popover"
+            [value]="selectedBarangay"
+            (ionChange)="onBarangayChange($event)"
+          >
+            <ion-select-option value="all">
+              All Barangays
+            </ion-select-option>
+
+            <ion-select-option
+              *ngFor="let place of barangays"
+              [value]="place"
+            >
+              {{ place }}
+            </ion-select-option>
+          </ion-select>
+
+          <ion-button
+            fill="outline"
+            color="medium"
+            class="reset-button"
+            (click)="resetFilters()"
+            [disabled]="!hasActiveFilters"
+          >
+            <ion-icon
+              name="refresh-outline"
+              slot="start"
+              aria-hidden="true"
+            ></ion-icon>
+            Reset Filters
+          </ion-button>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMMUNITY REPORTS -->
+    <section
+      class="reports-section"
+      aria-labelledby="reports-heading"
+    >
+      <div class="reports-heading">
+        <div class="reports-heading-copy">
+
+          <h2 id="reports-heading">
+            {{ isNearMeActive ? 'Nearby Reports' : 'Recent Reports' }}
+          </h2>
+
+          <p>
+            {{ displayedReports.length }} shown
+          </p>
+        </div>
+
+        <ion-item class="sort-select" lines="none">
+          <ion-label>Sort</ion-label>
+
+          <ion-select
+            interface="popover"
+            [value]="sortBy"
+            (ionChange)="onSortChange($event)"
+          >
+            <!-- Distance sorting is available only while Near Me is active. -->
+            <ion-select-option
+              *ngIf="isNearMeActive"
+              value="nearest"
+            >
+              Nearest First
+            </ion-select-option>
+            <ion-select-option value="newest">
+              Newest First
+            </ion-select-option>
+            <ion-select-option value="oldest">
+              Oldest First
+            </ion-select-option>
+            <ion-select-option value="name_asc">
+              Item Name (A–Z)
+            </ion-select-option>
+            <ion-select-option value="name_desc">
+              Item Name (Z–A)
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+
+      <!-- LOADING -->
+      <div
+        class="loading-state"
+        *ngIf="isLoading"
+        role="status"
+        aria-live="polite"
+      >
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Loading reports...</p>
+      </div>
+
+      <!-- ERROR -->
+      <div
+        class="error-state"
+        *ngIf="errorMessage"
+        role="alert"
+      >
+        <ion-icon
+          name="alert-circle-outline"
+          aria-hidden="true"
+        ></ion-icon>
+
+        <h3>Unable to load reports</h3>
+        <p>{{ errorMessage }}</p>
+
+        <ion-button
+          fill="outline"
+          (click)="loadReports()"
+        >
+          Try Again
+        </ion-button>
+      </div>
+
+      <!-- EMPTY STATE -->
+      <div
+        class="empty-state"
+        *ngIf="
+          !isLoading &&
+          !errorMessage &&
+          displayedReports.length === 0
+        "
+      >
+        <ion-icon
+          name="search-outline"
+          aria-hidden="true"
+        ></ion-icon>
+
+        <h3>
+          {{
+            isNearMeActive
+              ? 'No nearby reports found'
+              : hasActiveFilters
+                ? 'No matching reports'
+                : 'No reports found'
+          }}
+        </h3>
+
+        <p *ngIf="isNearMeActive">
+          No GPS-enabled reports found within
+          {{ nearbyRadiusKm }} km.
+          Try another radius or turn off Near Me.
+        </p>
+
+        <p *ngIf="!isNearMeActive && hasActiveFilters">
+          Try adjusting or clearing your filters.
+        </p>
+
+        <p *ngIf="!isNearMeActive && !hasActiveFilters">
+          There are no reports to display right now.
+        </p>
+
+        <ion-button
+          *ngIf="hasActiveFilters"
+          fill="outline"
+          (click)="resetFilters()"
+        >
+          Clear Filters
+        </ion-button>
+      </div>
+
+      <!-- REPORT CARDS -->
+      <ion-list
+        class="reports-grid"
+        *ngIf="
+          !isLoading &&
+          !errorMessage &&
+          displayedReports.length > 0
+        "
+      >
+        <ion-card
+          class="report-card"
+          *ngFor="
+            let report of displayedReports;
+            trackBy: trackByReportId
+          "
+        >
+          <!-- IMAGE -->
+          <div class="report-image-container">
+
+            <img
+              *ngIf="
+                getImageUrl(report.image_url) as photoUrl;
+                else noReportImage
+              "
+              [src]="photoUrl"
+              [alt]="'Photo of ' + report.item_name"
+              (error)="onReportImageError(report)"
+              loading="lazy"
+              class="report-image"
+            />
+
+            <ng-template #noReportImage>
+              <div class="report-image-placeholder">
+                <ion-icon
+                  name="image-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+                <span>No photo available</span>
+              </div>
+            </ng-template>
+
+            <ion-badge
+              class="report-type-badge"
+              [color]="
+                report.report_type === 'lost'
+                  ? 'danger'
+                  : 'success'
+              "
+            >
+              {{ report.report_type | uppercase }}
+            </ion-badge>
+          </div>
+
+          <!-- TITLE / LOCATION -->
+          <ion-card-header>
+            <ion-card-title>
+              {{ report.item_name }}
+            </ion-card-title>
+
+            <ion-card-subtitle>
+              <ion-icon
+                name="location-outline"
+                aria-hidden="true"
+              ></ion-icon>
+              {{ report.barangay }}
+            </ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content>
+
+            <!-- DESCRIPTION -->
+            <p class="report-description">
+              {{ report.description }}
+            </p>
+
+            <!-- META -->
+            <div class="report-meta">
+
+              <p>
+                <ion-icon
+                  name="pricetag-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+                <span>{{ report.category }}</span>
+              </p>
+
+              <p *ngIf="report.specific_location">
+                <ion-icon
+                  name="pin-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+                <span>{{ report.specific_location }}</span>
+              </p>
+
+              <p *ngIf="report.date_lost_found">
+                <ion-icon
+                  name="calendar-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+                <span>
+                  {{ report.date_lost_found | date:'mediumDate' }}
+                </span>
+              </p>
+
+              <p *ngIf="isNearMeActive">
+                <ion-icon
+                  name="navigate-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+                <span>{{ formatDistance(report) }}</span>
+              </p>
+            </div>
+
+            <!-- STATUS + ACTION -->
+            <div class="report-card-footer">
+              <span class="report-status">
+                {{ report.status }}
+              </span>
+
+              <ion-button
+                expand="block"
+                class="details-button"
+                (click)="viewDetails(report.id)"
+                [attr.aria-label]="
+                  'View details for ' + report.item_name
+                "
+              >
+                View Details
+                <ion-icon
+                  name="arrow-forward-outline"
+                  slot="end"
+                  aria-hidden="true"
+                ></ion-icon>
+              </ion-button>
+            </div>
+
+          </ion-card-content>
+        </ion-card>
+      </ion-list>
+
+      <!-- PAGINATION -->
+      <div
+        class="load-more-section"
+        *ngIf="
+          !isLoading &&
+          !errorMessage &&
+          hasMoreReports
+        "
+      >
+        <ion-button
+          fill="outline"
+          (click)="loadMoreReports()"
+          [disabled]="isLoadingMore"
+        >
+          {{
+            isLoadingMore
+              ? 'Loading More...'
+              : 'Load More Reports'
+          }}
+        </ion-button>
+      </div>
+
+    </section>
+  </main>
+</ion-content>
