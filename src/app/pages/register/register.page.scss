@@ -1,0 +1,328 @@
+/* ============================================================
+   FINDSTER — REGISTRATION | TWO-STEP MOBILE-FIRST DESIGN
+   Matches the Login / Forgot Password visual language.
+   Step 1 may scroll on short screens; no content is clipped.
+   ============================================================ */
+
+:host {
+  display: block;
+  --register-blue: #0758d3;
+  --register-blue-dark: #0649b3;
+  --register-navy: #092d66;
+  --register-text: #24344c;
+  --register-muted: #52627a;
+  --register-border: #e2e8f0;
+  --register-bg: #f7f9fd;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.register-content {
+  --background: var(--register-bg);
+  --color: var(--register-text);
+  /* Keep scrolling available for short screens and open keyboards. */
+  --overflow: auto;
+}
+
+.register-wrapper {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 460px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding:
+    max(65px, calc(env(safe-area-inset-top, 0px) + 56px))
+    18px
+    max(22px, env(safe-area-inset-bottom, 0px));
+}
+
+.register-layout { width: 100%; min-width: 0; }
+
+/* Fixed top-left back control. Positioned against the viewport,
+   not against the vertically centered card. */
+.register-navigation {
+  position: fixed;
+  z-index: 100;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  left: calc(env(safe-area-inset-left, 0px) + 16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+}
+
+.back-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  padding: 0;
+  border: 1px solid #dce9fa;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--register-blue);
+  box-shadow: 0 3px 10px rgba(9, 45, 102, 0.06);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.back-button ion-icon {
+  display: block;
+  width: 21px;
+  height: 21px;
+  font-size: 21px;
+}
+
+.back-button:hover:not(:disabled) { background: #edf4ff; }
+.back-button:disabled { opacity: 0.5; cursor: not-allowed; }
+.back-button:focus-visible { outline: 2px solid var(--register-blue); outline-offset: 3px; }
+.navigation-title { display: none; }
+
+/* Branding */
+.brand-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: 0 0 12px;
+  text-align: center;
+}
+
+.brand-logo {
+  display: block;
+  width: min(135px, 45vw);
+  height: 65px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.brand-location {
+  margin: 0;
+  color: var(--register-navy);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+/* Primary card */
+.form-section {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 19px 19px 17px;
+  border: 1px solid #e1eaf7;
+  border-radius: 21px;
+  background: #fff;
+  box-shadow: 0 12px 34px rgba(9, 45, 102, 0.055);
+}
+
+.form-heading { margin-bottom: 13px; }
+.form-heading h1 {
+  margin: 0;
+  color: var(--register-navy);
+  font-size: clamp(21px, 5.8vw, 25px);
+  font-weight: 800;
+  line-height: 1.22;
+  letter-spacing: -0.6px;
+}
+.subtitle {
+  margin: 6px 0 0;
+  color: var(--register-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Subtle step progress */
+.registration-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 0 0 14px;
+  color: var(--register-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+.registration-progress-track {
+  overflow: hidden;
+  width: 100%;
+  height: 4px;
+  border-radius: 99px;
+  background: #e9eff8;
+}
+.registration-progress-track > span {
+  display: block;
+  width: 50%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--register-blue);
+  transition: width 180ms ease;
+}
+.registration-progress-track > span.is-complete { width: 100%; }
+
+/* Form and fields */
+.form-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.form-group-heading { margin: 0 0 1px; }
+.form-group-heading h2 {
+  margin: 0;
+  color: var(--register-navy);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+.security-heading { margin-top: 2px; }
+.form-field { position: relative; width: 100%; min-width: 0; }
+
+.form-field ion-input,
+.form-field ion-select {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 54px;
+  --background: #f9fbff;
+  --color: var(--register-text);
+  --placeholder-color: #6e7d91;
+  --placeholder-opacity: 1;
+  --highlight-color-focused: var(--register-blue);
+  --border-color: #d8e3f1;
+  --border-radius: 12px;
+  --border-style: solid;
+  --border-width: 1px;
+  --padding-start: 13px;
+  --padding-end: 13px;
+  font-size: 16px; /* avoids iOS auto-zoom and improves legibility */
+  font-weight: 500;
+}
+.form-field ion-input::part(label),
+.form-field ion-select::part(label) {
+  color: #34455f;
+  font-size: 13px;
+  font-weight: 700;
+}
+.form-field ion-input.ion-focused,
+.form-field ion-select.ion-focused {
+  --border-color: var(--register-blue);
+  --background: #fff;
+}
+.field-helper {
+  margin: 4px 2px 0;
+  color: var(--register-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Password reveal controls */
+.password-field ion-input { --padding-end: 56px; }
+.password-toggle {
+  position: absolute;
+  z-index: 2;
+  top: 22px;
+  right: 4px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--register-blue);
+  cursor: pointer;
+}
+.password-toggle ion-icon { display: block; width: 20px; height: 20px; }
+.password-toggle:hover:not(:disabled) { background: #edf4ff; }
+.password-toggle:disabled { opacity: 0.45; cursor: not-allowed; }
+.password-toggle:focus-visible { outline: 2px solid var(--register-blue); outline-offset: 2px; }
+
+/* Primary action */
+.register-button {
+  --background: var(--register-blue);
+  --background-hover: #064fbd;
+  --background-activated: var(--register-blue-dark);
+  --color: #fff;
+  --border-radius: 12px;
+  --box-shadow: 0 7px 17px rgba(7, 88, 211, 0.13);
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.register-button::part(native) { min-height: 48px; }
+.register-button:focus-visible::part(native) { outline: 2px solid var(--register-blue); outline-offset: 3px; }
+.register-button[disabled] { --box-shadow: none; }
+
+.login-section {
+  margin-top: 13px;
+  padding-top: 11px;
+  border-top: 1px solid #e9eef7;
+  text-align: center;
+}
+.login-section p {
+  margin: 0;
+  color: var(--register-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.login-section a {
+  display: inline-block;
+  padding: 5px 2px;
+  color: var(--register-blue);
+  font-weight: 800;
+  text-decoration: none;
+}
+.login-section a:hover { text-decoration: underline; }
+.login-section a:focus-visible { outline: 2px solid var(--register-blue); outline-offset: 3px; }
+.footer-text { display: none; }
+
+/* Compact phones: preserve field/touch sizes, trim decorative spacing. */
+@media (max-width: 360px) {
+  .register-wrapper { padding-right: 12px; padding-left: 12px; }
+  .register-navigation { left: calc(env(safe-area-inset-left, 0px) + 12px); }
+  .brand-section { margin-bottom: 8px; }
+  .brand-logo { width: 120px; height: 57px; }
+  .form-section { padding: 15px 14px; border-radius: 18px; }
+  .form-section form { gap: 9px; }
+  .form-heading { margin-bottom: 10px; }
+  .registration-progress { margin-bottom: 10px; }
+}
+
+/* Short viewports, including many devices with the keyboard open. */
+@media (max-height: 760px) {
+  .register-wrapper {
+    justify-content: flex-start;
+    padding-top: max(62px, calc(env(safe-area-inset-top, 0px) + 52px));
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  }
+  .brand-logo { height: 50px; }
+  .brand-section { margin-bottom: 8px; }
+  .form-section { padding-top: 15px; padding-bottom: 14px; }
+  .form-heading { margin-bottom: 10px; }
+  .registration-progress { margin-bottom: 10px; }
+}
+
+@media (max-height: 540px) {
+  .brand-section { display: none; }
+  .register-wrapper { padding-top: max(65px, calc(env(safe-area-inset-top, 0px) + 53px)); }
+}
+
+@media (min-width: 600px) {
+  .register-wrapper { padding-right: 24px; padding-left: 24px; }
+  .form-section { padding: 25px 25px 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .registration-progress-track > span { transition: none; }
+}
