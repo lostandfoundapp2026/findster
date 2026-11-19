@@ -1,0 +1,240 @@
+<!-- =====================================================
+     FINDSTER — PROFILE PAGE
+     Clean, Mobile-First Account Layout
+     Save as: src/app/pages/profile/profile.page.html
+     ===================================================== -->
+
+<ion-header class="profile-header">
+  <ion-toolbar class="profile-toolbar">
+    <div class="toolbar-content">
+      <span class="toolbar-title">My Profile</span>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="profile-content" [fullscreen]="false">
+  <main class="profile-container">
+
+    <!-- ACCOUNT OVERVIEW -->
+    <section class="profile-hero" aria-label="Account overview">
+      <div class="avatar" aria-hidden="true">
+        {{ initials }}
+      </div>
+
+      <div class="profile-hero-info">
+        <h1>{{ displayName }}</h1>
+        <p class="profile-email">{{ displayEmail }}</p>
+        <span class="profile-location">
+          <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+          {{ displayBarangay }}
+        </span>
+      </div>
+    </section>
+
+    <!-- PERSONAL INFORMATION -->
+    <section class="profile-card personal-info-card" aria-labelledby="personal-info-heading">
+      <div class="section-heading">
+        <span class="section-icon" aria-hidden="true">
+          <ion-icon name="person-outline"></ion-icon>
+        </span>
+        <div class="section-heading-copy">
+          <h2 id="personal-info-heading">Personal Information</h2>
+          <p>{{ isEditing ? 'Update your account details' : 'Your account details' }}</p>
+        </div>
+      </div>
+
+      @if (!isEditing) {
+        <!-- READ-ONLY DETAILS -->
+        <dl class="detail-list">
+          <div class="detail-row">
+            <dt>First Name</dt>
+            <dd>{{ displayFirstName }}</dd>
+          </div>
+          <div class="detail-row">
+            <dt>Middle Name</dt>
+            <dd>{{ displayMiddleName }}</dd>
+          </div>
+          <div class="detail-row">
+            <dt>Last Name</dt>
+            <dd>{{ displayLastName }}</dd>
+          </div>
+          <div class="detail-row">
+            <dt>Email Address</dt>
+            <dd>{{ displayEmail }}</dd>
+          </div>
+          <div class="detail-row">
+            <dt>Contact Number</dt>
+            <dd>{{ displayContactNumber }}</dd>
+          </div>
+          <div class="detail-row">
+            <dt>Registered Barangay</dt>
+            <dd>{{ displayBarangay }}</dd>
+          </div>
+        </dl>
+
+        <ion-button
+          expand="block"
+          fill="outline"
+          class="edit-profile-button"
+          type="button"
+          (click)="startEdit()"
+          [disabled]="!user || isLoggingOut || isSaving"
+        >
+          <ion-icon name="create-outline" slot="start" aria-hidden="true"></ion-icon>
+          Edit Profile
+        </ion-button>
+
+      } @else {
+        <!-- EDIT DETAILS: labels are separate from the input controls -->
+        <form
+          class="edit-profile-form"
+          (ngSubmit)="saveProfile()"
+          #profileForm="ngForm"
+        >
+          <div class="form-field">
+            <label class="external-field-label" for="profile-first-name">First Name <span aria-hidden="true">*</span></label>
+            <ion-input
+              id="profile-first-name"
+              aria-label="First Name"
+              type="text"
+              name="firstName"
+              placeholder="Enter first name"
+              autocomplete="given-name"
+              maxlength="100"
+              [(ngModel)]="firstName"
+              [disabled]="isSaving"
+              required
+            ></ion-input>
+          </div>
+
+          <div class="form-field">
+            <label class="external-field-label" for="profile-middle-name">Middle Name (Optional)</label>
+            <ion-input
+              id="profile-middle-name"
+              aria-label="Middle Name (Optional)"
+              type="text"
+              name="middleName"
+              placeholder="Enter middle name"
+              autocomplete="additional-name"
+              maxlength="100"
+              [(ngModel)]="middleName"
+              [disabled]="isSaving"
+            ></ion-input>
+          </div>
+
+          <div class="form-field">
+            <label class="external-field-label" for="profile-last-name">Last Name <span aria-hidden="true">*</span></label>
+            <ion-input
+              id="profile-last-name"
+              aria-label="Last Name"
+              type="text"
+              name="lastName"
+              placeholder="Enter last name"
+              autocomplete="family-name"
+              maxlength="100"
+              [(ngModel)]="lastName"
+              [disabled]="isSaving"
+              required
+            ></ion-input>
+          </div>
+
+          <div class="form-field read-only-field">
+            <p class="read-only-label">Email Address</p>
+            <p class="read-only-value">{{ displayEmail }}</p>
+            <p class="field-helper">
+              Email changes are currently unavailable for account security.
+            </p>
+          </div>
+
+          <div class="form-field">
+            <label class="external-field-label" for="profile-contact-number">Contact Number <span aria-hidden="true">*</span></label>
+            <ion-input
+              id="profile-contact-number"
+              aria-label="Contact Number"
+              type="tel"
+              inputmode="numeric"
+              name="contactNumber"
+              placeholder="09XXXXXXXXX"
+              autocomplete="tel"
+              maxlength="11"
+              [(ngModel)]="contactNumber"
+              [disabled]="isSaving"
+              required
+            ></ion-input>
+            <p class="field-helper">Use an 11-digit mobile number starting with 09.</p>
+          </div>
+
+          <div class="form-field">
+            <label class="external-field-label" for="profile-barangay">Registered Barangay <span aria-hidden="true">*</span></label>
+            <ion-select
+              id="profile-barangay"
+              aria-label="Registered Barangay"
+              interface="popover"
+              placeholder="Select your barangay"
+              name="barangay"
+              [(ngModel)]="barangay"
+              [disabled]="isSaving"
+              required
+            >
+              @for (option of barangays; track option) {
+                <ion-select-option [value]="option">
+                  {{ option }}
+                </ion-select-option>
+              }
+            </ion-select>
+          </div>
+
+          <div class="profile-form-actions">
+            <ion-button
+              expand="block"
+              type="submit"
+              class="save-profile-button"
+              [disabled]="isSaving || isLoggingOut || profileForm.invalid"
+            >
+              <ion-icon name="checkmark-outline" slot="start" aria-hidden="true"></ion-icon>
+              {{ isSaving ? 'Saving Changes...' : 'Save Changes' }}
+            </ion-button>
+
+            <ion-button
+              expand="block"
+              fill="outline"
+              type="button"
+              class="cancel-profile-button"
+              (click)="cancelEdit()"
+              [disabled]="isSaving"
+            >
+              <ion-icon name="close-outline" slot="start" aria-hidden="true"></ion-icon>
+              Cancel
+            </ion-button>
+          </div>
+        </form>
+      }
+    </section>
+
+    <!-- ACCOUNT & SESSION -->
+    <section class="profile-card account-card" aria-labelledby="account-heading">
+      <div class="section-heading">
+        <span class="section-icon" aria-hidden="true">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </span>
+        <div class="section-heading-copy">
+          <h2 id="account-heading">Account</h2>
+          <p>Manage your current session</p>
+        </div>
+      </div>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        color="danger"
+        class="logout-button"
+        type="button"
+        (click)="confirmLogout()"
+        [disabled]="isLoggingOut || isSaving"
+      >
+        <ion-icon name="log-out-outline" slot="start" aria-hidden="true"></ion-icon>
+        {{ isLoggingOut ? 'Signing Out...' : 'Log Out' }}
+      </ion-button>
+    </section>
+  </main>
+</ion-content>
