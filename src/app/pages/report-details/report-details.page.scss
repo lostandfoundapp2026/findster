@@ -1,0 +1,1113 @@
+/* =========================================================
+   FINDSTER — REPORT DETAILS PAGE
+   Compact Mobile-First Design
+
+   File: src/app/pages/report-details/report-details.page.scss
+   ========================================================= */
+
+:host {
+  display: block;
+
+  --details-blue: #0758d3;
+  --details-navy: #092d66;
+  --details-text: #24344c;
+  --details-muted: #52627a;
+  --details-border: #e2e8f0;
+  --details-bg: #f7f9fd;
+  --details-shadow: 0 4px 18px rgba(9, 45, 102, 0.045);
+}
+
+/* HEADER */
+
+.details-header {
+  box-shadow: none;
+}
+
+.details-header::after {
+  display: none;
+}
+
+.details-toolbar {
+  --background: #ffffff;
+  --color: var(--details-navy);
+  --border-width: 0;
+  --min-height: 56px;
+
+  border-bottom: 1px solid var(--details-border);
+}
+
+.toolbar-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 56px;
+  padding: 5px 14px;
+  box-sizing: border-box;
+}
+
+.toolbar-title {
+  color: var(--details-navy);
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.back-button {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+
+  display: inline-grid;
+  place-items: center;
+
+  width: 42px;
+  height: 42px;
+  padding: 0;
+
+  border: 1px solid #dce9fa;
+  border-radius: 11px;
+  background: #f1f6ff;
+
+  color: var(--details-blue);
+  cursor: pointer;
+}
+
+.back-button ion-icon {
+  font-size: 21px;
+}
+
+.back-button:hover {
+  background: #e4efff;
+}
+
+.back-button:focus-visible {
+  outline: 2px solid var(--details-blue);
+  outline-offset: 2px;
+}
+
+/* PAGE CONTENT */
+
+.report-details-content {
+  --background: var(--details-bg);
+  --color: var(--details-text);
+}
+
+
+.details-container {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+
+  padding: 14px 14px
+    calc(150px + env(safe-area-inset-bottom, 0px));
+
+  box-sizing: border-box;
+}
+
+
+/* LOADING / ERROR STATES */
+
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 130px;
+  padding: 24px 17px;
+
+  border: 1px solid var(--details-border);
+  border-radius: 15px;
+  background: #ffffff;
+
+  text-align: center;
+}
+
+.loading-state ion-spinner {
+  width: 29px;
+  height: 29px;
+  margin-bottom: 11px;
+  color: var(--details-blue);
+}
+
+.loading-state p,
+.error-state p {
+  margin: 0;
+  color: var(--details-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.error-symbol {
+  display: grid;
+  place-items: center;
+
+  width: 43px;
+  height: 43px;
+  margin-bottom: 11px;
+
+  border-radius: 12px;
+  background: #fff0f2;
+  color: #b42338;
+
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.error-state h2 {
+  margin: 0 0 6px;
+  color: var(--details-navy);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.error-state ion-button {
+  --border-radius: 10px;
+  --box-shadow: none;
+
+  min-height: 42px;
+  margin: 13px 0 0;
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: none;
+}
+
+/* REPORT OVERVIEW */
+
+.details-intro {
+  margin-bottom: 13px;
+  padding: 15px;
+
+  border: 1px solid #dce8f7;
+  border-radius: 16px;
+
+  background: #ffffff;
+  box-shadow: var(--details-shadow);
+  text-align: left;
+}
+
+.intro-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+
+.intro-badges ion-badge {
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.details-intro h1 {
+  margin: 0 0 5px;
+
+  color: var(--details-navy);
+  font-size: 21px;
+  font-weight: 850;
+  line-height: 1.3;
+  letter-spacing: -0.4px;
+
+  overflow-wrap: anywhere;
+}
+
+.details-subtitle {
+  margin: 0;
+  color: var(--details-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.details-subtitle span {
+  margin: 0 4px;
+  color: #94a3b8;
+}
+
+/* SHARED DETAIL CARDS */
+
+.details-card {
+  min-width: 0;
+  margin-bottom: 13px;
+  padding: 15px;
+
+  border: 1px solid var(--details-border);
+  border-radius: 16px;
+
+  background: #ffffff;
+  box-shadow: var(--details-shadow);
+}
+
+.card-heading {
+  display: flex;
+  align-items: center;
+  margin-bottom: 11px;
+}
+
+.card-heading h2 {
+  margin: 0;
+  color: var(--details-navy);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+/* ITEM PHOTO */
+
+.photo-card {
+  padding: 9px;
+}
+
+.photo-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  max-height: 260px;
+  overflow: hidden;
+
+  border-radius: 11px;
+  background: #f1f5fb;
+}
+
+.item-photo {
+  display: block;
+  width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+}
+
+.no-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 115px;
+  padding: 16px;
+
+  border: 1px dashed #c9d8e9;
+  border-radius: 11px;
+  background: #f8fbff;
+  text-align: center;
+}
+
+.no-photo-symbol {
+  margin-bottom: 5px;
+  font-size: 25px;
+}
+
+.no-photo p {
+  margin: 0;
+  color: var(--details-muted);
+  font-size: 11.5px;
+}
+
+/* INFORMATION ROWS */
+
+.detail-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.detail-row {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 108px)
+    minmax(0, 1fr);
+
+  align-items: start;
+  gap: 10px;
+  min-width: 0;
+
+  padding: 10px 0;
+  border-bottom: 1px solid #edf1f6;
+}
+
+.detail-row:first-child {
+  padding-top: 3px;
+}
+
+.detail-row:last-child {
+  padding-bottom: 3px;
+  border-bottom: none;
+}
+
+.detail-label {
+  color: #708096;
+  font-size: 10.5px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.detail-value {
+  min-width: 0;
+  color: var(--details-text);
+  font-size: 11.5px;
+  font-weight: 750;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.detail-description {
+  min-width: 0;
+  margin: 0;
+  color: var(--details-text);
+  font-size: 11.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.detail-row ion-badge {
+  justify-self: start;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* GPS LOCATION */
+
+.map-information {
+  margin-top: 13px;
+  padding-top: 13px;
+  border-top: 1px solid #edf1f6;
+}
+
+.map-information h3 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  margin: 0 0 10px;
+
+  color: var(--details-navy);
+  font-size: 12.5px;
+  font-weight: 800;
+}
+
+.map-information h3 ion-icon {
+  color: var(--details-blue);
+  font-size: 16px;
+}
+
+.map-section {
+  width: 100%;
+  min-width: 0;
+}
+
+/* COORDINATES */
+
+.coordinates {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 11px;
+}
+
+.coordinates > div {
+  min-width: 0;
+  padding: 9px 10px;
+
+  border: 1px solid #dce8f7;
+  border-radius: 10px;
+  background: #f8fbff;
+}
+
+.coordinates span {
+  display: block;
+  margin-bottom: 4px;
+
+  color: var(--details-muted);
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.coordinates strong {
+  display: block;
+  color: var(--details-text);
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/* MAP PREVIEW */
+
+.map-frame {
+  overflow: hidden;
+  border: 1px solid #dce8f7;
+  border-radius: 11px;
+  background: #eef4fb;
+}
+
+.location-map {
+  display: block;
+  width: 100%;
+  height: 200px;
+  border: 0;
+}
+
+.open-map-button {
+  --color: var(--details-blue);
+  --border-color: #b9d1f0;
+  --border-radius: 10px;
+  --box-shadow: none;
+
+  width: 100%;
+  min-height: 42px;
+  margin: 10px 0 0;
+
+  font-size: 11.5px;
+  font-weight: 750;
+  text-transform: none;
+}
+
+.open-map-button ion-icon {
+  font-size: 16px;
+}
+
+/* NO GPS */
+
+.no-location {
+  padding: 11px;
+  border: 1px dashed #c9d8e9;
+  border-radius: 10px;
+  background: #f8fbff;
+}
+
+.no-location p {
+  margin: 0;
+  color: var(--details-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* CLAIM STATUS */
+
+.claim-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  padding: 10px 11px;
+
+  border: 1px solid #dce8f7;
+  border-radius: 10px;
+  background: #f8fbff;
+}
+
+.claim-status > span {
+  color: var(--details-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.claim-status ion-badge {
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* CLAIM MESSAGE */
+
+.claim-message {
+  margin-top: 12px;
+  padding: 11px;
+
+  border: 1px solid #e9eff8;
+  border-radius: 10px;
+  background: #f8faff;
+}
+
+.claim-message h3,
+.chat-section h3,
+.handover-section h3 {
+  margin: 0 0 7px;
+  color: var(--details-navy);
+  font-size: 12.5px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.claim-message p,
+.chat-section > p,
+.handover-description {
+  margin: 0;
+  color: var(--details-muted);
+  font-size: 11.5px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+/* CLAIM NOTICES */
+
+.claim-notice {
+  margin-top: 11px;
+  padding: 10px 11px;
+
+  border: 1px solid #f3dfad;
+  border-radius: 10px;
+  background: #fff9e9;
+}
+
+.claim-notice p {
+  margin: 0;
+  color: #77561f;
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.claim-notice p + p {
+  margin-top: 7px;
+}
+
+.approved-notice {
+  border-color: #c7e6d7;
+  background: #ecf9f1;
+}
+
+.approved-notice p {
+  color: #176244;
+}
+
+.rejected-notice {
+  border-color: #f3ced2;
+  background: #fff2f4;
+}
+
+.rejected-notice p {
+  color: #9d2838;
+}
+
+.retry-cooldown-message {
+  margin-top: 7px !important;
+}
+
+/* PRIVATE CHAT */
+
+.chat-section {
+  margin-top: 12px;
+  padding: 12px;
+
+  border: 1px solid #dce8f7;
+  border-radius: 11px;
+  background: #f8fbff;
+}
+
+.chat-button {
+  --color: var(--details-blue);
+  --border-color: #b9d1f0;
+  --border-radius: 10px;
+  --box-shadow: none;
+
+  width: 100%;
+  min-height: 43px;
+  margin: 10px 0 0;
+
+  font-size: 11.5px;
+  font-weight: 750;
+  text-transform: none;
+}
+
+.chat-button ion-icon {
+  font-size: 16px;
+}
+
+.chat-help {
+  margin-top: 8px !important;
+  color: var(--details-muted);
+  font-size: 10.5px !important;
+  line-height: 1.5 !important;
+}
+
+.chat-error {
+  margin: 11px 0 0;
+  padding: 10px 11px;
+  border-radius: 9px;
+  background: #fff2f4;
+
+  color: #9d2838;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* HANDOVER */
+
+.handover-section {
+  margin-top: 12px;
+  padding: 12px;
+
+  border: 1px solid #dce8f7;
+  border-radius: 11px;
+  background: #f8fbff;
+}
+
+.handover-description {
+  margin-bottom: 10px;
+}
+
+.handover-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 10px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.handover-row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.handover-row strong {
+  color: var(--details-text);
+  font-size: 11.5px;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.handover-row span {
+  color: var(--details-muted);
+  font-size: 10.5px;
+  line-height: 1.4;
+}
+
+.handover-row ion-badge {
+  flex-shrink: 0;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.handover-progress {
+  margin: 10px 0;
+  color: var(--details-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.handover-button {
+  --background: var(--details-blue);
+  --background-hover: #064bb5;
+  --color: #ffffff;
+  --border-radius: 10px;
+  --box-shadow: none;
+
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+
+  font-size: 11.5px;
+  font-weight: 750;
+  text-transform: none;
+}
+
+.handover-warning {
+  margin: 9px 0 0;
+  color: #85551c;
+  font-size: 10.5px;
+  line-height: 1.5;
+}
+
+/* CLAIM / RESPONSE ACTION */
+
+.action-card {
+  border-color: #cadff8;
+  background: #edf5ff;
+}
+
+.action-card h2,
+.owner-card h2 {
+  margin: 0 0 7px;
+  color: var(--details-navy);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.action-card p,
+.owner-card p {
+  margin: 0 0 11px;
+  color: var(--details-muted);
+  font-size: 11.5px;
+  line-height: 1.55;
+}
+
+.primary-action-button {
+  --background: var(--details-blue);
+  --background-hover: #064bb5;
+  --color: #ffffff;
+  --border-radius: 10px;
+  --box-shadow: none;
+
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: none;
+}
+
+/* REPORT OWNER */
+
+.owner-card {
+  border-color: #c7e6d7;
+  background: #f1fbf5;
+}
+
+.owner-card p {
+  margin-bottom: 0;
+}
+
+/* SMALL PHONES */
+
+@media (max-width: 360px) {
+  .details-container {
+    padding: 11px 10px
+      calc(150px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .details-card,
+  .details-intro {
+    padding: 12px;
+  }
+
+  .photo-card {
+    padding: 7px;
+  }
+
+  .details-intro h1 {
+    font-size: 19px;
+  }
+
+  .detail-row {
+    grid-template-columns:
+      minmax(0, 92px)
+      minmax(0, 1fr);
+    gap: 7px;
+  }
+
+  .detail-label {
+    font-size: 10px;
+  }
+
+  .detail-value,
+  .detail-description {
+    font-size: 11px;
+  }
+
+  .coordinates {
+    gap: 6px;
+  }
+
+  .coordinates > div {
+    padding: 8px;
+  }
+
+  .location-map {
+    height: 175px;
+  }
+
+  .chat-section,
+  .handover-section {
+    padding: 10px;
+  }
+
+  .back-button {
+    left: 9px;
+    width: 39px;
+    height: 39px;
+  }
+}
+
+/* TABLETS / DESKTOP */
+
+@media (min-width: 600px) {
+  .details-container {
+    padding: 25px 24px 45px;
+  }
+
+  .details-card {
+    padding: 20px 22px;
+  }
+
+  .photo-card {
+    padding: 10px;
+  }
+
+  .details-intro {
+    padding: 19px 22px;
+  }
+
+  .details-intro h1 {
+    font-size: 25px;
+  }
+
+  .card-heading h2 {
+    font-size: 17px;
+  }
+
+  .detail-row {
+    grid-template-columns:
+      155px minmax(0, 1fr);
+  }
+
+  .detail-value,
+  .detail-description {
+    font-size: 13px;
+  }
+
+  .photo-frame,
+  .item-photo {
+    max-height: 350px;
+  }
+
+  .location-map {
+    height: 265px;
+  }
+}
+
+/* ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+  .back-button,
+  .primary-action-button,
+  .chat-button,
+  .handover-button {
+    transition: none;
+  }
+}
+
+/* =========================================================
+   FINDSTER — REPORT DETAILS REFINEMENTS
+   Compatible with compact Report Details HTML
+   ========================================================= */
+
+/* Scroll area: allow all content and final claim actions to clear
+   the fixed mobile tab bar and Android safe area. */
+.details-container {
+  padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Harmonize surface hierarchy with Home / My Reports. */
+.details-intro,
+.details-card {
+  border-color: #e5ebf4;
+  border-radius: 17px;
+  box-shadow: var(--details-shadow);
+}
+
+.details-intro {
+  padding: 17px 16px;
+}
+
+.details-intro h1 {
+  font-weight: 800;
+  font-size: clamp(20px, 5.4vw, 24px);
+}
+
+.details-subtitle {
+  font-size: 13px;
+}
+
+.card-heading h2 {
+  font-size: 15px;
+  letter-spacing: -0.15px;
+}
+
+/* Give pictures a consistent presentation without cropping evidence. */
+.photo-card {
+  padding: 9px;
+}
+
+.photo-frame {
+  min-height: 185px;
+  max-height: 320px;
+  border-radius: 12px;
+  background: #f3f6fb;
+}
+
+.item-photo {
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+}
+
+.no-photo {
+  min-height: 160px;
+}
+
+.no-photo p {
+  font-size: 12px;
+}
+
+/* Comfortable reading sizes for mobile. */
+.detail-label {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.detail-value,
+.detail-description {
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.detail-row {
+  grid-template-columns: minmax(0, 112px) minmax(0, 1fr);
+  gap: 12px;
+  padding: 11px 0;
+}
+
+.detail-row.description-row {
+  align-items: start;
+}
+
+.detail-description {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Map stays embedded and scales with its container. */
+.coordinates span,
+.coordinates strong,
+.no-location p {
+  font-size: 12px;
+}
+
+.coordinates > div {
+  padding: 11px;
+}
+
+.location-map {
+  height: 220px;
+}
+
+/* Keep information organized without making nested panels heavy. */
+.claim-status,
+.claim-message,
+.claim-notice,
+.chat-section,
+.handover-section {
+  border-radius: 11px;
+}
+
+.claim-status > span,
+.claim-message p,
+.claim-notice p,
+.chat-section > p,
+.handover-description,
+.handover-progress,
+.handover-warning,
+.action-card p,
+.owner-card p {
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.claim-message h3,
+.chat-section h3,
+.handover-section h3 {
+  font-size: 13px;
+}
+
+.handover-row strong {
+  font-size: 12.5px;
+}
+
+.handover-row span {
+  font-size: 11.5px;
+}
+
+/* Clear, accessible action targets. */
+.open-map-button,
+.chat-button,
+.handover-button,
+.primary-action-button,
+.error-state ion-button {
+  min-height: 44px;
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+.details-toolbar .back-button:focus-visible,
+.details-container ion-button:focus-visible {
+  outline: 2px solid var(--details-blue);
+  outline-offset: 3px;
+}
+
+/* Narrow phones: preserve readable text without horizontal overflow. */
+@media (max-width: 360px) {
+  .details-container {
+    padding: 12px 10px calc(132px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .detail-row {
+    grid-template-columns: minmax(0, 92px) minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .detail-label {
+    font-size: 11.5px;
+  }
+
+  .detail-value,
+  .detail-description {
+    font-size: 12px;
+  }
+
+  .photo-frame {
+    min-height: 155px;
+  }
+
+  .location-map {
+    height: 185px;
+  }
+}
+
+/* Larger viewports: maintain restrained content width and line lengths. */
+@media (min-width: 600px) {
+  .details-container {
+    padding: 25px 24px 50px;
+  }
+
+  .detail-row {
+    grid-template-columns: minmax(0, 160px) minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .detail-label,
+  .detail-value,
+  .detail-description {
+    font-size: 13px;
+  }
+
+  .photo-frame,
+  .item-photo {
+    max-height: 380px;
+  }
+
+  .location-map {
+    height: 270px;
+  }
+}

@@ -1,0 +1,723 @@
+<!-- =====================================================
+     FINDSTER — REPORT DETAILS PAGE
+     Clean, consistent mobile-first report detail layout
+
+     File:
+     src/app/pages/report-details/report-details.page.html
+     ===================================================== -->
+
+<ion-header class="details-header">
+  <ion-toolbar class="details-toolbar">
+    <div class="toolbar-content">
+
+      <!-- ARROW-ONLY BACK BUTTON -->
+      <button
+        type="button"
+        class="back-button"
+        (click)="goBack()"
+        aria-label="Go back"
+      >
+        <ion-icon
+          name="arrow-back-outline"
+          aria-hidden="true"
+        ></ion-icon>
+      </button>
+
+      <span class="toolbar-title">
+        Report Details
+      </span>
+
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content
+  [fullscreen]="false"
+  class="report-details-content"
+>
+  <main class="details-container">
+
+    <!-- LOADING STATE -->
+    <div
+      class="loading-state"
+      *ngIf="isLoading"
+      role="status"
+      aria-live="polite"
+    >
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading report...</p>
+    </div>
+
+    <!-- ERROR STATE -->
+    <section
+      class="error-state"
+      *ngIf="!isLoading && errorMessage"
+    >
+      <div
+        class="error-symbol"
+        aria-hidden="true"
+      >
+        !
+      </div>
+
+      <h2>Report Unavailable</h2>
+
+      <p role="alert">
+        {{ errorMessage }}
+      </p>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        (click)="goBack()"
+      >
+        Go Back
+      </ion-button>
+    </section>
+
+    <!-- REPORT CONTENT -->
+    <ng-container
+      *ngIf="!isLoading && report && !errorMessage"
+    >
+
+      <!-- COMPACT REPORT OVERVIEW -->
+      <section class="details-intro">
+
+        <div class="intro-badges">
+          <ion-badge
+            [color]="
+              report.report_type === 'lost'
+                ? 'danger'
+                : 'success'
+            "
+          >
+            {{
+              report.report_type === 'lost'
+                ? 'LOST ITEM'
+                : 'FOUND ITEM'
+            }}
+          </ion-badge>
+
+          <ion-badge
+            [color]="
+              report.status === 'active' ? 'success' :
+              report.status === 'claimed' ? 'warning' :
+              report.status === 'returned' ? 'primary' : 'medium'
+            "
+          >
+            {{ report.status | titlecase }}
+          </ion-badge>
+        </div>
+
+        <h1>{{ report.item_name }}</h1>
+
+        <p class="details-subtitle">
+          {{ report.category }}
+          <span aria-hidden="true">·</span>
+          {{ report.barangay }}
+        </p>
+      </section>
+
+      <!-- ITEM PHOTO -->
+      <section class="details-card photo-card">
+
+        <div
+          class="photo-frame"
+          *ngIf="imageUrl"
+        >
+          <img
+            class="item-photo"
+            [src]="imageUrl"
+            [alt]="'Photo of ' + report.item_name"
+            (error)="onImageError()"
+          />
+        </div>
+
+        <div
+          class="no-photo"
+          *ngIf="!imageUrl"
+        >
+          <span
+            class="no-photo-symbol"
+            aria-hidden="true"
+          >
+            &#128247;
+          </span>
+
+          <p>No photo available</p>
+        </div>
+
+      </section>
+
+      <!-- ITEM DETAILS: title and report type appear in the overview -->
+      <section class="details-card info-card">
+
+        <div class="card-heading">
+          <h2>About This Item</h2>
+        </div>
+
+        <div class="detail-list">
+
+
+          <div class="detail-row">
+            <span class="detail-label">
+              Category
+            </span>
+
+            <strong class="detail-value">
+              {{ report.category }}
+            </strong>
+          </div>
+
+          <div class="detail-row description-row">
+            <span class="detail-label">
+              Description
+            </span>
+
+            <p class="detail-description">
+              {{ report.description }}
+            </p>
+          </div>
+
+
+          <div class="detail-row">
+            <span class="detail-label">
+              Date Lost / Found
+            </span>
+
+            <strong class="detail-value">
+              {{
+                report.date_lost_found
+                  ? (report.date_lost_found | date:'mediumDate')
+                  : 'Not specified'
+              }}
+            </strong>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- LOCATION INFORMATION -->
+      <section class="details-card location-card">
+
+        <div class="card-heading">
+          <h2>Location</h2>
+        </div>
+
+        <div class="detail-list">
+
+          <div class="detail-row">
+            <span class="detail-label">
+              Barangay
+            </span>
+
+            <strong class="detail-value">
+              {{ report.barangay }}
+            </strong>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">
+              Specific Location
+            </span>
+
+            <strong class="detail-value">
+              {{
+                report.specific_location ||
+                'Not specified'
+              }}
+            </strong>
+          </div>
+
+        </div>
+
+        <!-- GPS LOCATION -->
+        <div class="map-information">
+
+          <h3>
+            <ion-icon
+              name="location-outline"
+              aria-hidden="true"
+            ></ion-icon>
+            GPS Location
+          </h3>
+
+          <ng-container
+            *ngIf="
+              report.latitude !== null &&
+              report.latitude !== undefined &&
+              report.longitude !== null &&
+              report.longitude !== undefined;
+              else noGpsLocation
+            "
+          >
+
+            <div class="map-section">
+
+              <!-- COORDINATES -->
+              <div class="coordinates">
+
+                <div>
+                  <span>Latitude</span>
+                  <strong>
+                    {{ report.latitude }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>Longitude</span>
+                  <strong>
+                    {{ report.longitude }}
+                  </strong>
+                </div>
+
+              </div>
+
+              <!-- MAP PREVIEW -->
+              <div
+                class="map-frame"
+                *ngIf="getMapUrl() as mapUrl"
+              >
+                <iframe
+                  class="location-map"
+                  [src]="mapUrl"
+                  title="Map showing reported item location"
+                  loading="lazy"
+                  referrerpolicy="no-referrer"
+                ></iframe>
+              </div>
+
+              <!-- OPEN FULL MAP -->
+              <ion-button
+                expand="block"
+                fill="outline"
+                class="open-map-button"
+                (click)="openMap()"
+              >
+                <ion-icon
+                  name="map-outline"
+                  slot="start"
+                  aria-hidden="true"
+                ></ion-icon>
+                Open in Map
+              </ion-button>
+
+            </div>
+          </ng-container>
+
+          <!-- NO GPS -->
+          <ng-template #noGpsLocation>
+            <div class="no-location">
+              <p>
+                No GPS coordinates were provided.
+              </p>
+            </div>
+          </ng-template>
+
+        </div>
+      </section>
+
+      <!-- REPORT HISTORY -->
+      <section class="details-card status-card">
+
+        <div class="card-heading">
+          <h2>Report Activity</h2>
+        </div>
+
+        <div class="detail-list">
+
+
+          <div class="detail-row">
+            <span class="detail-label">
+              Created
+            </span>
+
+            <strong class="detail-value">
+              {{ report.created_at | date:'medium' }}
+            </strong>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">
+              Last Updated
+            </span>
+
+            <strong class="detail-value">
+              {{ report.updated_at | date:'medium' }}
+            </strong>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- EXISTING CLAIM OR RESPONSE -->
+      <section
+        class="details-card claim-card"
+        *ngIf="!isOwner && myClaim"
+      >
+
+        <div class="card-heading">
+          <h2>
+            {{
+              report.report_type === 'found'
+                ? 'Your Ownership Claim'
+                : 'Your Found-Item Response'
+            }}
+          </h2>
+        </div>
+
+        <!-- CLAIM STATUS -->
+        <div class="claim-status">
+          <span>Request Status</span>
+
+          <ion-badge
+            [color]="
+              myClaim.status === 'pending' ? 'warning' :
+              myClaim.status === 'approved' ? 'success' :
+              'medium'
+            "
+          >
+            {{ myClaim.status | titlecase }}
+          </ion-badge>
+        </div>
+
+        <!-- CLAIM MESSAGE -->
+        <div
+          class="claim-message"
+          *ngIf="myClaim.message"
+        >
+          <h3>Your Message</h3>
+          <p>{{ myClaim.message }}</p>
+        </div>
+
+        <!-- PENDING -->
+        <div
+          class="claim-notice"
+          *ngIf="myClaim.status === 'pending'"
+        >
+          <p>
+            {{
+              report.report_type === 'found'
+                ? 'Waiting for the finder to review your ownership claim.'
+                : 'Your response was submitted. Use private chat to verify the item with the owner.'
+            }}
+          </p>
+        </div>
+
+        <!-- APPROVED -->
+        <div
+          class="claim-notice approved-notice"
+          *ngIf="myClaim.status === 'approved'"
+        >
+          <p>
+            {{
+              report.report_type === 'found'
+                ? 'Your claim was approved. Coordinate the item return with the finder.'
+                : 'Continue coordinating the item return with the owner.'
+            }}
+          </p>
+        </div>
+
+        <!-- REJECTED -->
+        <div
+          class="claim-notice rejected-notice"
+          *ngIf="myClaim.status === 'rejected'"
+        >
+          <p>
+            {{
+              report.report_type === 'found'
+                ? 'Your ownership claim was rejected by the finder.'
+                : 'Your response was rejected by the item owner.'
+            }}
+          </p>
+
+          <!-- PRESERVE COOLDOWN MESSAGE -->
+          <p
+            *ngIf="report.status === 'active'"
+            class="retry-cooldown-message"
+          >
+            {{ retryCooldownMessage }}
+          </p>
+        </div>
+
+        <!-- PRIVATE CHAT -->
+        <div
+          class="chat-section"
+          *ngIf="canOpenClaimChat"
+        >
+          <h3>Private Conversation</h3>
+
+          <p>
+            Verify ownership and arrange the handover privately.
+          </p>
+
+          <ion-button
+            expand="block"
+            fill="outline"
+            class="chat-button"
+            (click)="openClaimChat()"
+            [disabled]="openingChat"
+          >
+            <ion-icon
+              name="chatbubble-outline"
+              slot="start"
+              aria-hidden="true"
+            ></ion-icon>
+
+            {{
+              openingChat
+                ? 'Opening Chat...'
+                : (
+                    myClaim.status === 'rejected' ||
+                    report.status === 'returned'
+                      ? 'View Chat History'
+                      : 'Start / Open Chat'
+                  )
+            }}
+          </ion-button>
+
+          <p
+            class="chat-help"
+            *ngIf="
+              report.report_type === 'lost' &&
+              myClaim.status === 'pending'
+            "
+          >
+            Verify the item before arranging a return.
+          </p>
+        </div>
+
+        <!-- CHAT ERROR -->
+        <p
+          class="chat-error"
+          role="alert"
+          *ngIf="chatErrorMessage"
+        >
+          {{ chatErrorMessage }}
+        </p>
+
+        <!-- HANDOVER CONFIRMATION -->
+        <div
+          class="handover-section"
+          *ngIf="myClaim.status === 'approved'"
+        >
+          <h3>Item Handover</h3>
+
+          <p class="handover-description">
+            Both parties must confirm the handover.
+          </p>
+
+          <!-- OWNER -->
+          <div class="handover-row">
+            <div>
+              <strong>Report Owner</strong>
+
+              <span
+                *ngIf="myClaim.owner_return_confirmed_at"
+              >
+                {{
+                  myClaim.owner_return_confirmed_at
+                    | date:'medium'
+                }}
+              </span>
+            </div>
+
+            <ion-badge
+              [color]="
+                myClaim.owner_return_confirmed_at
+                  ? 'success'
+                  : 'warning'
+              "
+            >
+              {{
+                myClaim.owner_return_confirmed_at
+                  ? 'Confirmed'
+                  : 'Pending'
+              }}
+            </ion-badge>
+          </div>
+
+          <!-- REQUESTER -->
+          <div class="handover-row">
+            <div>
+              <strong>You (Requester)</strong>
+
+              <span
+                *ngIf="myClaim.requester_return_confirmed_at"
+              >
+                {{
+                  myClaim.requester_return_confirmed_at
+                    | date:'medium'
+                }}
+              </span>
+            </div>
+
+            <ion-badge
+              [color]="
+                myClaim.requester_return_confirmed_at
+                  ? 'success'
+                  : 'warning'
+              "
+            >
+              {{
+                myClaim.requester_return_confirmed_at
+                  ? 'Confirmed'
+                  : 'Pending'
+              }}
+            </ion-badge>
+          </div>
+
+          <!-- RETURN PROGRESS -->
+          <p class="handover-progress">
+            {{ requesterReturnProgress }}
+          </p>
+
+          <!-- CONFIRM HANDOVER -->
+          <ion-button
+            *ngIf="canConfirmRequesterReturn"
+            expand="block"
+            class="handover-button"
+            [disabled]="isProcessingHandover"
+            (click)="confirmRequesterReturn()"
+          >
+            {{
+              isProcessingHandover
+                ? 'Processing...'
+                : (
+                    report.report_type === 'found'
+                      ? 'Confirm Item Received'
+                      : 'Confirm Item Handed Over'
+                  )
+            }}
+          </ion-button>
+
+          <!-- SAFETY NOTICE -->
+          <p
+            class="handover-warning"
+            *ngIf="report.status === 'claimed'"
+          >
+            {{
+              report.report_type === 'found'
+                ? 'Confirm only after physically receiving the item.'
+                : 'Confirm only after physically returning the item to its owner.'
+            }}
+          </p>
+        </div>
+      </section>
+
+      <!-- FIRST CLAIM / RESPONSE -->
+      <section
+        class="details-card action-card"
+        *ngIf="canRequestClaim"
+      >
+        <h2>
+          {{
+            report.report_type === 'lost'
+              ? 'Have You Found This Item?'
+              : 'Does This Item Belong to You?'
+          }}
+        </h2>
+
+        <p>
+          {{ requestDescription }}
+        </p>
+
+        <ion-button
+          expand="block"
+          class="primary-action-button"
+          (click)="requestClaim()"
+          [disabled]="
+            isSubmittingClaim ||
+            isLoadingMyClaim
+          "
+        >
+          {{
+            isSubmittingClaim
+              ? 'Submitting...'
+              : requestActionLabel
+          }}
+        </ion-button>
+      </section>
+
+      <!-- RETRY REJECTED CLAIM -->
+      <section
+        class="details-card action-card"
+        *ngIf="
+          !isOwner &&
+          report.status === 'active' &&
+          myClaim?.status === 'rejected'
+        "
+      >
+        <h2>
+          {{
+            report.report_type === 'found'
+              ? 'Submit Another Ownership Claim'
+              : 'Send Another Found-Item Response'
+          }}
+        </h2>
+
+        <p>
+          A new request may be allowed after the 24-hour cooldown.
+        </p>
+
+        <!-- COOLDOWN ACTIVE -->
+        <div
+          class="claim-notice"
+          *ngIf="isRetryCooldownActive"
+        >
+          <p>{{ retryCooldownMessage }}</p>
+        </div>
+
+        <!-- COOLDOWN FINISHED -->
+        <div
+          class="claim-notice approved-notice"
+          *ngIf="!isRetryCooldownActive"
+        >
+          <p>
+            You may try again. The backend will confirm eligibility.
+          </p>
+        </div>
+
+        <!-- RETRY ACTION -->
+        <ion-button
+          expand="block"
+          fill="outline"
+          class="primary-action-button"
+          (click)="requestClaim()"
+          [disabled]="
+            !canRetryClaim ||
+            isSubmittingClaim ||
+            isLoadingMyClaim
+          "
+        >
+          {{
+            isSubmittingClaim
+              ? 'Submitting...'
+              : (
+                  report.report_type === 'found'
+                    ? 'Submit Another Ownership Claim'
+                    : 'Send Another Found-Item Response'
+                )
+          }}
+        </ion-button>
+      </section>
+
+      <!-- REPORT OWNER -->
+      <section
+        class="details-card owner-card"
+        *ngIf="isOwner"
+      >
+        <h2>This Is Your Report</h2>
+
+        <p>
+          {{
+            report.report_type === 'found'
+              ? 'Manage incoming ownership claims in My Reports.'
+              : 'Manage finder responses in My Reports.'
+          }}
+        </p>
+      </section>
+
+    </ng-container>
+  </main>
+</ion-content>
