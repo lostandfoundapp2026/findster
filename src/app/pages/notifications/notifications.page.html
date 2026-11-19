@@ -1,0 +1,175 @@
+<!-- =====================================================
+     FINDSTER — NOTIFICATIONS PAGE
+     Clean, mobile-first account activity
+     Save as: src/app/pages/notifications/notifications.page.html
+     ===================================================== -->
+
+<ion-header class="notifications-header">
+  <ion-toolbar class="notifications-toolbar">
+    <div class="toolbar-content">
+      <button
+        type="button"
+        class="back-button"
+        routerLink="/home"
+        aria-label="Back to Home"
+      >
+        <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon>
+      </button>
+      <span class="toolbar-title">Notifications</span>
+      <span class="toolbar-spacer" aria-hidden="true"></span>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="notifications-content" [fullscreen]="false">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <main class="notifications-container">
+    <section class="notifications-intro" aria-labelledby="notifications-page-heading">
+      <h1 id="notifications-page-heading">Your Updates</h1>
+      <p>Updates about your reports, claims, conversations, and item returns.</p>
+    </section>
+
+    <!-- UNREAD SUMMARY -->
+    <section class="notification-summary" aria-label="Notification summary">
+      <div class="summary-information">
+        <span class="summary-icon" aria-hidden="true">
+          <ion-icon name="notifications-outline"></ion-icon>
+        </span>
+        <div class="summary-text">
+          <strong>{{ unreadCount === 0 ? "You're All Caught Up!" : 'New Notifications' }}</strong>
+          <p aria-live="polite">
+            {{ unreadCount }} unread {{ unreadCount === 1 ? 'notification' : 'notifications' }}
+          </p>
+        </div>
+      </div>
+      <ion-button
+        type="button"
+        size="small"
+        fill="outline"
+        class="mark-all-button"
+        (click)="markAllAsRead()"
+        [disabled]="unreadCount === 0 || isMarkingAllRead || isLoading"
+      >
+        {{ isMarkingAllRead ? 'Marking...' : 'Mark All Read' }}
+      </ion-button>
+    </section>
+
+    <!-- ACTIVITY TITLE -->
+    <div class="section-heading">
+      <div class="section-heading-copy">
+        <h2>Recent Activity</h2>
+        <p>Tap a notification to view its details.</p>
+      </div>
+      <span
+        class="notification-count"
+        *ngIf="!isLoading && !errorMessage"
+        [attr.aria-label]="notifications.length + ' notifications'"
+      >
+        {{ notifications.length }}
+      </span>
+    </div>
+
+    <!-- LOADING -->
+    <section class="loading-container" *ngIf="isLoading" role="status" aria-live="polite">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading notifications...</p>
+    </section>
+
+    <!-- ERROR -->
+    <section class="error-container" *ngIf="!isLoading && errorMessage" role="alert">
+      <span class="state-icon error-icon" aria-hidden="true">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+      </span>
+      <h3>Unable to Load Notifications</h3>
+      <p>{{ errorMessage }}</p>
+      <ion-button type="button" fill="outline" (click)="loadNotifications()">
+        Try Again
+      </ion-button>
+    </section>
+
+    <!-- EMPTY STATE -->
+    <section
+      class="empty-state"
+      *ngIf="!isLoading && !errorMessage && notifications.length === 0"
+      aria-label="No notifications"
+    >
+      <span class="state-icon empty-icon" aria-hidden="true">
+        <ion-icon name="notifications-outline"></ion-icon>
+      </span>
+      <h3>No Notifications Yet</h3>
+      <p>When something happens with your reports, claims, or messages, you'll see it here.</p>
+    </section>
+
+    <!-- NOTIFICATION LIST -->
+    <ion-list
+      class="notifications-list"
+      lines="none"
+      *ngIf="!isLoading && !errorMessage && notifications.length > 0"
+      aria-label="Recent notifications"
+    >
+      <ion-item
+        *ngFor="let notification of notifications"
+        button
+        detail="false"
+        class="notification-card"
+        [class.unread-notification]="!notification.is_read"
+        [class.read-notification]="notification.is_read"
+        (click)="markAsRead(notification)"
+      >
+        <span
+          class="notification-icon-wrapper"
+          slot="start"
+          [class.unread-icon]="!notification.is_read"
+          aria-hidden="true"
+        >
+          <ion-icon
+            class="notification-icon"
+            [name]="getNotificationIcon(notification.notification_type)"
+          ></ion-icon>
+        </span>
+
+        <ion-label class="notification-body">
+          <div class="notification-heading">
+            <h3>{{ notification.title }}</h3>
+            <span
+              class="unread-dot"
+              *ngIf="!notification.is_read"
+              aria-label="Unread notification"
+            ></span>
+          </div>
+
+          <p class="notification-message">{{ notification.message }}</p>
+
+          <div class="notification-meta">
+            <span class="notification-type">
+              {{ getNotificationLabel(notification.notification_type) }}
+            </span>
+            <span class="notification-date">
+              {{ formatDate(notification.created_at) }}
+            </span>
+          </div>
+
+          <div class="notification-footer">
+            <span class="read-status" [class.status-unread]="!notification.is_read">
+              {{ notification.is_read ? 'Read' : 'Unread' }}
+            </span>
+            <span class="view-details">
+              View Details
+              <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+            </span>
+          </div>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <footer
+      class="notifications-footer"
+      *ngIf="!isLoading && !errorMessage && notifications.length > 0"
+    >
+      <p>Pull down to refresh your notifications.</p>
+    </footer>
+  </main>
+</ion-content>
