@@ -1,0 +1,457 @@
+<!-- ==================================================
+     FINDSTER — CHAT CONVERSATION
+     Clean mobile-first private messaging | streamlined layout
+     Save as: src/app/pages/chat-conversation/chat-conversation.page.html
+     ================================================== -->
+
+<!-- CHAT HEADER -->
+<ion-header class="chat-header">
+  <ion-toolbar class="chat-toolbar">
+    <div class="chat-toolbar-content">
+
+      <!-- ARROW-ONLY BACK -->
+      <button
+        type="button"
+        class="chat-back-button"
+        (click)="goBack()"
+        aria-label="Back to Messages"
+      >
+        <ion-icon
+          name="arrow-back-outline"
+          aria-hidden="true"
+        ></ion-icon>
+      </button>
+
+      <!-- CHAT INFORMATION -->
+      <div class="chat-header-info">
+        <strong>{{ chatTitle }}</strong>
+
+        <span *ngIf="conversation" class="chat-header-reference">
+          Claim #{{ conversation.claim_id }}
+        </span>
+      </div>
+
+      <!-- ICON-ONLY REFRESH -->
+      <button
+        type="button"
+        class="chat-refresh-button"
+        (click)="loadConversation()"
+        [disabled]="loading"
+        aria-label="Refresh messages"
+      >
+        <ion-icon
+          name="refresh-outline"
+          aria-hidden="true"
+        ></ion-icon>
+      </button>
+
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<!-- CHAT CONTENT -->
+<ion-content
+  [fullscreen]="false"
+  class="conversation-content"
+>
+  <main class="chat-layout">
+
+    <!-- COMPACT CONVERSATION SUMMARY -->
+    <section
+      class="conversation-summary"
+      *ngIf="conversation"
+    >
+      <div class="summary-top">
+        <span
+          class="report-type"
+          [class.lost-type]="
+            conversation.report_type === 'lost'
+          "
+          [class.found-type]="
+            conversation.report_type === 'found'
+          "
+        >
+          {{
+            conversation.report_type === 'lost'
+              ? 'Lost Item'
+              : 'Found Item'
+          }}
+        </span>
+
+        <span
+          class="chat-status"
+          [class.read-only]="!conversation.can_send"
+        >
+          {{ statusLabel }}
+        </span>
+      </div>
+
+      <p class="claim-reference">
+        Private conversation about this item
+      </p>
+
+      <!-- CONNECTION WARNING ONLY WHEN NEEDED -->
+      <div
+        class="connection-status"
+        *ngIf="connectionState !== 'connected'"
+        [class.disconnected]="
+          connectionState === 'disconnected'
+        "
+        aria-live="polite"
+      >
+        <span
+          class="connection-dot"
+          aria-hidden="true"
+        ></span>
+
+        <span [ngSwitch]="connectionState">
+          <ng-container *ngSwitchCase="'connecting'">
+            Connecting to live updates...
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'reconnecting'">
+            Reconnecting to live updates...
+          </ng-container>
+
+          <ng-container *ngSwitchDefault>
+            Live updates unavailable. Refresh to check messages.
+          </ng-container>
+        </span>
+      </div>
+    </section>
+
+    <!-- LOADING -->
+    <section
+      class="chat-loading"
+      *ngIf="loading"
+      role="status"
+    >
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading conversation...</p>
+    </section>
+
+    <!-- ERROR -->
+    <section
+      class="chat-error"
+      *ngIf="!loading && errorMessage"
+      role="alert"
+    >
+      <div
+        class="error-symbol"
+        aria-hidden="true"
+      >
+        !
+      </div>
+
+      <h2>Unable to Load Conversation</h2>
+      <p>{{ errorMessage }}</p>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        (click)="loadConversation()"
+      >
+        Try Again
+      </ion-button>
+    </section>
+
+    <!-- CONVERSATION -->
+    <ng-container *ngIf="!loading && conversation">
+
+      <!-- LIGHTWEIGHT SAFETY REMINDER -->
+      <aside class="chat-privacy-note" aria-label="Chat safety reminder">
+        <span class="privacy-indicator" aria-hidden="true">i</span>
+        <p>Verify item details privately. Confirm a return only after handover.</p>
+      </aside>
+
+      <!-- OLDER MESSAGES -->
+      <ion-infinite-scroll
+        position="top"
+        threshold="80px"
+        [disabled]="!hasOlder || loadingOlder"
+        (ionInfinite)="loadOlder($event)"
+      >
+        <ion-infinite-scroll-content
+          loadingSpinner="crescent"
+          loadingText="Loading older messages..."
+        ></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+
+      <!-- EMPTY CONVERSATION -->
+      <section
+        class="empty-messages"
+        *ngIf="messages.length === 0"
+      >
+        <div
+          class="empty-chat-icon"
+          aria-hidden="true"
+        >
+          &#128172;
+        </div>
+
+        <h2>No Messages Yet</h2>
+
+        <p *ngIf="conversation.can_send">
+          Send a message or photo to start verifying
+          this claim.
+        </p>
+
+        <p *ngIf="!conversation.can_send">
+          There are no messages.
+          This conversation is read-only.
+        </p>
+      </section>
+
+      <!-- MESSAGES -->
+      <div
+        class="message-list"
+        *ngIf="messages.length > 0"
+        role="log"
+        aria-label="Chat messages"
+        aria-live="polite"
+      >
+        <article
+          class="message-row"
+          *ngFor="
+            let message of messages;
+            trackBy: trackByMessage
+          "
+          [class.mine]="isMine(message)"
+        >
+          <div
+            class="message-bubble"
+            [class.image-message-bubble]="isImage(message)"
+          >
+
+            <!-- PRIVATE IMAGE MESSAGE -->
+            <!-- Preserve authenticated Blob image handling -->
+            <ng-container
+              *ngIf="isImage(message); else textMessage"
+            >
+              <ng-container *ngIf="getMessageImageUrl(message) as imageSrc; else imagePlaceholder">
+                <img
+                  class="chat-message-image"
+                  [src]="imageSrc"
+                  alt="Photo shared in this private conversation"
+                  loading="lazy"
+                />
+              </ng-container>
+
+              <ng-template #imagePlaceholder>
+                <p
+                  class="image-error"
+                  *ngIf="hasImageError(message); else imageLoading"
+                  role="alert"
+                >
+                  Unable to load this photo.
+                </p>
+
+                <ng-template #imageLoading>
+                  <div class="image-loading" role="status">
+                    <ion-spinner name="crescent"></ion-spinner>
+                    <span>Loading photo...</span>
+                  </div>
+                </ng-template>
+              </ng-template>
+            </ng-container>
+
+            <!-- TEXT MESSAGE -->
+            <ng-template #textMessage>
+              <p class="message-body">
+                {{ message.body }}
+              </p>
+            </ng-template>
+
+            <!-- TIMESTAMP / READ RECEIPT -->
+            <div class="message-meta">
+              <time *ngIf="message.created_at">
+                {{ message.created_at | date:'shortTime' }}
+              </time>
+
+              <span
+                class="message-read-status"
+                *ngIf="isMine(message)"
+              >
+                {{
+                  message.read_at
+                    ? 'Read'
+                    : 'Sent'
+                }}
+              </span>
+            </div>
+
+          </div>
+        </article>
+      </div>
+
+      <!-- READ-ONLY NOTICE -->
+      <div
+        class="read-only-notice"
+        *ngIf="!conversation.can_send"
+      >
+        <strong>Conversation Closed</strong>
+
+        <p>
+          You can view previous messages,
+          but new messages and photos cannot be sent.
+        </p>
+      </div>
+
+    </ng-container>
+  </main>
+</ion-content>
+
+<!-- MESSAGE COMPOSER -->
+<ion-footer
+  class="chat-footer"
+  *ngIf="!loading && conversation"
+>
+  <ion-toolbar class="composer-toolbar">
+
+    <ng-container
+      *ngIf="
+        conversation.can_send;
+        else readOnlyComposer
+      "
+    >
+
+      <!-- SELECTED IMAGE PREVIEW -->
+      <div
+        *ngIf="selectedImagePreview"
+        class="selected-image-preview"
+      >
+        <img
+          [src]="selectedImagePreview"
+          alt="Selected photo preview"
+          class="selected-preview-image"
+        />
+
+        <div class="selected-image-information">
+          <strong>Photo selected</strong>
+          <p>Ready to send privately</p>
+        </div>
+
+        <div class="selected-image-actions">
+          <ion-button
+            size="small"
+            fill="clear"
+            color="medium"
+            (click)="clearSelectedImage()"
+            [disabled]="sendingImage"
+            aria-label="Remove selected photo"
+          >
+            Cancel
+          </ion-button>
+
+          <ion-button
+            size="small"
+            class="send-photo-button"
+            (click)="sendSelectedImage()"
+            [disabled]="sending || sendingImage"
+            aria-label="Send selected photo"
+          >
+            <ion-spinner
+              *ngIf="sendingImage"
+              name="crescent"
+            ></ion-spinner>
+
+            <span *ngIf="!sendingImage">
+              Send Photo
+            </span>
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- COMPOSER -->
+      <div class="composer">
+
+        <!-- CAMERA / GALLERY -->
+        <ion-button
+          fill="clear"
+          class="attach-image-button"
+          (click)="pickImage()"
+          [disabled]="
+            sending ||
+            sendingImage ||
+            pickingImage
+          "
+          aria-label="Take a photo or choose an image"
+          title="Camera or gallery"
+        >
+          <ion-spinner
+            *ngIf="pickingImage"
+            name="crescent"
+          ></ion-spinner>
+
+          <ion-icon
+            *ngIf="!pickingImage"
+            name="camera-outline"
+            slot="icon-only"
+          ></ion-icon>
+        </ion-button>
+
+        <!-- MESSAGE INPUT -->
+        <ion-textarea
+          class="message-input"
+          [(ngModel)]="draft"
+          [autoGrow]="true"
+          [rows]="1"
+          [maxlength]="2000"
+          placeholder="Type a message..."
+          aria-label="Message"
+          [disabled]="sending || sendingImage"
+        ></ion-textarea>
+
+        <!-- SEND MESSAGE -->
+        <ion-button
+          class="send-message-button"
+          (click)="send()"
+          [disabled]="
+            sending ||
+            sendingImage ||
+            !draft.trim()
+          "
+          aria-label="Send message"
+        >
+          <ion-spinner
+            *ngIf="sending"
+            name="crescent"
+          ></ion-spinner>
+
+          <span *ngIf="!sending">Send</span>
+        </ion-button>
+
+      </div>
+
+      <!-- CHARACTER COUNT / SEND ERROR -->
+      <div class="composer-bottom">
+        <ion-note class="character-counter" *ngIf="draft.length > 0">
+          {{ draft.length }}/2000
+        </ion-note>
+
+        <p
+          *ngIf="sendError"
+          class="send-error"
+          role="alert"
+        >
+          {{ sendError }}
+        </p>
+      </div>
+
+    </ng-container>
+
+    <!-- READ-ONLY COMPOSER -->
+    <ng-template #readOnlyComposer>
+      <div
+        class="readonly-composer"
+        role="status"
+        aria-live="polite"
+      >
+        <strong>Messaging Unavailable</strong>
+
+        <p>This claim or report is closed. Previous messages remain available.</p>
+      </div>
+    </ng-template>
+
+  </ion-toolbar>
+</ion-footer>
