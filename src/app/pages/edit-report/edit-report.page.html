@@ -1,0 +1,544 @@
+<!-- =====================================================
+     FINDSTER — EDIT REPORT PAGE
+     Refined mobile-first form (existing bindings preserved)
+     Save as: src/app/pages/edit-report/edit-report.page.html
+     ===================================================== -->
+
+<ion-header class="edit-report-header">
+  <ion-toolbar class="edit-report-toolbar">
+    <div class="toolbar-content">
+
+      <!-- BACK NAVIGATION -->
+      <button
+        type="button"
+        class="back-button"
+        (click)="goBack()"
+        [disabled]="isSubmitting || isGettingLocation"
+        aria-label="Back to My Reports"
+      >
+        <ion-icon
+          name="arrow-back-outline"
+          aria-hidden="true"
+        ></ion-icon>
+      </button>
+
+      <span class="toolbar-title">
+        Edit Report
+      </span>
+
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content
+  [fullscreen]="false"
+  [scrollY]="true"
+  class="edit-report-content"
+>
+  <main class="edit-report-container">
+
+    <!-- LOADING STATE -->
+    <div
+      class="loading-state"
+      *ngIf="isLoading"
+      role="status"
+    >
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading your report...</p>
+    </div>
+
+    <!-- ERROR STATE -->
+    <section
+      class="error-state"
+      *ngIf="!isLoading && errorMessage"
+    >
+      <div
+        class="error-symbol"
+        aria-hidden="true"
+      >
+        !
+      </div>
+
+      <h2>Unable to Load Report</h2>
+
+      <p role="alert">
+        {{ errorMessage }}
+      </p>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        (click)="loadReport(true)"
+      >
+        Try Again
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        fill="clear"
+        (click)="goBack()"
+      >
+        Back to My Reports
+      </ion-button>
+    </section>
+
+    <!-- EDIT FORM -->
+    <ng-container *ngIf="!isLoading && !errorMessage">
+
+      <!-- COMPACT INTRODUCTION -->
+      <section class="edit-intro">
+        <h1>Update Report Details</h1>
+
+        <p>
+          Review and update the information people use to identify your item.
+        </p>
+      </section>
+
+      <form
+        class="edit-report-form"
+        (submit)="$event.preventDefault()"
+        [attr.aria-busy]="isSubmitting"
+      >
+
+        <!-- REPORT TYPE -->
+        <section class="form-card type-card">
+          <div class="card-heading">
+            <h2>Report Type</h2>
+            <p>Choose whether the item was lost or found.</p>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">
+              Type of Report
+              <span class="required">*</span>
+            </label>
+
+            <ion-select
+              class="form-control"
+              aria-label="Type of Report"
+              placeholder="Select report type"
+              [(ngModel)]="reportType"
+              name="reportType"
+              interface="popover"
+              required
+            >
+              <ion-select-option value="lost">
+                Lost Item
+              </ion-select-option>
+
+              <ion-select-option value="found">
+                Found Item
+              </ion-select-option>
+            </ion-select>
+          </div>
+        </section>
+
+        <!-- ITEM INFORMATION -->
+        <section class="form-card item-card">
+          <div class="card-heading">
+            <h2>Item Details</h2>
+            <p>Help others recognize the item accurately.</p>
+          </div>
+
+          <!-- ITEM NAME -->
+          <div class="field-group">
+            <label class="field-label">
+              Item Name
+              <span class="required">*</span>
+            </label>
+
+            <ion-input
+              class="form-control"
+              aria-label="Item Name"
+              placeholder="e.g. Black wallet"
+              type="text"
+              [(ngModel)]="itemName"
+              name="itemName"
+              required
+            ></ion-input>
+          </div>
+
+          <!-- CATEGORY -->
+          <div class="field-group">
+            <label class="field-label">
+              Category
+              <span class="required">*</span>
+            </label>
+
+            <ion-select
+              class="form-control"
+              aria-label="Category"
+              placeholder="Select category"
+              [(ngModel)]="category"
+              name="category"
+              interface="popover"
+              required
+            >
+              <ion-select-option value="Electronics">
+                Electronics
+              </ion-select-option>
+
+              <ion-select-option value="Wallet">
+                Wallet
+              </ion-select-option>
+
+              <ion-select-option value="ID and Documents">
+                ID and Documents
+              </ion-select-option>
+
+              <ion-select-option value="Keys">
+                Keys
+              </ion-select-option>
+
+              <ion-select-option value="Bags">
+                Bags
+              </ion-select-option>
+
+              <ion-select-option value="Clothing">
+                Clothing
+              </ion-select-option>
+
+              <ion-select-option value="Accessories">
+                Accessories
+              </ion-select-option>
+
+              <ion-select-option value="Others">
+                Others
+              </ion-select-option>
+            </ion-select>
+          </div>
+
+          <!-- DESCRIPTION -->
+          <div class="field-group">
+            <label class="field-label">
+              Description
+              <span class="required">*</span>
+            </label>
+
+            <ion-textarea
+              class="form-control description-control"
+              aria-label="Description"
+              placeholder="Color, brand, appearance, and identifying details"
+              [(ngModel)]="description"
+              name="description"
+              [autoGrow]="true"
+              [rows]="2"
+              required
+            ></ion-textarea>
+
+            <p class="field-helper">
+              Do not include passwords or sensitive
+              identification numbers.
+            </p>
+          </div>
+        </section>
+
+        <!-- LOCATION INFORMATION -->
+        <section class="form-card location-card">
+          <div class="card-heading">
+            <h2>Location</h2>
+            <p>
+              Where and when was the item lost or found?
+            </p>
+          </div>
+
+          <!-- BARANGAY -->
+          <div class="field-group">
+            <label class="field-label">
+              Barangay
+              <span class="required">*</span>
+            </label>
+
+            <ion-select
+              class="form-control"
+              aria-label="Barangay"
+              placeholder="Select barangay"
+              [(ngModel)]="barangay"
+              name="barangay"
+              interface="popover"
+              required
+            >
+              @for (place of barangays; track place) {
+                <ion-select-option [value]="place">
+                  {{ place }}
+                </ion-select-option>
+              }
+            </ion-select>
+          </div>
+
+          <!-- SPECIFIC LOCATION -->
+          <div class="field-group">
+            <label class="field-label">
+              Specific Location
+              <span class="optional">(Optional)</span>
+            </label>
+
+            <ion-input
+              class="form-control"
+              aria-label="Specific Location"
+              placeholder="e.g. Near the public market"
+              type="text"
+              [(ngModel)]="specificLocation"
+              name="specificLocation"
+            ></ion-input>
+          </div>
+
+          <!-- DATE -->
+          <div class="field-group">
+            <label class="field-label">
+              Date Lost or Found
+              <span class="optional">(Optional)</span>
+            </label>
+
+            <ion-input
+              class="form-control"
+              aria-label="Date Lost or Found"
+              type="date"
+              [(ngModel)]="dateLostFound"
+              name="dateLostFound"
+            ></ion-input>
+          </div>
+
+          <!-- REQUIRED INCIDENT LOCATION: the TypeScript integration will
+               initialize Leaflet after the report finishes loading. -->
+          <div class="location-section" aria-labelledby="edit-incident-location-heading">
+            <div class="subsection-heading">
+              <h3 id="edit-incident-location-heading">
+                Actual Incident Location <span class="required">*</span>
+              </h3>
+            </div>
+
+            <p class="location-help">
+              Select the actual place where the item was lost or found.
+              It must be within San Leonardo, Nueva Ecija. You can edit
+              your report even when you are physically elsewhere.
+            </p>
+
+            <!-- An existing report pin should be shown here if valid
+                 coordinates were previously saved. -->
+            <div class="incident-map-wrapper">
+              <div
+                #incidentMap
+                id="edit-incident-location-map"
+                class="incident-location-map"
+                role="group"
+                aria-label="Map of San Leonardo. Tap to set or change the incident location."
+                aria-describedby="edit-incident-map-help"
+              ></div>
+              <p id="edit-incident-map-help" class="location-help map-help">
+                Tap the map to place or move the pin. The selected barangay
+                must match the incident location. Map tiles require internet.
+              </p>
+            </div>
+
+            <ion-button
+              expand="block"
+              fill="outline"
+              class="location-button"
+              type="button"
+              (click)="useCurrentLocation()"
+              [disabled]="isSubmitting || isGettingLocation"
+            >
+              <ion-icon
+                name="location-outline"
+                slot="start"
+                aria-hidden="true"
+              ></ion-icon>
+              {{
+                isGettingLocation
+                  ? 'Getting Location...'
+                  : 'Use My Current Location Instead'
+              }}
+            </ion-button>
+
+            <p class="location-help">
+              Use current GPS only if you are at the exact incident location.
+            </p>
+
+            @if (latitude !== null && longitude !== null) {
+              <div class="location-preview" role="status">
+                <div class="location-status">
+                  <ion-icon
+                    name="checkmark-circle-outline"
+                    aria-hidden="true"
+                  ></ion-icon>
+                  <strong>Incident Coordinates Selected</strong>
+                </div>
+
+                <div class="coordinate-grid">
+                  <div class="coordinate-item">
+                    <span>Latitude</span>
+                    <strong>{{ latitude }}</strong>
+                  </div>
+                  <div class="coordinate-item">
+                    <span>Longitude</span>
+                    <strong>{{ longitude }}</strong>
+                  </div>
+                </div>
+
+                <ion-button
+                  expand="block"
+                  fill="outline"
+                  color="danger"
+                  class="clear-location-button"
+                  type="button"
+                  (click)="clearLocation()"
+                  [disabled]="isSubmitting || isGettingLocation"
+                >
+                  Clear Selected Location
+                </ion-button>
+              </div>
+            } @else {
+              <div class="location-empty location-required-message" role="status">
+                <p>
+                  A valid incident location is required. Select a point on
+                  the map or use GPS before saving your changes.
+                </p>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- ITEM PHOTO -->
+        <section class="form-card photo-card">
+          <div class="card-heading">
+            <h2>
+              Item Photo
+              <span class="optional">(Optional)</span>
+            </h2>
+
+            <p>
+              You may replace the current photo. JPG, PNG, or WEBP, up to 5 MB.
+            </p>
+          </div>
+
+          <!-- CURRENT OR NEW PHOTO -->
+          @if (photoPreview || currentPhotoUrl) {
+            <div class="photo-preview">
+              <img
+                [src]="photoPreview || currentPhotoUrl"
+                alt="Current or newly selected item photo"
+              />
+
+              <p class="photo-caption">
+                {{
+                  photoPreview
+                    ? 'New photo selected — not saved yet'
+                    : 'Current report photo'
+                }}
+              </p>
+            </div>
+          } @else {
+            <div class="no-photo">
+              <ion-icon
+                name="image-outline"
+                aria-hidden="true"
+              ></ion-icon>
+
+              <p>No photo uploaded</p>
+            </div>
+          }
+
+          <!-- NATIVE IMAGE FILE INPUT -->
+          <input
+            #photoInput
+            class="file-input"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            (change)="onPhotoSelected($event)"
+            [disabled]="isSubmitting"
+            aria-label="Choose a replacement item photo"
+          />
+
+          <!-- CHANGE PHOTO -->
+          <div class="photo-actions">
+            <ion-button
+              expand="block"
+              fill="outline"
+              class="select-photo-button"
+              type="button"
+              (click)="photoInput.click()"
+              [disabled]="isSubmitting"
+            >
+              <ion-icon
+                name="images-outline"
+                slot="start"
+                aria-hidden="true"
+              ></ion-icon>
+
+              {{
+                selectedPhoto
+                  ? 'Choose Another Photo'
+                  : 'Select New Photo'
+              }}
+            </ion-button>
+
+            @if (selectedPhoto) {
+              <ion-button
+                expand="block"
+                fill="clear"
+                color="medium"
+                class="cancel-photo-button"
+                type="button"
+                (click)="cancelPhotoChange(photoInput)"
+                [disabled]="isSubmitting"
+              >
+                Cancel Photo Change
+              </ion-button>
+            }
+          </div>
+
+          <!-- PHOTO ERROR -->
+          @if (photoError) {
+            <p class="photo-error" role="alert">
+              {{ photoError }}
+            </p>
+          }
+        </section>
+
+        <!-- SAVE / CANCEL -->
+        <section class="form-actions">
+          <p class="save-note">
+            Check the details before saving your report.
+          </p>
+
+          <div class="action-buttons">
+            <ion-button
+              expand="block"
+              type="button"
+              class="submit-button"
+              [disabled]="isSubmitting || isGettingLocation"
+              (click)="submitChanges()"
+            >
+              <ion-icon
+                name="checkmark-outline"
+                slot="start"
+                aria-hidden="true"
+              ></ion-icon>
+
+              {{
+                isSubmitting
+                  ? 'Saving Changes...'
+                  : 'Save Changes'
+              }}
+            </ion-button>
+
+            <ion-button
+              expand="block"
+              fill="outline"
+              type="button"
+              class="cancel-button"
+              [disabled]="isSubmitting || isGettingLocation"
+              (click)="goBack()"
+            >
+              Cancel
+            </ion-button>
+          </div>
+        </section>
+
+      </form>
+    </ng-container>
+
+  </main>
+</ion-content>
