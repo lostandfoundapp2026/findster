@@ -1,0 +1,947 @@
+/* =========================================================
+   FINDSTER — EDIT REPORT PAGE
+   Refined Mobile-First Design — balanced fields and mobile-safe layout
+   ========================================================= */
+
+:host {
+  display: block;
+
+  --edit-blue: #0758d3;
+  --edit-navy: #092d66;
+  --edit-text: #24344c;
+  --edit-muted: #52627a;
+  --edit-border: #e2e8f0;
+  --edit-bg: #f7f9fd;
+  --edit-shadow: 0 4px 16px rgba(9, 45, 102, 0.045);
+}
+
+/* HEADER */
+
+.edit-report-header {
+  box-shadow: none;
+}
+
+.edit-report-header::after {
+  display: none;
+}
+
+.edit-report-toolbar {
+  --background: #ffffff;
+  --color: var(--edit-navy);
+  --min-height: 56px;
+  --border-width: 0;
+
+  border-bottom: 1px solid var(--edit-border);
+}
+
+.toolbar-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 56px;
+  padding: 5px 14px;
+  box-sizing: border-box;
+}
+
+.toolbar-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  color: var(--edit-navy);
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.back-button {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+
+  display: inline-grid;
+  place-items: center;
+
+  width: 42px;
+  height: 42px;
+  padding: 0;
+
+  border: 1px solid #dce9fa;
+  border-radius: 11px;
+
+  background: #f1f6ff;
+  color: var(--edit-blue);
+  cursor: pointer;
+}
+
+.back-button ion-icon {
+  font-size: 21px;
+}
+
+.back-button:hover:not(:disabled) {
+  background: #e4efff;
+}
+
+.back-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.back-button:focus-visible {
+  outline: 2px solid var(--edit-blue);
+  outline-offset: 2px;
+}
+
+/* MAIN CONTENT */
+
+.edit-report-content {
+  --background: var(--edit-bg);
+  --color: var(--edit-text);
+}
+
+.edit-report-container {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+
+  padding: 16px 14px
+    calc(104px + env(safe-area-inset-bottom, 0px));
+
+  box-sizing: border-box;
+}
+
+/* COMPACT INTRO */
+
+.edit-intro {
+  margin-bottom: 15px;
+}
+
+.edit-intro h1 {
+  margin: 0 0 4px;
+
+  color: var(--edit-navy);
+  font-size: 21px;
+  font-weight: 850;
+  line-height: 1.3;
+  letter-spacing: -0.4px;
+}
+
+.edit-intro > p {
+  margin: 0;
+
+  color: var(--edit-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* FORM */
+
+.edit-report-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.form-card {
+  min-width: 0;
+  padding: 16px;
+
+  border: 1px solid var(--edit-border);
+  border-radius: 16px;
+
+  background: #ffffff;
+  box-shadow: var(--edit-shadow);
+  box-sizing: border-box;
+}
+
+/* CARD HEADINGS */
+
+.card-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 12px;
+}
+
+.card-heading h2 {
+  margin: 0;
+
+  color: var(--edit-navy);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.card-heading p {
+  margin: 0;
+
+  color: var(--edit-muted);
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+
+/* FORM FIELDS — clear labels above controls */
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  margin-bottom: 18px;
+}
+
+.field-group:last-child {
+  margin-bottom: 0;
+}
+
+.field-label {
+  display: block;
+  margin: 0;
+  padding: 0 1px;
+  color: var(--edit-text);
+  font-size: 12.5px;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.required {
+  margin-left: 2px;
+  color: #c93646;
+  font-weight: 800;
+}
+
+.optional {
+  margin-left: 5px;
+  color: #718096;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.field-helper {
+  margin: 0 1px;
+  color: #748096;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* IONIC INPUTS — spacing is applied inside the Ionic control,
+   not by shrinking the text area with host padding. */
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 49px;
+  padding: 0;
+  border: 1px solid #dce5f1;
+  border-radius: 11px;
+  background: #f8fbff;
+
+  --background: transparent;
+  --color: var(--edit-text);
+  --placeholder-color: #8190a6;
+  --placeholder-opacity: 1;
+  --highlight-color-focused: var(--edit-blue);
+  --padding-start: 15px;
+  --padding-end: 15px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+
+  box-sizing: border-box;
+  font-size: 13px;
+}
+
+ion-input.form-control {
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+}
+
+ion-select.form-control {
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+}
+
+ion-textarea.form-control {
+  min-height: 96px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+}
+
+.form-control.ion-focused,
+.form-control:focus-within {
+  border-color: var(--edit-blue);
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(7, 88, 211, 0.08);
+}
+
+.form-control.ion-invalid.ion-touched {
+  border-color: #dc7474;
+}
+
+.form-control::part(icon) {
+  color: var(--edit-blue);
+}
+
+/* GPS LOCATION */
+
+.location-section {
+  margin-top: 13px;
+  padding: 13px;
+
+  border: 1px solid #dce8f7;
+  border-radius: 12px;
+  background: #f8fbff;
+}
+
+.subsection-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 6px;
+}
+
+.subsection-heading h3 {
+  margin: 0;
+
+  color: var(--edit-navy);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.location-help {
+  margin: 0 0 11px;
+
+  color: var(--edit-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.location-button,
+.clear-location-button {
+  --border-radius: 10px;
+  --box-shadow: none;
+
+  width: 100%;
+  min-height: 43px;
+  margin: 0;
+
+  font-size: 11.5px;
+  font-weight: 750;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.location-button {
+  --border-color: #b9d5ff;
+  --color: var(--edit-blue);
+}
+
+.location-button ion-icon {
+  font-size: 17px;
+}
+
+/* CAPTURED COORDINATES */
+
+.location-preview {
+  margin-top: 11px;
+  padding: 11px;
+
+  border: 1px solid #cfeadd;
+  border-radius: 10px;
+  background: #f1fbf6;
+}
+
+.location-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.location-status ion-icon {
+  flex-shrink: 0;
+  color: #20a365;
+  font-size: 18px;
+}
+
+.location-status strong {
+  color: #17784b;
+  font-size: 11.5px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.coordinate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.coordinate-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-width: 0;
+  padding: 9px;
+
+  border: 1px solid #e0eee7;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
+.coordinate-item span {
+  color: #66758c;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.coordinate-item strong {
+  color: var(--edit-text);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.clear-location-button {
+  --border-color: #e9bcbc;
+  --color: #ba3434;
+}
+
+/* NO GPS */
+
+.location-empty {
+  margin-top: 10px;
+  padding: 10px 11px;
+
+  border: 1px dashed #cbd9eb;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
+.location-empty p {
+  margin: 0;
+
+  color: var(--edit-muted);
+  font-size: 10.5px;
+  line-height: 1.5;
+}
+
+/* PHOTO PREVIEW */
+
+.photo-preview {
+  margin-bottom: 12px;
+  padding: 10px;
+
+  border: 1px solid #e2eaf5;
+  border-radius: 11px;
+  background: #f8faff;
+}
+
+.photo-preview img {
+  display: block;
+  width: 100%;
+  max-height: 260px;
+
+  border-radius: 9px;
+  background: #eaf0f7;
+  object-fit: contain;
+}
+
+.photo-caption {
+  margin: 8px 0 0;
+
+  color: var(--edit-muted);
+  font-size: 10.5px;
+  font-weight: 650;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.no-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 110px;
+  margin-bottom: 12px;
+  padding: 13px;
+
+  border: 1px dashed #cbd9eb;
+  border-radius: 11px;
+  background: #f8faff;
+  text-align: center;
+}
+
+.no-photo ion-icon {
+  margin-bottom: 5px;
+  color: #8ca7c9;
+  font-size: 26px;
+}
+
+.no-photo p {
+  margin: 0;
+
+  color: #7b8799;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* PHOTO SELECTION */
+
+.file-input {
+  display: none;
+}
+
+.photo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.select-photo-button,
+.cancel-photo-button {
+  --border-radius: 10px;
+  --box-shadow: none;
+
+  width: 100%;
+  min-height: 42px;
+  margin: 0;
+
+  font-size: 11.5px;
+  font-weight: 750;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.select-photo-button {
+  --border-color: #b9d5ff;
+  --color: var(--edit-blue);
+}
+
+.select-photo-button ion-icon {
+  font-size: 17px;
+}
+
+.cancel-photo-button {
+  --color: var(--edit-muted);
+}
+
+/* PHOTO ERROR */
+
+.photo-error {
+  margin: 10px 0 0;
+  padding: 9px 10px;
+
+  border: 1px solid #f2d0d0;
+  border-radius: 9px;
+  background: #fff5f5;
+
+  color: #c32c2c;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* SAVE / CANCEL */
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  padding: 13px;
+
+  border: 1px solid #dce8f7;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: var(--edit-shadow);
+}
+
+.save-note {
+  margin: 0;
+
+  color: var(--edit-muted);
+  font-size: 11.5px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.submit-button,
+.cancel-button {
+  --border-radius: 10px;
+  --box-shadow: none;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  margin: 0;
+
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.submit-button {
+  --background: var(--edit-blue);
+  --background-hover: #0649ae;
+  --background-activated: #0644a4;
+  --color: #ffffff;
+}
+
+.cancel-button {
+  --border-color: #d2e2f7;
+  --color: var(--edit-blue);
+  --background: #ffffff;
+}
+
+.action-buttons ion-button::part(native) {
+  min-height: 45px;
+  padding-inline: 6px;
+}
+
+.action-buttons ion-icon {
+  font-size: 17px;
+}
+
+/* LOADING / ERROR */
+
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 125px;
+  padding: 23px 16px;
+
+  border: 1px solid var(--edit-border);
+  border-radius: 14px;
+  background: #ffffff;
+
+  text-align: center;
+}
+
+.loading-state ion-spinner {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 10px;
+  color: var(--edit-blue);
+}
+
+.loading-state p,
+.error-state p {
+  margin: 0;
+
+  color: var(--edit-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.error-symbol {
+  display: grid;
+  place-items: center;
+
+  width: 43px;
+  height: 43px;
+  margin-bottom: 10px;
+
+  border-radius: 12px;
+  background: #fff0f0;
+
+  color: #c32929;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.error-state h2 {
+  margin: 0 0 6px;
+
+  color: var(--edit-navy);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.error-state ion-button {
+  --border-radius: 10px;
+  --box-shadow: none;
+
+  width: 100%;
+  max-width: 240px;
+  min-height: 42px;
+  margin: 12px 0 0;
+
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: none;
+}
+
+/* SMALL PHONES */
+
+@media (max-width: 360px) {
+  .edit-report-container {
+    padding: 12px 10px
+      calc(104px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .toolbar-content {
+    padding-inline: 10px;
+  }
+
+  .back-button {
+    left: 9px;
+    width: 39px;
+    height: 39px;
+  }
+
+  .toolbar-title {
+    font-size: 15px;
+  }
+
+  .edit-intro h1 {
+    font-size: 19px;
+  }
+
+  .form-card {
+    padding: 12px;
+  }
+
+  .card-heading h2 {
+    font-size: 15px;
+  }
+
+  .location-section {
+    padding: 10px;
+  }
+
+  .coordinate-grid {
+    gap: 6px;
+  }
+
+  .coordinate-item {
+    padding: 8px;
+  }
+
+  .action-buttons {
+    gap: 6px;
+  }
+
+  .submit-button,
+  .cancel-button {
+    font-size: 10.5px;
+  }
+}
+
+/* TABLET / DESKTOP */
+
+@media (min-width: 600px) {
+  .edit-report-container {
+    padding: 25px 24px 45px;
+  }
+
+  .edit-intro h1 {
+    font-size: 25px;
+  }
+
+  .form-card {
+    padding: 20px 22px;
+  }
+
+  .edit-report-form {
+    gap: 16px;
+  }
+
+  .card-heading h2 {
+    font-size: 18px;
+  }
+
+  .location-section {
+    padding: 15px;
+  }
+
+  .photo-preview img {
+    max-height: 300px;
+  }
+
+  .form-actions {
+    padding: 17px;
+  }
+}
+
+/* ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+  .back-button,
+  .submit-button,
+  .cancel-button,
+  .select-photo-button,
+  .location-button {
+    transition: none;
+  }
+}
+
+
+/* INTERACTION POLISH — keep Ionic controls visually consistent */
+
+.form-control,
+.location-button,
+.select-photo-button,
+.submit-button,
+.cancel-button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.form-control.ion-disabled,
+.form-control[disabled] {
+  opacity: 0.65;
+}
+
+.description-control {
+  line-height: 1.5;
+}
+
+.photo-preview,
+.no-photo,
+.location-preview,
+.location-empty {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.photo-preview img {
+  height: auto;
+  object-position: center;
+}
+
+.location-status strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.location-button::part(native),
+.clear-location-button::part(native),
+.select-photo-button::part(native) {
+  min-height: 43px;
+}
+
+.action-buttons ion-button {
+  white-space: normal;
+}
+
+/* On narrow phones, give long action labels room to wrap instead of clipping. */
+@media (max-width: 390px) {
+  .action-buttons ion-button::part(native) {
+    padding-inline: 4px;
+  }
+
+  .coordinate-item strong {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+
+/* =========================================================
+   SAN LEONARDO INCIDENT MAP — EDIT REPORT
+   Used by the updated edit-report.page.html and Leaflet logic.
+   The Leaflet library stylesheet must also be loaded globally.
+   ========================================================= */
+
+.incident-map-wrapper {
+  width: 100%;
+  min-width: 0;
+  margin: 13px 0 12px;
+}
+
+.incident-location-map {
+  position: relative;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 285px;
+  min-height: 245px;
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 1px solid #cbdcf0;
+  border-radius: 12px;
+  background: #eaf1fa;
+  touch-action: pan-x pan-y;
+}
+
+/* Leaflet controls remain behind Ionic overlays and sticky headers. */
+.incident-map-wrapper .map-help {
+  margin: 9px 1px 0;
+  color: var(--edit-muted);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.location-section .subsection-heading .required {
+  margin-left: 3px;
+  font-size: 13px;
+}
+
+.location-section > .location-help {
+  line-height: 1.55;
+}
+
+.location-required-message {
+  border-color: #f0ccce;
+  background: #fff7f7;
+}
+
+.location-required-message p {
+  color: #9b343c;
+  font-size: 11.5px;
+}
+
+/* Align clear/GPS buttons with Android-friendly touch target sizes. */
+.location-section .location-button,
+.location-section .clear-location-button {
+  min-height: 44px;
+}
+
+.location-section .location-button::part(native),
+.location-section .clear-location-button::part(native) {
+  min-height: 44px;
+}
+
+@media (max-width: 360px) {
+  .incident-location-map {
+    height: 245px;
+    min-height: 230px;
+    border-radius: 10px;
+  }
+
+  .incident-map-wrapper .map-help {
+    font-size: 11px;
+  }
+}
+
+@media (min-width: 600px) {
+  .incident-location-map {
+    height: 350px;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .incident-location-map {
+    border-color: #5277a9;
+    border-width: 2px;
+  }
+}
