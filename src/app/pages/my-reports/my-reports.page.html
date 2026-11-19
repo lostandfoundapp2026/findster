@@ -1,0 +1,718 @@
+<!-- FINDSTER | Compact My Reports with tabs, filters, expandable cards, and incremental display. -->
+
+<!-- Save as: src/app/pages/my-reports/my-reports.page.html -->
+<!-- FINDSTER | Minimal, consistent My Reports — preserve all existing bindings -->
+
+<ion-header class="my-reports-header">
+  <ion-toolbar class="my-reports-toolbar">
+    <div class="toolbar-content">
+      <span class="toolbar-title">My Reports</span>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false" class="my-reports-content">
+  <main class="reports-container">
+
+    <!-- COMPACT PAGE INTRO -->
+    <section class="reports-intro">
+      <div class="reports-intro-copy">
+        <h1>Your Reports</h1>
+        <p>Manage your items and review incoming requests.</p>
+      </div>
+
+      <ion-button
+        class="create-report-button"
+        routerLink="/create-report"
+        aria-label="Create a new report"
+      >
+        Report an Item
+      </ion-button>
+    </section>
+
+    <!-- COMPACT SECTION SWITCHER -->
+    <nav class="reports-view-switch" aria-label="My Reports sections">
+      <button type="button" class="reports-view-tab"
+        [class.is-active]="activeSection === 'reports'"
+        [attr.aria-pressed]="activeSection === 'reports'"
+        (click)="setActiveSection('reports')">
+        My Items <span class="tab-count">{{ reports.length }}</span>
+      </button>
+      <button type="button" class="reports-view-tab"
+        [class.is-active]="activeSection === 'requests'"
+        [attr.aria-pressed]="activeSection === 'requests'"
+        (click)="setActiveSection('requests')">
+        Requests <span class="tab-count">{{ receivedClaims.length }}</span>
+      </button>
+    </nav>
+
+    <!-- SUBMITTED REPORTS -->
+    <section
+      class="reports-section"
+      *ngIf="activeSection === 'reports'"
+      aria-labelledby="submitted-title"
+    >
+      <div class="section-heading">
+        <div class="section-heading-text">
+          <h2 id="submitted-title">My Items</h2>
+          <p>
+            {{ reports.length }}
+            {{ reports.length === 1 ? 'report' : 'reports' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="report-filter-controls" *ngIf="!isLoading && !errorMessage && reports.length > 0">
+        <button type="button" class="report-filter-chip"
+          *ngFor="let option of reportFilterOptions"
+          [class.is-active]="selectedReportFilter === option.value"
+          [attr.aria-pressed]="selectedReportFilter === option.value"
+          (click)="setReportFilter(option.value)">
+          {{ option.label }}
+        </button>
+      </div>
+
+      <!-- LOADING -->
+      <div class="loading-state" *ngIf="isLoading" role="status" aria-live="polite">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Loading reports...</p>
+      </div>
+
+      <!-- ERROR -->
+      <div
+        class="error-state"
+        *ngIf="!isLoading && errorMessage"
+      >
+        <div class="error-symbol" aria-hidden="true">!</div>
+        <h3>Unable to Load Reports</h3>
+        <p role="alert">{{ errorMessage }}</p>
+
+        <ion-button
+          expand="block"
+          fill="outline"
+          (click)="loadMyReports(true)"
+        >
+          Try Again
+        </ion-button>
+      </div>
+
+      <!-- EMPTY -->
+      <div
+        class="empty-state"
+        *ngIf="
+          !isLoading &&
+          !errorMessage &&
+          reports.length === 0
+        "
+      >
+        <div class="empty-symbol" aria-hidden="true">
+          &#128196;
+        </div>
+
+        <h3>No reports yet</h3>
+        <p>Your lost and found reports will appear here.</p>
+
+      </div>
+
+      <div class="empty-state" *ngIf="!isLoading && !errorMessage && reports.length > 0 && filteredReports.length === 0">
+        <h3>No matching reports</h3>
+        <p>Try choosing a different status.</p>
+        <ion-button fill="outline" (click)="setReportFilter('all')">Show All</ion-button>
+      </div>
+
+      <!-- REPORT CARDS -->
+      <div
+        class="reports-list"
+        *ngIf="
+          !isLoading &&
+          !errorMessage &&
+          filteredReports.length > 0
+        "
+      >
+        <ion-card
+          class="report-card"
+          *ngFor="
+            let report of visibleReports;
+            trackBy: trackByReportId
+          "
+        >
+          <ion-card-header>
+            <div class="report-card-top">
+              <span
+                class="report-type-tag"
+                [class.lost-tag]="report.report_type === 'lost'"
+                [class.found-tag]="report.report_type === 'found'"
+              >
+                {{
+                  report.report_type === 'lost'
+                    ? 'LOST ITEM'
+                    : 'FOUND ITEM'
+                }}
+              </span>
+
+              <ion-badge
+                [color]="
+                  report.status === 'active' ? 'success' :
+                  report.status === 'claimed' ? 'warning' :
+                  report.status === 'returned' ? 'primary' : 'medium'
+                "
+              >
+                {{ report.status | titlecase }}
+              </ion-badge>
+            </div>
+
+            <ion-card-title>
+              {{ report.item_name }}
+            </ion-card-title>
+
+            <ion-card-subtitle>
+              {{ report.report_type | titlecase }} item · {{ report.barangay }} ·
+              {{ report.created_at | date:'mediumDate' }}
+            </ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content class="report-compact-content">
+            <button type="button" class="card-expand-button"
+              [attr.aria-expanded]="expandedReportId === report.id"
+              (click)="toggleReportDetails(report.id)">
+              {{ expandedReportId === report.id ? 'Hide Details' : 'View Details' }}
+              <ion-icon [name]="expandedReportId === report.id ? 'chevron-up-outline' : 'chevron-down-outline'" aria-hidden="true"></ion-icon>
+            </button>
+            <div class="expanded-card-details" *ngIf="expandedReportId === report.id">
+            <p class="report-description">
+              {{ report.description }}
+            </p>
+
+            <div class="report-info-list">
+              <div class="report-info-row">
+                <span class="info-label">Location</span>
+                <strong class="info-value">
+                  {{ report.barangay }}
+                  <span *ngIf="report.specific_location">
+                    — {{ report.specific_location }}
+                  </span>
+                </strong>
+              </div>
+
+              <div
+                class="report-info-row"
+                *ngIf="report.date_lost_found"
+              >
+                <span class="info-label">Item date</span>
+                <strong class="info-value">
+                  {{ report.date_lost_found | date:'mediumDate' }}
+                </strong>
+              </div>
+
+              <div class="report-info-row">
+                <span class="info-label">Posted</span>
+                <strong class="info-value">
+                  {{ report.created_at | date:'mediumDate' }}
+                </strong>
+              </div>
+            </div>
+
+            <div class="report-actions">
+              <ion-button
+                expand="block"
+                class="edit-button"
+                (click)="editReport(report.id)"
+                [disabled]="report.status !== 'active'"
+              >
+                Edit Report
+              </ion-button>
+
+              <ion-button
+                expand="block"
+                fill="outline"
+                color="danger"
+                class="delete-button"
+                [disabled]="
+                  report.status !== 'active' ||
+                  deletingReportId !== null
+                "
+                (click)="
+                  confirmDeleteReport(
+                    report.id,
+                    report.item_name
+                  )
+                "
+              >
+                {{
+                  deletingReportId === report.id
+                    ? 'Deleting...'
+                    : 'Delete'
+                }}
+              </ion-button>
+            </div>
+
+            <p
+              class="report-restriction"
+              *ngIf="report.status !== 'active'"
+            >
+              This report can no longer be edited or deleted.
+            </p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+      <div class="report-load-more" *ngIf="!isLoading && !errorMessage && visibleReports.length < filteredReports.length">
+        <ion-button fill="outline" expand="block" (click)="showMoreReports()">Load More Items</ion-button>
+      </div>
+    </section>
+
+    <!-- REQUESTS RECEIVED -->
+    <section
+      class="requests-section"
+      *ngIf="activeSection === 'requests'"
+      aria-labelledby="requests-title"
+    >
+      <div class="section-heading">
+        <div class="section-heading-text">
+          <h2 id="requests-title">Incoming Requests</h2>
+          <p>
+            {{ receivedClaims.length }}
+            {{
+              receivedClaims.length === 1
+                ? 'request'
+                : 'requests'
+            }}
+          </p>
+        </div>
+      </div>
+
+      <!-- LOADING -->
+      <div
+        class="loading-state"
+        *ngIf="isLoadingClaims"
+        role="status"
+        aria-live="polite"
+      >
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Loading requests...</p>
+      </div>
+
+      <!-- ERROR -->
+      <div
+        class="error-state"
+        *ngIf="!isLoadingClaims && claimsErrorMessage"
+      >
+        <div class="error-symbol" aria-hidden="true">!</div>
+        <h3>Unable to Load Requests</h3>
+        <p role="alert">{{ claimsErrorMessage }}</p>
+
+        <ion-button
+          expand="block"
+          fill="outline"
+          (click)="loadReceivedClaims(true)"
+        >
+          Try Again
+        </ion-button>
+      </div>
+
+      <!-- EMPTY -->
+      <div
+        class="empty-state"
+        *ngIf="
+          !isLoadingClaims &&
+          !claimsErrorMessage &&
+          receivedClaims.length === 0
+        "
+      >
+        <div class="empty-symbol" aria-hidden="true">
+          &#128172;
+        </div>
+
+        <h3>No requests yet</h3>
+        <p>
+          Claim requests and possible matches will appear here.
+        </p>
+      </div>
+
+      <!-- REQUEST CARDS -->
+      <div
+        class="claims-list"
+        *ngIf="
+          !isLoadingClaims &&
+          !claimsErrorMessage &&
+          receivedClaims.length > 0
+        "
+      >
+        <!-- Preserve claim-card and highlighted-claim classes:
+             these are used by notification navigation. -->
+        <ion-card
+          class="claim-card"
+          *ngFor="
+            let claim of visibleClaims;
+            trackBy: trackByClaimId
+          "
+          [class.highlighted-claim]="
+            highlightedClaimId === claim.id
+          "
+        >
+          <ion-card-header>
+            <div class="claim-card-top">
+              <span
+                class="report-type-tag"
+                [class.lost-tag]="
+                  getClaimReportType(claim) === 'lost'
+                "
+                [class.found-tag]="
+                  getClaimReportType(claim) === 'found'
+                "
+              >
+                {{ getClaimRequestLabel(claim) }}
+              </span>
+
+              <ion-badge
+                [color]="getClaimStatusColor(claim)"
+              >
+                {{ getClaimStatusLabel(claim) }}
+              </ion-badge>
+            </div>
+
+            <ion-card-title>
+              {{
+                claim.item_name ||
+                ('Report #' + claim.report_id)
+              }}
+            </ion-card-title>
+
+            <ion-card-subtitle>
+              From
+              {{
+                claim.requester_name ||
+                ('User #' + claim.requester_id)
+              }}
+            </ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content class="claim-compact-content">
+            <button type="button" class="card-expand-button"
+              [attr.aria-expanded]="expandedClaimId === claim.id"
+              (click)="toggleClaimDetails(claim.id)">
+              {{ expandedClaimId === claim.id ? 'Hide Request' : 'Review Request' }}
+              <ion-icon [name]="expandedClaimId === claim.id ? 'chevron-up-outline' : 'chevron-down-outline'" aria-hidden="true"></ion-icon>
+            </button>
+            <div class="expanded-card-details" *ngIf="expandedClaimId === claim.id">
+
+            <!-- REQUEST CONTEXT -->
+            <div class="request-explanation">
+              <p
+                *ngIf="getClaimReportType(claim) === 'found'"
+              >
+                Someone is claiming this found item. Check their proof before deciding.
+              </p>
+
+              <p
+                *ngIf="getClaimReportType(claim) === 'lost'"
+              >
+                Someone may have found your lost item. Verify the details in chat.
+              </p>
+            </div>
+
+            <!-- REQUESTER EMAIL -->
+            <div
+              class="claim-info-row"
+              *ngIf="claim.requester_email"
+            >
+              <span>Requester Email</span>
+              <strong>{{ claim.requester_email }}</strong>
+            </div>
+
+            <!-- PRIVATE VERIFICATION -->
+            <div
+              class="verification-details"
+              *ngIf="
+                claim.verification_details?.trim();
+                else legacyClaimNotice
+              "
+            >
+              <h3>Private Verification Details</h3>
+              <p class="private-verification-text">
+                {{ claim.verification_details }}
+              </p>
+              <ion-note>
+                Private information—do not share it publicly.
+              </ion-note>
+            </div>
+
+            <ng-template #legacyClaimNotice>
+              <div
+                class="verification-details missing-verification"
+              >
+                <h3>Verification Details Unavailable</h3>
+                <ion-note color="warning">
+                  No verification details provided. Confirm ownership before proceeding.
+                </ion-note>
+              </div>
+            </ng-template>
+
+            <!-- ADDITIONAL MESSAGE -->
+            <div
+              class="claim-message"
+              *ngIf="claim.message"
+            >
+              <h3>Additional Message</h3>
+              <p>{{ claim.message }}</p>
+            </div>
+
+            <!-- REQUEST CLOSURE -->
+            <div
+              class="claim-closure"
+              *ngIf="claim.status === 'rejected'"
+            >
+              <h3>Request Closure</h3>
+              <p>{{ getClaimClosureDescription(claim) }}</p>
+            </div>
+
+            <!-- SUBMITTED -->
+            <div
+              class="claim-info-row"
+              *ngIf="claim.created_at"
+            >
+              <span>Submitted</span>
+              <strong>
+                {{ claim.created_at | date:'medium' }}
+              </strong>
+            </div>
+
+            <!-- PRIVATE CHAT -->
+            <div
+              class="claim-action-section"
+              *ngIf="canOpenClaimChat(claim)"
+            >
+              <h3>Private Conversation</h3>
+
+              <ion-button
+                expand="block"
+                fill="outline"
+                class="chat-button"
+                [disabled]="openingChatClaimId !== null"
+                (click)="openClaimChat(claim)"
+              >
+                {{
+                  openingChatClaimId === claim.id
+                    ? 'Opening Chat...'
+                    : (
+                        claim.status === 'rejected' ||
+                        claim.report_status === 'returned'
+                          ? 'View Chat History'
+                          : 'Open Private Chat'
+                      )
+                }}
+              </ion-button>
+
+              <p
+                class="action-helper"
+                *ngIf="
+                  (claim.status === 'pending' || claim.status === 'approved') &&
+                  claim.report_status !== 'returned'
+                "
+              >
+                Verify the item and arrange handover through chat.
+              </p>
+
+              <p
+                class="action-helper"
+                *ngIf="
+                  claim.status === 'rejected' ||
+                  claim.report_status === 'returned'
+                "
+              >
+                This conversation is read-only.
+              </p>
+            </div>
+
+            <!-- FOUND ITEM: APPROVAL / REJECTION -->
+            <div
+              class="claim-action-section decision-section"
+              *ngIf="showDecisionActions(claim)"
+            >
+              <h3>Ownership Verification</h3>
+
+              <p>
+                Approve only after verifying ownership. Other pending claims will close.
+              </p>
+
+              <ion-button
+                expand="block"
+                color="success"
+                class="approve-button"
+                [disabled]="
+                  processingClaimId !== null ||
+                  claim.report_status !== 'active'
+                "
+                (click)="decideClaim(claim, 'approve')"
+              >
+                {{
+                  processingClaimId === claim.id
+                    ? 'Processing...'
+                    : getApproveActionLabel(claim)
+                }}
+              </ion-button>
+
+              <ion-button
+                expand="block"
+                color="danger"
+                fill="outline"
+                class="reject-button"
+                [disabled]="processingClaimId !== null"
+                (click)="decideClaim(claim, 'reject')"
+              >
+                {{ getRejectActionLabel(claim) }}
+              </ion-button>
+            </div>
+
+            <!-- LOST ITEM: NOT A MATCH -->
+            <div
+              class="claim-action-section not-match-section"
+              *ngIf="showNotAMatchAction(claim)"
+            >
+              <h3>Item Verification</h3>
+
+              <p>
+                Not the right item? Close this request without affecting your report.
+              </p>
+
+              <ion-button
+                expand="block"
+                color="danger"
+                fill="outline"
+                class="not-match-button"
+                [disabled]="!canMarkNotAMatch(claim)"
+                (click)="confirmNotAMatch(claim)"
+              >
+                {{
+                  processingClaimId === claim.id
+                    ? 'Processing...'
+                    : 'Not a Match'
+                }}
+              </ion-button>
+            </div>
+
+            <!-- PHYSICAL HANDOVER -->
+            <div
+              class="return-confirmation-section"
+              *ngIf="showHandoverSection(claim)"
+            >
+              <h3>Item Handover</h3>
+
+              <p class="handover-description">
+                {{ getReturnProgress(claim) }}
+              </p>
+
+              <!-- REPORT OWNER CONFIRMATION -->
+              <div class="handover-row">
+                <div>
+                  <strong>
+                    {{
+                      getClaimReportType(claim) === 'lost'
+                        ? 'Lost-Item Owner'
+                        : 'Found-Item Finder'
+                    }}
+                  </strong>
+
+                  <span *ngIf="claim.owner_return_confirmed_at">
+                    Confirmed on
+                    {{
+                      claim.owner_return_confirmed_at
+                        | date:'medium'
+                    }}
+                  </span>
+                </div>
+
+                <ion-badge
+                  [color]="
+                    claim.owner_return_confirmed_at
+                      ? 'success'
+                      : 'warning'
+                  "
+                >
+                  {{
+                    claim.owner_return_confirmed_at
+                      ? 'Confirmed'
+                      : 'Pending'
+                  }}
+                </ion-badge>
+              </div>
+
+              <!-- REQUESTER CONFIRMATION -->
+              <div class="handover-row">
+                <div>
+                  <strong>
+                    {{
+                      getClaimReportType(claim) === 'lost'
+                        ? 'Person Who Found the Item'
+                        : 'Approved Item Owner'
+                    }}
+                  </strong>
+
+                  <span
+                    *ngIf="claim.requester_return_confirmed_at"
+                  >
+                    Confirmed on
+                    {{
+                      claim.requester_return_confirmed_at
+                        | date:'medium'
+                    }}
+                  </span>
+                </div>
+
+                <ion-badge
+                  [color]="
+                    claim.requester_return_confirmed_at
+                      ? 'success'
+                      : 'warning'
+                  "
+                >
+                  {{
+                    claim.requester_return_confirmed_at
+                      ? 'Confirmed'
+                      : 'Pending'
+                  }}
+                </ion-badge>
+              </div>
+
+              <!-- HANDOVER CONFIRMATION -->
+              <ion-button
+                *ngIf="canConfirmReturn(claim)"
+                expand="block"
+                class="confirm-return-button"
+                [disabled]="processingClaimId !== null"
+                (click)="confirmReturned(claim)"
+              >
+                {{
+                  processingClaimId === claim.id
+                    ? 'Processing...'
+                    : (
+                        getClaimReportType(claim) === 'found'
+                          ? 'Confirm Item Handed Over'
+                          : 'Confirm Item Received'
+                      )
+                }}
+              </ion-button>
+
+              <p
+                class="handover-warning"
+                *ngIf="canConfirmReturn(claim)"
+              >
+                {{
+                  getClaimReportType(claim) === 'found'
+                    ? 'Confirm only after physically handing the item to the verified owner.'
+                    : 'Confirm only after physically receiving your lost item.'
+                }}
+              </p>
+            </div>
+
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+      <div class="report-load-more" *ngIf="!isLoadingClaims && !claimsErrorMessage && visibleClaims.length < receivedClaims.length">
+        <ion-button fill="outline" expand="block" (click)="showMoreClaims()">Load More Requests</ion-button>
+      </div>
+    </section>
+
+  </main>
+</ion-content>
