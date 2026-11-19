@@ -1,0 +1,459 @@
+<!-- =====================================================
+     FINDSTER — CREATE REPORT
+     Refined mobile-first form | existing behavior preserved
+     ===================================================== -->
+
+<ion-header class="report-header">
+  <ion-toolbar class="report-toolbar">
+    <div class="toolbar-content">
+      <button
+        type="button"
+        class="back-button"
+        (click)="handleReportBack()"
+        [disabled]="
+          isSubmitting ||
+          isGettingLocation ||
+          isSelectingPhoto
+        "
+        [attr.aria-label]="reportStep === 1 ? 'Back to Home' : 'Previous step'"
+      >
+        <ion-icon
+          name="arrow-back-outline"
+          aria-hidden="true"
+        ></ion-icon>
+      </button>
+
+      <span class="toolbar-title">Create Report</span>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content
+  [fullscreen]="false"
+  [scrollY]="true"
+  class="create-report-content"
+>
+  <main class="report-container">
+
+    <div class="report-step-progress" aria-label="Report creation progress">
+      <span class="step-counter">Step {{ reportStep }} of 3</span>
+      <div class="progress-track" aria-hidden="true">
+        <span [style.width.%]="reportStep * 100 / 3"></span>
+      </div>
+    </div>
+
+    <form class="report-form" (ngSubmit)="submitReport()">
+
+      @if (reportStep === 1) {
+        <div class="report-step" aria-label="Item details step">
+      <!-- REPORT TYPE -->
+      <section
+        class="form-card"
+        aria-label="Choose report type"
+      >
+        <div class="form-field">
+          <ion-select
+            label="Report Type"
+            label-placement="stacked"
+            placeholder="Select report type"
+            [(ngModel)]="reportType"
+            name="reportType"
+            interface="popover"
+            [disabled]="isSubmitting"
+            required
+          >
+            <ion-select-option value="lost">
+              Lost Item
+            </ion-select-option>
+
+            <ion-select-option value="found">
+              Found Item
+            </ion-select-option>
+          </ion-select>
+        </div>
+
+      </section>
+
+      <!-- ITEM DETAILS -->
+      <section
+        class="form-card"
+        aria-labelledby="item-details-heading"
+      >
+        <div class="section-heading">
+          <div>
+            <h2 id="item-details-heading">Item Details</h2>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <ion-input
+            label="Item Name"
+            label-placement="stacked"
+            placeholder="e.g. Black wallet"
+            [(ngModel)]="itemName"
+            name="itemName"
+            [disabled]="isSubmitting"
+            required
+          ></ion-input>
+        </div>
+
+        <div class="form-field">
+          <ion-textarea
+            label="Description"
+            label-placement="stacked"
+            placeholder="Color, brand, or identifying details"
+            [(ngModel)]="description"
+            name="description"
+            [autoGrow]="true"
+            [rows]="2"
+            [disabled]="isSubmitting"
+            required
+          ></ion-textarea>
+        </div>
+
+        <div class="form-field">
+          <ion-select
+            label="Category"
+            label-placement="stacked"
+            placeholder="Select category"
+            [(ngModel)]="category"
+            name="category"
+            interface="popover"
+            [disabled]="isSubmitting"
+            required
+          >
+            <ion-select-option value="Electronics">
+              Electronics
+            </ion-select-option>
+
+            <ion-select-option value="Wallet">
+              Wallet
+            </ion-select-option>
+
+            <ion-select-option value="ID and Documents">
+              ID and Documents
+            </ion-select-option>
+
+            <ion-select-option value="Keys">
+              Keys
+            </ion-select-option>
+
+            <ion-select-option value="Bags">
+              Bags
+            </ion-select-option>
+
+            <ion-select-option value="Clothing">
+              Clothing
+            </ion-select-option>
+
+            <ion-select-option value="Accessories">
+              Accessories
+            </ion-select-option>
+
+            <ion-select-option value="Others">
+              Others
+            </ion-select-option>
+          </ion-select>
+        </div>
+      </section>
+          <ion-button expand="block" type="button" class="submit-button step-next"
+            (click)="nextReportStep()"
+            [disabled]="isSubmitting || isGettingLocation || isSelectingPhoto">
+            Continue to Location
+          </ion-button>
+        </div>
+      }
+
+      @if (reportStep === 2) {
+        <div class="report-step" aria-label="Location step">
+      <!-- LOCATION -->
+      <section
+        class="form-card"
+        aria-labelledby="location-heading"
+      >
+        <div class="section-heading">
+          <div>
+            <h2 id="location-heading">Location</h2>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <ion-select
+            label="Barangay"
+            label-placement="stacked"
+            placeholder="Select barangay"
+            [(ngModel)]="barangay"
+            name="barangay"
+            interface="popover"
+            [disabled]="isSubmitting"
+            required
+          >
+            @for (place of barangays; track place) {
+              <ion-select-option [value]="place">
+                {{ place }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </div>
+
+        <div class="form-field">
+          <ion-input
+            label="Specific Location (Optional)"
+            label-placement="stacked"
+            placeholder="e.g. Near the public market"
+            [(ngModel)]="specificLocation"
+            name="specificLocation"
+            [disabled]="isSubmitting"
+          ></ion-input>
+        </div>
+
+        <div class="form-field">
+          <ion-input
+            label="Date Lost or Found (Optional)"
+            label-placement="stacked"
+            type="date"
+            [(ngModel)]="dateLostFound"
+            name="dateLostFound"
+            [disabled]="isSubmitting"
+          ></ion-input>
+        </div>
+
+        <!-- OPTIONAL GPS -->
+        <div class="location-section">
+          <div class="subsection-heading">
+            <h3>
+              GPS Location
+              <span>(Optional)</span>
+            </h3>
+
+            <p class="location-help">
+              Use only if you are at the location
+              where the item was lost or found.
+            </p>
+          </div>
+
+          <ion-button
+            expand="block"
+            type="button"
+            class="location-button"
+            (click)="useCurrentLocation()"
+            [disabled]="
+              isSubmitting ||
+              isGettingLocation
+            "
+          >
+            <ion-icon
+              name="location-outline"
+              slot="start"
+              aria-hidden="true"
+            ></ion-icon>
+
+            {{
+              isGettingLocation
+                ? 'Getting Location...'
+                : 'Use Current Location'
+            }}
+          </ion-button>
+
+          @if (latitude !== null && longitude !== null) {
+            <div class="location-preview">
+              <p class="location-success">
+                <ion-icon
+                  name="checkmark-circle-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+                Location captured
+              </p>
+
+              <details class="location-coordinates">
+                <summary>View GPS coordinates</summary>
+                <p><strong>Latitude:</strong> {{ latitude }}</p>
+                <p><strong>Longitude:</strong> {{ longitude }}</p>
+              </details>
+
+              <ion-button
+                expand="block"
+                fill="outline"
+                color="danger"
+                type="button"
+                (click)="clearLocation()"
+                [disabled]="
+                  isSubmitting ||
+                  isGettingLocation
+                "
+              >
+                Clear Location
+              </ion-button>
+            </div>
+          }
+        </div>
+      </section>
+          <ion-button expand="block" type="button" class="submit-button step-next"
+            (click)="nextReportStep()"
+            [disabled]="isSubmitting || isGettingLocation || isSelectingPhoto">
+            Continue to Photo
+          </ion-button>
+        </div>
+      }
+
+      @if (reportStep === 3) {
+        <div class="report-step" aria-label="Photo and submission step">
+      <!-- ITEM PHOTO -->
+      <section
+        class="form-card"
+        aria-labelledby="photo-heading"
+      >
+        <div class="section-heading">
+          <div>
+            <h2 id="photo-heading">
+              Item Photo
+              <span class="optional-label">
+                (Optional)
+              </span>
+            </h2>
+
+            <p>
+              JPG, PNG, or WEBP — maximum 5 MB.
+            </p>
+          </div>
+        </div>
+
+        <div class="photo-section">
+
+          <!-- CAMERA / GALLERY -->
+          <div class="photo-actions">
+            <ion-button
+              expand="block"
+              type="button"
+              class="camera-button"
+              (click)="takePhoto()"
+              [disabled]="
+                isSubmitting ||
+                isSelectingPhoto
+              "
+            >
+              <ion-icon
+                name="camera-outline"
+                slot="start"
+                aria-hidden="true"
+              ></ion-icon>
+
+              {{
+                isSelectingPhoto
+                  ? 'Opening Camera...'
+                  : 'Take Photo'
+              }}
+            </ion-button>
+
+            <ion-button
+              expand="block"
+              fill="outline"
+              type="button"
+              class="gallery-button"
+              (click)="chooseFromGallery()"
+              [disabled]="
+                isSubmitting ||
+                isSelectingPhoto
+              "
+            >
+              <ion-icon
+                name="images-outline"
+                slot="start"
+                aria-hidden="true"
+              ></ion-icon>
+              Gallery
+            </ion-button>
+          </div>
+
+          <!-- FILE PICKER -->
+          <input
+            #photoInput
+            class="file-input"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            (change)="onPhotoSelected($event)"
+            [disabled]="
+              isSubmitting ||
+              isSelectingPhoto
+            "
+            aria-label="Choose an item photo file"
+          />
+
+          <ion-button
+            expand="block"
+            fill="clear"
+            type="button"
+            class="file-button"
+            (click)="photoInput.click()"
+            [disabled]="
+              isSubmitting ||
+              isSelectingPhoto
+            "
+          >
+            Choose Image File
+          </ion-button>
+
+          <!-- PHOTO PREVIEW -->
+          @if (photoPreview) {
+            <div class="photo-preview">
+              <img
+                [src]="photoPreview"
+                alt="Selected item photo preview"
+              />
+
+              <ion-button
+                expand="block"
+                fill="outline"
+                color="danger"
+                type="button"
+                (click)="removePhoto()"
+                [disabled]="
+                  isSubmitting ||
+                  isSelectingPhoto
+                "
+              >
+                Remove Photo
+              </ion-button>
+            </div>
+          }
+
+          <!-- PHOTO ERROR -->
+          @if (photoError) {
+            <p class="photo-error" role="alert">
+              {{ photoError }}
+            </p>
+          }
+        </div>
+      </section>
+
+      <!-- SUBMIT REPORT — ONLY AT THE BOTTOM -->
+      <div class="submission-section">
+        <ion-button
+          expand="block"
+          type="submit"
+          class="submit-button"
+          [disabled]="
+            isSubmitting ||
+            isGettingLocation ||
+            isSelectingPhoto
+          "
+        >
+          <ion-icon
+            name="checkmark-circle-outline"
+            slot="start"
+            aria-hidden="true"
+          ></ion-icon>
+
+          {{
+            isSubmitting
+              ? 'Submitting...'
+              : 'Submit Report'
+          }}
+        </ion-button>
+      </div>
+        </div>
+      }
+
+    </form>
+  </main>
+</ion-content>

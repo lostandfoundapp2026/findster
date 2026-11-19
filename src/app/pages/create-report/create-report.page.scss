@@ -1,0 +1,438 @@
+/* =========================================================
+   FINDSTER — CREATE REPORT / DESIGN 02
+   Clean Form Surface • Mobile First • Three Steps
+   Matches Login, Forgot Password and Registration palette.
+   SCSS ONLY: preserves existing HTML and TypeScript bindings.
+   ========================================================= */
+
+:host {
+  display: block;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+
+  --report-blue: #0758d3;
+  --report-blue-dark: #0649b3;
+  --report-blue-soft: #edf4ff;
+  --report-navy: #092d66;
+  --report-text: #24344c;
+  --report-muted: #65758d;
+  --report-bg: #f7f9fd;
+  --report-surface: #ffffff;
+  --report-border: #e4ebf5;
+  --report-field: #f9fbfe;
+  --report-field-border: #dce5f1;
+}
+
+/* Fixed Ionic header: back button stays at upper left while content scrolls. */
+.report-header { box-shadow: none; }
+.report-header::after { display: none; }
+.report-toolbar {
+  --background: #ffffff;
+  --color: var(--report-navy);
+  --min-height: 58px;
+  --padding-start: 0;
+  --padding-end: 0;
+  --border-width: 0;
+  border-bottom: 1px solid var(--report-border);
+}
+.toolbar-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 58px;
+  padding: 6px 66px;
+  box-sizing: border-box;
+}
+.toolbar-title {
+  color: var(--report-navy);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  text-align: center;
+}
+.back-button {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #dce9fa;
+  border-radius: 12px;
+  background: #f1f6ff;
+  color: var(--report-blue);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.back-button ion-icon { display: block; width: 21px; height: 21px; font-size: 21px; }
+.back-button:focus-visible { outline: 2px solid var(--report-blue); outline-offset: 3px; }
+.back-button:disabled { opacity: .45; cursor: not-allowed; }
+
+/* Page stays readable on small screens and with the keyboard open. */
+.create-report-content {
+  --background: var(--report-bg);
+  --color: var(--report-text);
+  --overflow: auto;
+}
+.report-container {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 18px max(26px, env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+}
+
+/* Compact progress: one visual guide rather than three large numbered circles. */
+.report-step-progress { margin: 0 2px 16px; }
+.step-counter {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--report-blue);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: .01em;
+}
+.progress-track {
+  width: 100%;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e6edf8;
+}
+.progress-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--report-blue);
+  transition: width 200ms ease;
+}
+
+/* Each step looks like ONE login-style form, rather than stacked competing cards. */
+.report-form, .report-step { display: flex; flex-direction: column; min-width: 0; }
+.report-form { gap: 0; }
+.report-step { gap: 0; }
+.form-card {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 20px 20px 0;
+  box-sizing: border-box;
+  border: 1px solid var(--report-border);
+  border-bottom: 0;
+  border-radius: 0;
+  background: var(--report-surface);
+  box-shadow: none;
+}
+/* Merge adjacent sections into a single continuous white surface. */
+.report-step > .form-card:first-child {
+  border-radius: 20px 20px 0 0;
+  padding-top: 22px;
+}
+.report-step > .form-card:last-of-type {
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--report-border);
+  border-radius: 0 0 20px 20px;
+  box-shadow: 0 12px 34px rgba(9, 45, 102, .045);
+}
+/* The first step has two sections: separate with space, not another card. */
+.report-step > .form-card + .form-card { padding-top: 14px; }
+
+.section-heading { display: block; margin: 0 0 17px; }
+.section-heading > div { min-width: 0; }
+.section-heading h2 {
+  margin: 0;
+  color: var(--report-navy);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.45px;
+}
+.section-heading p {
+  margin: 6px 0 0;
+  color: var(--report-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.optional-label { color: var(--report-muted); font-size: 12px; font-weight: 500; }
+
+/* Consistent fields: 16px input text, clear labels and generous touch targets. */
+.form-field { position: relative; width: 100%; min-width: 0; margin: 0 0 14px; }
+.form-field:last-child { margin-bottom: 0; }
+.form-field ion-input,
+.form-field ion-select,
+.form-field ion-textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  --background: var(--report-field);
+  --color: var(--report-text);
+  --placeholder-color: #8796aa;
+  --placeholder-opacity: 1;
+  --highlight-color-focused: var(--report-blue);
+  --border-color: var(--report-field-border);
+  --border-radius: 12px;
+  --border-style: solid;
+  --border-width: 1px;
+  --padding-start: 13px;
+  --padding-end: 13px;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-weight: 500;
+}
+.form-field ion-input, .form-field ion-select { min-height: 56px; }
+.form-field ion-textarea { min-height: 94px; }
+.form-field ion-input::part(label),
+.form-field ion-select::part(label),
+.form-field ion-textarea::part(label) {
+  color: #34455f;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.form-field:focus-within ion-input,
+.form-field:focus-within ion-select,
+.form-field:focus-within ion-textarea { --border-color: var(--report-blue); }
+.form-field ion-select::part(text),
+.form-field ion-select::part(placeholder) { overflow: hidden; text-overflow: ellipsis; }
+.field-helper { margin: 5px 2px 0; color: var(--report-muted); font-size: 12px; line-height: 1.45; }
+
+/* Existing optional report-type info remains supported. */
+.report-type-info { margin: 0 0 13px; padding: 9px 11px; border-radius: 10px; background: var(--report-blue-soft); }
+.report-type-info p { margin: 0; color: #31557f; font-size: 12px; line-height: 1.45; }
+
+/* GPS: a quiet sub-section, not an extra prominent card. */
+.location-section {
+  margin-top: 3px;
+  padding: 14px;
+  border: 1px solid #e3ebf7;
+  border-radius: 12px;
+  background: #f9fbff;
+}
+.subsection-heading h3 { margin: 0 0 4px; color: var(--report-navy); font-size: 14px; font-weight: 800; }
+.subsection-heading h3 span { color: var(--report-muted); font-size: 12px; font-weight: 500; }
+.location-help { margin: 0 0 12px; color: var(--report-muted); font-size: 12px; line-height: 1.5; }
+.location-button {
+  --background: var(--report-blue-soft);
+  --background-hover: #e0ecff;
+  --background-activated: #d5e5ff;
+  --color: var(--report-blue);
+  --border-radius: 11px;
+  --box-shadow: none;
+  width: 100%;
+  min-height: 46px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 750;
+  text-transform: none;
+}
+.location-button ion-icon { font-size: 18px; }
+.location-preview { margin-top: 12px; padding: 12px; border: 1px solid #cce8d8; border-radius: 11px; background: #effaf3; overflow-wrap: anywhere; }
+.location-preview p { margin: 0 0 5px; color: #176244; font-size: 12px; line-height: 1.45; }
+.location-preview p:last-of-type { margin-bottom: 0; }
+.location-success { display: flex; align-items: center; gap: 7px; font-weight: 750; }
+.location-success ion-icon { flex: 0 0 auto; font-size: 18px; }
+.location-coordinates { margin-top: 9px; font-size: 12px; }
+.location-coordinates summary { color: var(--report-blue); font-weight: 750; cursor: pointer; padding: 4px 0; }
+.location-coordinates summary:focus-visible { outline: 2px solid var(--report-blue); outline-offset: 2px; }
+.location-coordinates p { margin-top: 7px; }
+.location-preview ion-button { --border-radius: 10px; width: 100%; min-height: 44px; margin: 9px 0 0; font-size: 12px; font-weight: 700; text-transform: none; }
+.location-empty { margin: 10px 0 0; color: var(--report-muted); font-size: 12px; line-height: 1.5; }
+
+/* Photo step: dashed upload area stays functional, but does not dominate. */
+.photo-section { padding: 15px; border: 1px dashed #c6d7ed; border-radius: 13px; background: #f9fbff; }
+.photo-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.photo-actions ion-button {
+  --border-radius: 11px;
+  --box-shadow: none;
+  min-width: 0;
+  min-height: 46px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: none;
+}
+.photo-actions ion-icon { font-size: 17px; }
+.camera-button { --background: var(--report-blue); --color: #ffffff; }
+.gallery-button { --color: var(--report-blue); --border-color: #bbd0ed; }
+.file-input { display: none; }
+.file-button { --color: var(--report-blue); width: 100%; min-height: 44px; margin: 6px 0 0; font-size: 12px; font-weight: 700; text-transform: none; }
+.photo-preview { margin-top: 13px; padding: 10px; border: 1px solid var(--report-border); border-radius: 12px; background: #ffffff; }
+.photo-preview img { display: block; width: 100%; max-height: 230px; border-radius: 9px; background: #f1f5fa; object-fit: contain; }
+.photo-preview ion-button { --border-radius: 10px; width: 100%; min-height: 44px; margin: 10px 0 0; font-size: 12px; font-weight: 700; text-transform: none; }
+.photo-error { margin: 10px 0 0; padding: 10px; border-radius: 10px; background: #fff2f4; color: #9c2736; font-size: 12px; line-height: 1.5; }
+
+/* Action buttons: strong hierarchy, same blue CTA as Login. */
+.report-step > .step-next { margin: 16px 0 0; }
+.submission-section { margin: 16px 0 0; padding: 0; border: 0; background: transparent; box-shadow: none; }
+.submission-note { margin: 0 0 10px; color: var(--report-muted); font-size: 12px; text-align: center; }
+.submit-button {
+  --background: var(--report-blue);
+  --background-hover: #064fbd;
+  --background-activated: var(--report-blue-dark);
+  --color: #ffffff;
+  --border-radius: 12px;
+  --box-shadow: 0 7px 17px rgba(7, 88, 211, .14);
+  width: 100%;
+  min-height: 50px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.submit-button::part(native),
+.location-button::part(native),
+.photo-actions ion-button::part(native) { min-height: 44px; }
+.submit-button::part(native) { min-height: 50px; }
+.submit-button ion-icon { font-size: 18px; }
+.submit-button:focus-visible::part(native) { outline: 2px solid var(--report-blue); outline-offset: 3px; }
+
+/* Classes retained for compatibility if the prior introduction returns. */
+.report-intro { margin: 0 0 12px; }
+.report-intro h1 { margin: 0 0 5px; color: var(--report-navy); font-size: 21px; font-weight: 800; }
+.subtitle { margin: 0; color: var(--report-muted); font-size: 13px; line-height: 1.5; }
+
+/* Narrow screens: reduce whitespace, never sacrifice legibility. */
+@media (max-width: 360px) {
+  .report-container { padding: 14px 12px max(20px, env(safe-area-inset-bottom, 0px)); }
+  .toolbar-content { padding-inline: 58px; }
+  .back-button { left: 10px; }
+  .form-card { padding-inline: 15px; }
+  .report-step > .form-card:first-child { padding-top: 18px; }
+  .report-step > .form-card:last-of-type { padding-bottom: 17px; }
+  .section-heading h2 { font-size: 19px; }
+  .photo-section, .location-section { padding: 11px; }
+  .photo-actions { gap: 7px; }
+  .photo-actions ion-button { font-size: 11.5px; }
+}
+
+@media (max-height: 700px) {
+  .report-container { padding-top: 12px; }
+  .report-step-progress { margin-bottom: 12px; }
+  .section-heading { margin-bottom: 13px; }
+  .form-field { margin-bottom: 11px; }
+  .report-step > .step-next, .submission-section { margin-top: 12px; }
+}
+
+@media (min-width: 600px) {
+  .report-container { padding: 28px 26px 48px; }
+  .form-card { padding-left: 26px; padding-right: 26px; }
+  .report-step > .form-card:first-child { padding-top: 27px; }
+  .report-step > .form-card:last-of-type { padding-bottom: 26px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-track > span { transition: none !important; }
+}
+
+
+/* =========================================================
+   SAN LEONARDO — REQUIRED INCIDENT MAP
+   Matches Create Report Step 2 without changing form bindings.
+   Map rendering, markers and polygon validation are implemented
+   separately in TypeScript; these rules only style the container.
+   ========================================================= */
+
+.required-label {
+  color: #bd3544;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.incident-map-wrapper {
+  min-width: 0;
+  margin: 12px 0 14px;
+  padding: 8px;
+  border: 1px solid #d5e3f4;
+  border-radius: 13px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.incident-location-map {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 290px;
+  min-height: 250px;
+  border: 1px solid #dae5f3;
+  border-radius: 10px;
+  background: #eaf1f9;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Leaflet is optional until its TypeScript integration is added. */
+.incident-location-map .leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+.incident-location-map .leaflet-control-container {
+  position: relative;
+  z-index: 400;
+}
+
+.map-help {
+  margin: 9px 4px 2px;
+  color: var(--report-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.location-section > .location-help {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.location-required-message {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid #e6cf9b;
+  border-radius: 10px;
+  background: #fffbf1;
+  color: #795b20;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.location-section .location-button {
+  --background: #edf4ff;
+  --color: var(--report-blue);
+  --border-radius: 11px;
+  --box-shadow: none;
+  width: 100%;
+  min-height: 46px;
+  font-size: 12.5px;
+}
+
+.location-section .location-preview {
+  margin-top: 12px;
+}
+
+@media (max-width: 360px) {
+  .incident-map-wrapper {
+    margin-top: 10px;
+    padding: 6px;
+  }
+
+  .incident-location-map {
+    height: 245px;
+    min-height: 245px;
+  }
+
+  .map-help,
+  .location-required-message {
+    font-size: 11.5px;
+  }
+}
+
+@media (min-width: 600px) {
+  .incident-location-map {
+    height: 350px;
+  }
+}
