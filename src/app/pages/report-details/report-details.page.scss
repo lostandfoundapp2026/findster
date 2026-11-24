@@ -1111,3 +1111,52 @@
     height: 270px;
   }
 }
+
+/* ---------------------------------------------------------
+   REPORT DETAILS CLEANUP: section hierarchy and responsive rows
+   --------------------------------------------------------- */
+.info-card .incident-heading {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #edf1f6;
+}
+
+.claim-card .claim-status {
+  margin-bottom: 10px;
+}
+
+.claim-card .chat-section {
+  margin-top: 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.claim-card .chat-button,
+.claim-card .handover-button {
+  width: 100%;
+  min-width: 0;
+}
+
+.claim-card .handover-section {
+  margin-top: 14px;
+}
+
+/* A long label must not squeeze or overflow its value on phones. */
+@media (max-width: 420px) {
+  .details-container .detail-row {
+    grid-template-columns: minmax(0, 104px) minmax(0, 1fr);
+    gap: 10px;
+  }
+  .details-container .detail-label,
+  .details-container .detail-value {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 340px) {
+  .details-container .detail-row {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+}

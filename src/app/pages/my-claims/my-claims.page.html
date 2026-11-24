@@ -1,4 +1,3 @@
-
 <!-- =====================================================
      FINDSTER — MY CLAIMS PAGE
      Compact Mobile-First Cards with Expandable Details
@@ -265,8 +264,6 @@
 
           <!-- CLAIM REFERENCE -->
           <ion-card-subtitle class="claim-reference">
-            Report #{{ claim.report_id }}
-            <span aria-hidden="true">·</span>
             Claim #{{ claim.id }}
           </ion-card-subtitle>
 
@@ -366,13 +363,7 @@
             <h3>Awaiting Item Verification</h3>
 
             <p>
-              Chat with the owner to verify whether
-              the item matches.
-            </p>
-
-            <p>
-              Arrange the return only after verification.
-              Both parties must confirm the handover.
+              Verify the item privately with the owner before arranging a return.
             </p>
           </section>
 
@@ -389,8 +380,7 @@
             <h3>Ownership Verification Pending</h3>
 
             <p>
-              The finder is reviewing your request.
-              Share proof of ownership privately.
+              The finder is reviewing your request. Verify ownership in private chat.
             </p>
           </section>
 
@@ -407,9 +397,6 @@
               {{ getClaimClosureDescription(claim) }}
             </p>
 
-            <p class="guidance-caption">
-              Existing chat history is read-only.
-            </p>
           </section>
 
           <!-- ===========================================
@@ -426,13 +413,7 @@
             <h3>Selected Finder</h3>
 
             <p>
-              Your response was selected.
-              Arrange the return through private chat.
-            </p>
-
-            <p>
-              Confirm the handover in View Report
-              after giving the item to its owner.
+              Coordinate the handover through private chat. Confirm it in View Report after returning the item.
             </p>
           </section>
 
@@ -450,13 +431,7 @@
             <h3>Ownership Claim Approved</h3>
 
             <p>
-              Your claim was approved.
-              Arrange collection through private chat.
-            </p>
-
-            <p>
-              Confirm receipt only after the item
-              is in your possession.
+              Arrange collection through private chat. Confirm receipt only after receiving the item.
             </p>
           </section>
 
@@ -571,61 +546,21 @@
 
             </div>
 
-            <!-- HANDOVER INSTRUCTIONS -->
-            <div
-              class="handover-instruction"
-              *ngIf="
-                claim.report_status === 'claimed' &&
-                !claim.requester_return_confirmed_at
-              "
-            >
-              <p>
-                {{
-                  claim.report_type === 'lost'
-                    ? 'After handing the item to its owner, open View Report to confirm the handover.'
-                    : 'After physically receiving your item, open View Report to confirm receipt.'
-                }}
-              </p>
-            </div>
-
-            <!-- COMPLETED HANDOVER -->
-            <div
-              class="handover-finished"
-              *ngIf="claim.report_status === 'returned'"
-            >
-              <strong>
-                Item Successfully Returned
-              </strong>
-
-              <p>
-                Both parties have confirmed the handover.
-              </p>
-            </div>
-
-          </section>
+            </section>
 
           <!-- ===========================================
                ACTION BUTTONS
                =========================================== -->
-          <div class="claim-actions">
+          <div class="claim-actions" role="group" aria-label="Claim actions">
 
-            <!-- PRIVATE CHAT -->
             <ion-button
               expand="block"
               fill="outline"
               class="chat-action-button"
               (click)="openClaimChat(claim)"
-              [disabled]="
-                openingChatClaimId !== null ||
-                !canOpenClaimChat(claim)
-              "
+              [disabled]="openingChatClaimId !== null || !canOpenClaimChat(claim)"
             >
-              <ion-icon
-                name="chatbubble-outline"
-                slot="start"
-                aria-hidden="true"
-              ></ion-icon>
-
+              <ion-icon name="chatbubble-outline" slot="start" aria-hidden="true"></ion-icon>
               {{
                 openingChatClaimId === claim.id
                   ? 'Opening Chat...'
@@ -637,37 +572,25 @@
                     ? 'View Chat History'
                     : 'Open Private Chat'
               }}
-
             </ion-button>
 
-            <!-- CHAT NOTICE -->
-            <p
-              class="chat-notice"
-              *ngIf="
-                chatNoticeClaimId === claim.id &&
-                chatNoticeMessage
-              "
-              role="status"
-            >
-              {{ chatNoticeMessage }}
-            </p>
-
-            <!-- VIEW REPORT -->
             <ion-button
               expand="block"
               class="view-report-button"
               (click)="viewReport(claim.report_id)"
             >
-              <ion-icon
-                name="document-text-outline"
-                slot="start"
-                aria-hidden="true"
-              ></ion-icon>
-
+              <ion-icon name="document-text-outline" slot="start" aria-hidden="true"></ion-icon>
               View Report
             </ion-button>
-
           </div>
+
+          <p
+            class="chat-notice"
+            *ngIf="chatNoticeClaimId === claim.id && chatNoticeMessage"
+            role="status"
+          >
+            {{ chatNoticeMessage }}
+          </p>
 
         </ion-card-content>
 

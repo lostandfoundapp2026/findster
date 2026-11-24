@@ -1,4 +1,3 @@
-
 import { CommonModule } from '@angular/common';
 
 import {
@@ -671,11 +670,14 @@ export class MyClaimsPage implements OnDestroy {
 
           if (conversation) {
 
-            void this.router.navigate([
-              '/chat',
-              conversation.id,
-            ]);
-
+           void this.router.navigate(
+  ['/chat', conversation.id],
+  {
+    queryParams: {
+      from: 'my-claims',
+    },
+  },
+);
           } else {
 
             this.chatNoticeClaimId = claim.id;
@@ -728,10 +730,14 @@ export class MyClaimsPage implements OnDestroy {
       return;
     }
 
-    void this.router.navigate([
-      '/report-details',
-      reportId,
-    ]);
+    // Preserve the navigation source so Report Details can
+    // show a focused view and return to My Claims.
+    void this.router.navigate(
+      ['/report-details', reportId],
+      {
+        queryParams: { from: 'my-claims' },
+      },
+    );
   }
 
   /* ============================================================

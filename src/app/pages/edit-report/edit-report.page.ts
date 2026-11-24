@@ -140,6 +140,10 @@ export class EditReportPage implements OnInit, OnDestroy {
   barangay = '';
   specificLocation = '';
   dateLostFound = '';
+  timeLostFound = '';
+
+  // Server-recorded original submission timestamp (read-only).
+  reportedAt: string | null = null;
 
   // ==========================================
   // GPS LOCATION
@@ -313,6 +317,7 @@ export class EditReportPage implements OnInit, OnDestroy {
       specificLocation: this.specificLocation.trim(),
 
       dateLostFound: this.dateLostFound || '',
+      timeLostFound: this.timeLostFound || '',
 
       latitude: this.latitude,
 
@@ -418,6 +423,14 @@ export class EditReportPage implements OnInit, OnDestroy {
             report.date_lost_found
               ? report.date_lost_found.substring(0, 10)
               : '';
+
+          // MySQL TIME may arrive as HH:mm:ss; ion-input uses HH:mm.
+          this.timeLostFound = report.time_lost_found
+            ? report.time_lost_found.substring(0, 5)
+            : '';
+
+          // Do not include this in the editable form snapshot.
+          this.reportedAt = report.created_at ?? null;
 
           this.latitude =
             report.latitude ?? null;
@@ -939,6 +952,55 @@ export class EditReportPage implements OnInit, OnDestroy {
       return;
     }
 
+    // Validate the optional incident date/time before sending the update.
+    // User-entered incident time is local Philippine wall-clock time, not UTC.
+    const incidentDate = this.dateLostFound.trim();
+    const incidentTime = this.timeLostFound.trim();
+
+    if (incidentTime && !incidentDate) {
+      await this.haptics.warning();
+      await this.showAlert(
+        'Incident Date Required',
+        'Select the date when the item was lost or found before entering a time.',
+      );
+      return;
+    }
+
+    if (incidentDate) {
+      const dateParts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(incidentDate);
+      const timeParts = incidentTime
+        ? /^(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(incidentTime)
+        : null;
+
+      if (!dateParts || (incidentTime && !timeParts)) {
+        await this.haptics.warning();
+        await this.showAlert('Invalid Incident Date or Time',
+          'Please select a valid incident date and time.');
+        return;
+      }
+
+      const year = Number(dateParts[1]);
+      const month = Number(dateParts[2]);
+      const day = Number(dateParts[3]);
+      const hour = timeParts ? Number(timeParts[1]) : 0;
+      const minute = timeParts ? Number(timeParts[2]) : 0;
+      const second = timeParts && timeParts[3] ? Number(timeParts[3]) : 0;
+      const incident = new Date(year, month - 1, day, hour, minute, second);
+
+      if (incident.getFullYear() !== year ||
+          incident.getMonth() !== month - 1 ||
+          incident.getDate() !== day ||
+          incident.getHours() !== hour ||
+          incident.getMinutes() !== minute ||
+          incident.getSeconds() !== second ||
+          incident > new Date()) {
+        await this.haptics.warning();
+        await this.showAlert('Invalid Incident Date or Time',
+          'The incident date and time must be valid and cannot be in the future.');
+        return;
+      }
+    }
+
     // The actual incident location is mandatory under San Leonardo-only rules.
     if (!await this.validateSelectedLocation()) {
       await this.haptics.warning();
@@ -960,6 +1022,8 @@ export class EditReportPage implements OnInit, OnDestroy {
         this.specificLocation.trim() || null,
       date_lost_found:
         this.dateLostFound || null,
+      time_lost_found:
+        this.timeLostFound || null,
       latitude: this.latitude,
       longitude: this.longitude,
     };

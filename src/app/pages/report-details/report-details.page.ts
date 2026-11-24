@@ -1350,11 +1350,18 @@ export class ReportDetailsPage implements OnDestroy {
   }
 
   // ==========================================
-  // BACK TO HOME
+  // NAVIGATION CONTEXT
   // ==========================================
 
+  get isFromMyClaims(): boolean {
+    return this.route.snapshot.queryParamMap.get('from') === 'my-claims';
+  }
+
+  // Return to the page that opened this report.
   goBack(): void {
-    void this.router.navigateByUrl('/home');
+    void this.router.navigateByUrl(
+      this.isFromMyClaims ? '/my-claims' : '/home'
+    );
   }
 
   // ==========================================
