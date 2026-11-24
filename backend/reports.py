@@ -6,7 +6,8 @@ import json
 import logging
 import os
 from functools import lru_cache
-from datetime import date
+from datetime import date, datetime, time, timedelta
+from zoneinfo import ZoneInfo
 from io import BytesIO
 from pathlib import Path
 from typing import Literal
@@ -298,6 +299,7 @@ class ReportCreate(BaseModel):
     )
 
     date_lost_found: date | None = None
+    time_lost_found: time | None = None
 
     latitude: float | None = Field(
         default=None,
@@ -344,12 +346,40 @@ class ReportCreate(BaseModel):
                 "in San Leonardo."
             )
 
+        # Incident dates are supplied by the reporter; submission time is server-managed.
+        now_local = datetime.now(ZoneInfo("Asia/Manila"))
+        if self.time_lost_found is not None and self.date_lost_found is None:
+            raise ValueError("Select an incident date before entering an incident time.")
+        if self.date_lost_found is not None:
+            if self.date_lost_found > now_local.date():
+                raise ValueError("Incident date cannot be in the future.")
+            if self.time_lost_found is not None:
+                incident = datetime.combine(self.date_lost_found, self.time_lost_found)
+                if incident > now_local.replace(tzinfo=None):
+                    raise ValueError("Incident date and time cannot be in the future.")
+
         return self
 
 
 # ============================================================
 # RESPONSE FORMAT
 # ============================================================
+
+def format_report_time(value):
+    """MySQL TIME columns can be returned as timedelta, time or string."""
+    if value is None:
+        return None
+    if isinstance(value, timedelta):
+        total_seconds = int(value.total_seconds())
+        if not 0 <= total_seconds < 86400:
+            return None
+        hours, remainder = divmod(total_seconds, 3600)
+        minutes = remainder // 60
+        return f"{hours:02d}:{minutes:02d}"
+    if isinstance(value, time):
+        return value.strftime("%H:%M")
+    return str(value)[:5]
+
 
 def report_response(row):
     return {
@@ -366,6 +396,7 @@ def report_response(row):
             if row["date_lost_found"]
             else None
         ),
+        "time_lost_found": format_report_time(row.get("time_lost_found")),
         "image_url": row.get("image_url"),
         "status": row["status"],
         "created_at": (
@@ -707,12 +738,13 @@ def create_report(
                 barangay,
                 specific_location,
                 date_lost_found,
+                time_lost_found,
                 latitude,
                 longitude
             )
             VALUES (
                 %s, %s, %s, %s, %s,
-                %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, %s
             )
             """,
             (
@@ -728,6 +760,7 @@ def create_report(
                     else None
                 ),
                 data.date_lost_found,
+                data.time_lost_found,
                 data.latitude,
                 data.longitude,
             ),
@@ -839,6 +872,7 @@ def list_reports(
                 barangay,
                 specific_location,
                 date_lost_found,
+                time_lost_found,
                 latitude,
                 longitude,
                 image_url,
@@ -956,6 +990,7 @@ def get_my_reports(
                 barangay,
                 specific_location,
                 date_lost_found,
+                time_lost_found,
                 latitude,
                 longitude,
                 image_url,
@@ -1022,6 +1057,7 @@ def get_report(report_id: int):
                 barangay,
                 specific_location,
                 date_lost_found,
+                time_lost_found,
                 latitude,
                 longitude,
                 image_url,
@@ -1130,6 +1166,7 @@ def update_report(
                 barangay = %s,
                 specific_location = %s,
                 date_lost_found = %s,
+                time_lost_found = %s,
                 latitude = %s,
                 longitude = %s
             WHERE id = %s
@@ -1148,6 +1185,7 @@ def update_report(
                     else None
                 ),
                 data.date_lost_found,
+                data.time_lost_found,
                 data.latitude,
                 data.longitude,
                 report_id,

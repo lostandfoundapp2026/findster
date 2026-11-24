@@ -284,20 +284,53 @@
             ></ion-input>
           </div>
 
-          <!-- DATE -->
+          <!-- INCIDENT DATE (USER-EDITABLE) -->
           <div class="field-group">
             <label class="field-label">
-              Date Lost or Found
+              {{ reportType === 'lost' ? 'Date Last Seen / Lost' : 'Date Found' }}
               <span class="optional">(Optional)</span>
             </label>
 
             <ion-input
               class="form-control"
-              aria-label="Date Lost or Found"
+              [attr.aria-label]="reportType === 'lost' ? 'Date Last Seen or Lost' : 'Date Found'"
               type="date"
               [(ngModel)]="dateLostFound"
               name="dateLostFound"
+              [disabled]="isSubmitting"
             ></ion-input>
+          </div>
+
+          <!-- INCIDENT TIME (USER-EDITABLE) -->
+          <div class="field-group">
+            <label class="field-label">
+              {{ reportType === 'lost' ? 'Time Last Seen / Lost' : 'Time Found' }}
+              <span class="optional">(Optional)</span>
+            </label>
+
+            <ion-input
+              class="form-control"
+              [attr.aria-label]="reportType === 'lost' ? 'Time Last Seen or Lost' : 'Time Found'"
+              type="time"
+              [(ngModel)]="timeLostFound"
+              name="timeLostFound"
+              [disabled]="isSubmitting"
+            ></ion-input>
+
+            <p class="field-helper">
+              Leave blank if the exact time is unknown. Enter a date if you specify a time.
+            </p>
+          </div>
+
+          <!-- ORIGINAL REPORT SUBMISSION TIME (READ-ONLY) -->
+          <div class="field-group">
+            <span class="field-label">Date &amp; Time Reported</span>
+            <p class="field-helper">
+              {{ reportedAt ? (reportedAt | date:'medium') : 'Not available' }}
+            </p>
+            <p class="field-helper">
+              Automatically recorded when the report was first submitted. This cannot be edited.
+            </p>
           </div>
 
           <!-- REQUIRED INCIDENT LOCATION: the TypeScript integration will

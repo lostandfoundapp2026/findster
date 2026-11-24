@@ -126,6 +126,7 @@ export class CreateReportPage implements OnDestroy {
   barangay = '';
   specificLocation = '';
   dateLostFound = '';
+  timeLostFound = '';
   // ==========================================
   // GPS LOCATION
   // ==========================================
@@ -203,6 +204,7 @@ export class CreateReportPage implements OnDestroy {
     this.barangay = '';
     this.specificLocation = '';
     this.dateLostFound = '';
+    this.timeLostFound = '';
     this.latitude = null;
     this.longitude = null;
     this.destroyIncidentMap();
@@ -239,6 +241,7 @@ export class CreateReportPage implements OnDestroy {
       }
       this.reportStep = 2;
     } else if (this.reportStep === 2) {
+      if (!await this.validateIncidentDateTime()) return;
       if (!await this.validateSelectedLocation()) return;
       this.reportStep = 3;
     } else {
@@ -355,6 +358,7 @@ export class CreateReportPage implements OnDestroy {
       this.barangay.trim().length > 0 ||
       this.specificLocation.trim().length > 0 ||
       this.dateLostFound.trim().length > 0 ||
+      this.timeLostFound.trim().length > 0 ||
       this.latitude !== null ||
       this.longitude !== null ||
       this.selectedPhoto !== null
@@ -731,6 +735,41 @@ export class CreateReportPage implements OnDestroy {
       return false;
     }
   }
+  // Validate the incident date/time before advancing or submitting.
+  // The reporting timestamp is recorded by the backend, not the client.
+  private async validateIncidentDateTime(): Promise<boolean> {
+    const date = this.dateLostFound.trim();
+    const time = this.timeLostFound.trim();
+
+    if (time && !date) {
+      await this.showAlert('Incident Date Required',
+        'Please select the date if you enter an incident time.');
+      return false;
+    }
+
+    if (!date) return true; // The incident date and time remain optional.
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+        (time && !/^([01]\d|2[0-3]):[0-5]\d$/.test(time))) {
+      await this.showAlert('Invalid Date or Time',
+        'Please select a valid incident date and time.');
+      return false;
+    }
+
+    const incident = new Date(`${date}T${time || '00:00'}`);
+    if (Number.isNaN(incident.getTime()) ||
+        incident.getFullYear() !== Number(date.slice(0, 4)) ||
+        incident.getMonth() + 1 !== Number(date.slice(5, 7)) ||
+        incident.getDate() !== Number(date.slice(8, 10)) ||
+        incident.getTime() > Date.now()) {
+      await this.showAlert('Invalid Incident Date/Time',
+        'The incident date and time must be valid and cannot be in the future.');
+      return false;
+    }
+
+    return true;
+  }
+
   // ==========================================
   // CAMERA
   // ==========================================
@@ -1048,6 +1087,7 @@ export class CreateReportPage implements OnDestroy {
       );
       return;
     }
+    if (!await this.validateIncidentDateTime()) return;
     if (!await this.validateSelectedLocation()) return;
     if (this.destroyed || this.createdReportId !== null) return;
     this.isSubmitting = true;
@@ -1064,6 +1104,7 @@ export class CreateReportPage implements OnDestroy {
       longitude: this.longitude,
       date_lost_found:
         this.dateLostFound || null,
+      time_lost_found: this.timeLostFound || null,
     };
     const createRequest = this.reportsService
       .createReport(reportData)

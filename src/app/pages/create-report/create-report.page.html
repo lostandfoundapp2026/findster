@@ -207,15 +207,37 @@
           ></ion-input>
         </div>
 
+        <!-- INCIDENT DATE AND TIME (USER-ENTERED) -->
         <div class="form-field">
           <ion-input
-            label="Date Lost or Found (Optional)"
+            [label]="reportType === 'lost' ? 'Date Last Seen / Lost (Optional)' : 'Date Found (Optional)'"
             label-placement="stacked"
             type="date"
             [(ngModel)]="dateLostFound"
             name="dateLostFound"
             [disabled]="isSubmitting"
           ></ion-input>
+        </div>
+
+        <div class="form-field">
+          <ion-input
+            [label]="reportType === 'lost' ? 'Time Last Seen / Lost (Optional)' : 'Time Found (Optional)'"
+            label-placement="stacked"
+            type="time"
+            [(ngModel)]="timeLostFound"
+            name="timeLostFound"
+            [disabled]="isSubmitting"
+          ></ion-input>
+          <p class="location-help">
+            If you are unsure of the exact time, you may leave it blank.
+          </p>
+        </div>
+
+        <div class="form-field">
+          <p class="location-help">
+            <strong>Date &amp; Time Reported:</strong>
+            Automatically recorded when your report is successfully submitted.
+          </p>
         </div>
 
         <!-- OPTIONAL GPS -->
