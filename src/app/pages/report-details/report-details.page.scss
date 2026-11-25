@@ -1112,51 +1112,292 @@
   }
 }
 
-/* ---------------------------------------------------------
-   REPORT DETAILS CLEANUP: section hierarchy and responsive rows
-   --------------------------------------------------------- */
-.info-card .incident-heading {
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid #edf1f6;
+/* ===========================================================
+   MOBILE REPORT DETAILS — COMPACT OVERVIEW + NATIVE ACCORDIONS
+   No inner accordion scrolling, no fixed footer, no hidden actions.
+   =========================================================== */
+.report-details-content {
+  --overflow: auto;
+  overscroll-behavior-y: contain;
 }
-
-.claim-card .claim-status {
-  margin-bottom: 10px;
+.details-container {
+  max-width: 520px;
+  padding: 12px 14px calc(28px + env(safe-area-inset-bottom, 0px));
 }
-
-.claim-card .chat-section {
-  margin-top: 12px;
+.compact-report-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 104px;
+  grid-template-areas: "intro photo";
+  align-items: stretch;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid var(--details-border);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: none;
+}
+.compact-report-overview .details-intro {
+  grid-area: intro;
+  min-width: 0;
+  margin: 0;
+  padding: 2px 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.compact-report-overview .details-intro h1 {
+  font-size: 18px;
+  line-height: 1.25;
+  margin-bottom: 6px;
+  overflow-wrap: anywhere;
+}
+.compact-report-overview .intro-badges {
+  gap: 5px;
+  margin-bottom: 8px;
+}
+.compact-report-overview .intro-badges ion-badge {
+  font-size: 9px;
+  padding: 4px 7px;
+}
+.compact-report-overview .details-subtitle {
+  font-size: 12px;
+  line-height: 1.45;
+}
+.compact-report-overview .photo-card {
+  grid-area: photo;
+  min-width: 0;
+  min-height: 104px;
+  margin: 0;
   padding: 0;
   border: 0;
-  background: transparent;
+  border-radius: 11px;
+  overflow: hidden;
+  background: #f1f5fb;
+  box-shadow: none;
 }
-
-.claim-card .chat-button,
-.claim-card .handover-button {
+.compact-report-overview .photo-frame,
+.compact-report-overview .item-photo {
   width: 100%;
-  min-width: 0;
+  height: 100%;
+  min-height: 104px;
+  max-height: 128px;
+}
+.compact-report-overview .item-photo {
+  object-fit: contain;
+}
+.compact-report-overview .no-photo {
+  height: 100%;
+  min-height: 104px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+.report-accordion {
+  display: block;
+  margin-bottom: 10px;
+  border: 1px solid #e0e8f3;
+  border-radius: 13px;
+  background: #fff;
+  overflow: visible;
+}
+.report-accordion[open] { border-color: #cbdcf4; }
+.accordion-trigger {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 68px;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.accordion-trigger::-webkit-details-marker { display: none; }
+.accordion-trigger::marker { content: ''; }
+.accordion-trigger:focus-visible {
+  outline: 2px solid var(--details-blue);
+  outline-offset: 3px;
+}
+.accordion-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 35px;
+  width: 35px;
+  height: 35px;
+  border-radius: 10px;
+  background: #edf4ff;
+  color: #0758d3;
+  font-size: 12px;
+  font-weight: 800;
+}
+.accordion-titles { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 4px; }
+.accordion-titles strong { font-size: 14px; font-weight: 800; color: var(--details-navy); }
+.accordion-titles small { font-size: 11px; line-height: 1.4; color: var(--details-muted); }
+.accordion-chevron {
+  flex: 0 0 9px;
+  height: 9px;
+  width: 9px;
+  margin-right: 5px;
+  border-right: 2px solid #6b7a90;
+  border-bottom: 2px solid #6b7a90;
+  transform: rotate(45deg);
+  transition: transform .16s ease;
+}
+.report-accordion[open] .accordion-chevron { transform: rotate(225deg); }
+.accordion-body { padding: 0 12px 12px; max-height: none; overflow: visible; }
+.accordion-body > .details-card {
+  margin: 0;
+  padding: 12px 2px 2px;
+  border: 0;
+  border-top: 1px solid #edf1f7;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.accordion-body > .details-card > .card-heading { display: none; }
+.accordion-body .detail-row { padding: 9px 0; }
+.accordion-body .location-map { height: 180px; }
+.accordion-body .map-frame { overflow: hidden; }
+/* Claims and confirmation controls are intentionally always outside the accordions. */
+.details-container > ng-container > .details-card,
+.details-container .claim-card,
+.details-container .action-card,
+.details-container .owner-card { margin-top: 10px; }
+@media (max-width: 360px) {
+  .details-container { padding: 10px 11px calc(28px + env(safe-area-inset-bottom, 0px)); }
+  .compact-report-overview { grid-template-columns: minmax(0,1fr) 90px; padding: 10px; }
+  .compact-report-overview .photo-frame,
+  .compact-report-overview .item-photo { min-height: 95px; }
+  .accordion-trigger { min-height: 62px; padding: 10px 12px; }
+  .accordion-body .location-map { height: 155px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .accordion-chevron { transition: none; }
 }
 
-.claim-card .handover-section {
+
+/* =========================================================
+   MOBILE CHROME — BOTTOM VISIBILITY FIX
+   Keep the final claim/action controls reachable above
+   Chrome's bottom toolbar and Android gesture/navigation area.
+   Whole-page Ionic scrolling remains enabled.
+   ========================================================= */
+.report-details-content {
+  --overflow: auto;
+}
+
+.details-container {
+  padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
+}
+
+@media (max-width: 360px) {
+  .details-container {
+    padding-bottom: calc(128px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+
+/* Unified claim/response design: one card for all request statuses. */
+.request-summary {
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #dce6f2;
+  border-radius: 17px;
+}
+.request-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.request-heading-copy { min-width: 0; }
+.request-heading h2 {
+  margin: 2px 0 0;
+  font-size: 16px;
+  line-height: 1.35;
+  font-weight: 800;
+  color: #102f57;
+}
+.request-eyebrow {
+  margin: 0 !important;
+  font-size: 11px;
+  letter-spacing: .02em;
+  color: #72819a;
+  font-weight: 700;
+}
+.request-status-badge {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+.request-update {
+  padding: 12px 13px;
+  border-radius: 11px;
+  background: #fff9ed;
+  border: 1px solid #f4dfb5;
+}
+.request-update strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #8a5e19;
+  font-size: 13px;
+  font-weight: 800;
+}
+.request-update p,
+.request-message p,
+.request-retry p,
+.request-chat-copy p {
+  margin: 0;
+  color: #53657c;
+  font-size: 12.5px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.request-approved .request-update {
+  background: #effaf4;
+  border-color: #cae9d7;
+}
+.request-approved .request-update strong { color: #187148; }
+.request-rejected .request-update {
+  background: #fff4f5;
+  border-color: #f2d8dc;
+}
+.request-rejected .request-update strong { color: #a43140; }
+.request-message,
+.request-retry,
+.request-chat {
   margin-top: 14px;
+  padding-top: 13px;
+  border-top: 1px solid #edf1f6;
 }
-
-/* A long label must not squeeze or overflow its value on phones. */
-@media (max-width: 420px) {
-  .details-container .detail-row {
-    grid-template-columns: minmax(0, 104px) minmax(0, 1fr);
-    gap: 10px;
-  }
-  .details-container .detail-label,
-  .details-container .detail-value {
-    overflow-wrap: anywhere;
-  }
+.request-section-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #173d67;
+  margin-bottom: 5px;
 }
-
-@media (max-width: 340px) {
-  .details-container .detail-row {
-    grid-template-columns: 1fr;
-    gap: 3px;
-  }
+.request-retry .retry-request-button {
+  margin-top: 12px;
+  font-size: 12.5px;
+}
+.request-retry .retry-request-button.button-disabled {
+  opacity: .63;
+}
+.request-chat .chat-button { margin-top: 10px; }
+.request-summary .handover-section {
+  margin-top: 14px;
+  padding: 12px 0 0;
+  border: 0;
+  border-top: 1px solid #edf1f6;
+  border-radius: 0;
+  background: none;
+}
+@media (max-width: 360px) {
+  .request-summary { padding: 13px; }
+  .request-heading h2 { font-size: 14px; }
+  .request-heading { gap: 7px; }
+  .request-status-badge { font-size: 10px; padding: 5px 8px; }
 }

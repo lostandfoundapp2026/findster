@@ -95,12 +95,23 @@
         </p>
       </section>
 
+      <!-- Sections expand in place; no tab navigation. -->
       <form
         class="edit-report-form"
         (submit)="$event.preventDefault()"
         [attr.aria-busy]="isSubmitting"
       >
 
+        <!-- ITEM SECTION: report type and item fields stay together. -->
+        <button type="button" class="section-toggle"
+          (click)="toggleEditSection('item')"
+          [attr.aria-expanded]="expandedSection === 'item'"
+          aria-controls="edit-item-section">
+          <span class="section-toggle-number">01</span>
+          <span class="section-toggle-copy"><strong>Item Information</strong><small>Report type, item name, category and description</small></span>
+          <span class="section-toggle-chevron" aria-hidden="true">{{ expandedSection === 'item' ? '−' : '+' }}</span>
+        </button>
+        <div id="edit-item-section" class="accordion-panel" [hidden]="expandedSection !== 'item'">
         <!-- REPORT TYPE -->
         <section class="form-card type-card">
           <div class="card-heading">
@@ -234,7 +245,18 @@
           </div>
         </section>
 
-        <!-- LOCATION INFORMATION -->
+        </div>
+
+        <!-- LOCATION SECTION -->
+        <button type="button" class="section-toggle"
+          (click)="toggleEditSection('location')"
+          [attr.aria-expanded]="expandedSection === 'location'"
+          aria-controls="edit-location-section">
+          <span class="section-toggle-number">02</span>
+          <span class="section-toggle-copy"><strong>Location &amp; Date</strong><small>Where and when the item was lost or found</small></span>
+          <span class="section-toggle-chevron" aria-hidden="true">{{ expandedSection === 'location' ? '−' : '+' }}</span>
+        </button>
+        <div id="edit-location-section" class="accordion-panel" [hidden]="expandedSection !== 'location'">
         <section class="form-card location-card">
           <div class="card-heading">
             <h2>Location</h2>
@@ -433,7 +455,18 @@
           </div>
         </section>
 
-        <!-- ITEM PHOTO -->
+        </div>
+
+        <!-- PHOTO SECTION -->
+        <button type="button" class="section-toggle"
+          (click)="toggleEditSection('photo')"
+          [attr.aria-expanded]="expandedSection === 'photo'"
+          aria-controls="edit-photo-section">
+          <span class="section-toggle-number">03</span>
+          <span class="section-toggle-copy"><strong>Item Photo</strong><small>View or replace report photo</small></span>
+          <span class="section-toggle-chevron" aria-hidden="true">{{ expandedSection === 'photo' ? '−' : '+' }}</span>
+        </button>
+        <div id="edit-photo-section" class="accordion-panel" [hidden]="expandedSection !== 'photo'">
         <section class="form-card photo-card">
           <div class="card-heading">
             <h2>
@@ -530,44 +563,21 @@
           }
         </section>
 
-        <!-- SAVE / CANCEL -->
-        <section class="form-actions">
-          <p class="save-note">
-            Check the details before saving your report.
-          </p>
+        </div>
 
+        <!-- ACTIONS: at the end of the scrollable form (not a footer) -->
+        <section class="form-actions in-form-actions" aria-label="Edit report actions">
           <div class="action-buttons">
-            <ion-button
-              expand="block"
-              type="button"
-              class="submit-button"
-              [disabled]="isSubmitting || isGettingLocation"
-              (click)="submitChanges()"
-            >
-              <ion-icon
-                name="checkmark-outline"
-                slot="start"
-                aria-hidden="true"
-              ></ion-icon>
-
-              {{
-                isSubmitting
-                  ? 'Saving Changes...'
-                  : 'Save Changes'
-              }}
-            </ion-button>
-
-            <ion-button
-              expand="block"
-              fill="outline"
-              type="button"
-              class="cancel-button"
-              [disabled]="isSubmitting || isGettingLocation"
-              (click)="goBack()"
-            >
-              Cancel
-            </ion-button>
-          </div>
+<ion-button expand="block" fill="outline" type="button" class="cancel-button"
+          [disabled]="isSubmitting || isGettingLocation" (click)="goBack()">
+          Cancel
+        </ion-button>
+<ion-button expand="block" type="button" class="submit-button"
+          [disabled]="isSubmitting || isGettingLocation" (click)="submitChanges()">
+          <ion-icon name="checkmark-outline" slot="start" aria-hidden="true"></ion-icon>
+          {{ isSubmitting ? 'Saving Changes...' : 'Save Changes' }}
+        </ion-button>
+                </div>
         </section>
 
       </form>

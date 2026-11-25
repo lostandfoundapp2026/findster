@@ -436,3 +436,120 @@
     height: 350px;
   }
 }
+
+
+/* =========================================================
+   FINDSTER — STEP 2 LOCATION UI REFINEMENT
+   Scope: Step 2 only. Step 1 / Step 3 styling remains unchanged.
+   Continue to Photo stays directly BELOW the Location card.
+   No footer, sticky/fixed positioning, or inner-section scroll.
+   ========================================================= */
+.report-step[aria-label="Location step"] {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  gap: 0;
+  /* Comfortable clearance for Chrome's bottom bar and phone safe area. */
+  padding-bottom: max(96px, calc(56px + env(safe-area-inset-bottom, 0px)));
+}
+
+.report-step[aria-label="Location step"] > .form-card {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  /* Maintain the same overall card width as the other steps. */
+}
+
+.report-step[aria-label="Location step"] .section-heading {
+  margin-bottom: 16px;
+}
+
+.report-step[aria-label="Location step"] .form-field {
+  margin-bottom: 12px;
+}
+
+.report-step[aria-label="Location step"] .form-field ion-input,
+.report-step[aria-label="Location step"] .form-field ion-select {
+  --background: #f8faff;
+  --border-color: #e0e9f5;
+  --border-radius: 11px;
+  min-height: 54px;
+}
+
+.report-step[aria-label="Location step"] .location-help {
+  color: #5e718c;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.report-step[aria-label="Location step"] .location-section {
+  margin-top: 5px;
+  padding: 13px;
+  border: 1px solid #e0e9f6;
+  border-radius: 12px;
+  background: #f8fbff;
+  overflow: visible;
+}
+
+.report-step[aria-label="Location step"] .subsection-heading h3 {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.report-step[aria-label="Location step"] .location-button {
+  --border-radius: 10px;
+  --box-shadow: none;
+  margin: 0;
+  min-height: 46px;
+}
+
+.report-step[aria-label="Location step"] .location-preview {
+  margin-top: 12px;
+  padding: 12px;
+  border-color: #cbe6d6;
+  background: #f0faf4;
+  overflow: visible;
+}
+
+.report-step[aria-label="Location step"] .location-coordinates {
+  margin-top: 8px;
+}
+
+.report-step[aria-label="Location step"] .location-coordinates summary {
+  padding: 7px 0;
+  min-height: 32px;
+}
+
+/* The CTA is a regular form element immediately after the card. */
+.report-step[aria-label="Location step"] > .step2-bottom-action {
+  position: static;
+  inset: auto;
+  flex: 0 0 auto;
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 14px 0 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+  transform: none;
+}
+
+.report-step[aria-label="Location step"] .step2-continue-button {
+  display: block;
+  width: 100%;
+  min-height: 50px;
+  margin: 0;
+  --border-radius: 12px;
+}
+
+@media (max-width: 360px) {
+  .report-step[aria-label="Location step"] {
+    padding-bottom: max(104px, calc(60px + env(safe-area-inset-bottom, 0px)));
+  }
+  .report-step[aria-label="Location step"] .location-section {
+    padding: 11px;
+  }
+}

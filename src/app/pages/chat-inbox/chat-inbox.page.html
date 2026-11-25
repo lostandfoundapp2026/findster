@@ -1,213 +1,79 @@
-<!-- Save as: src/app/pages/chat-inbox/chat-inbox.page.html -->
-<!-- FINDSTER | Minimalist, mobile-first Messages Inbox -->
-
+<!-- FINDSTER · Messages · reference-inspired, data-safe -->
 <ion-header class="chat-inbox-header">
   <ion-toolbar class="chat-inbox-toolbar">
     <div class="toolbar-content">
       <span class="toolbar-title">Messages</span>
-
-      <button
-        type="button"
-        class="toolbar-refresh"
-        (click)="loadConversations(true)"
-        [disabled]="loading || refreshing"
-        aria-label="Refresh conversations"
-      >
-        <span>Refresh</span>
+      <button type="button" class="toolbar-refresh" (click)="loadConversations(true)"
+        [disabled]="loading || refreshing" aria-label="Refresh conversations">
+        <span aria-hidden="true">&#8635;</span>
       </button>
     </div>
   </ion-toolbar>
 </ion-header>
-
 <ion-content [fullscreen]="false" class="chat-inbox-content">
-  <!-- Pull to refresh is preserved. -->
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-
   <main class="chat-inbox-container">
-    <!-- Page introduction -->
-    <section class="inbox-heading">
-      <div class="inbox-heading-copy">
-        <h1>Your Conversations</h1>
-        <p class="inbox-description">
-          Discuss item details and arrange safe returns.
-        </p>
-      </div>
-
-      <span class="conversation-count" *ngIf="!loading && !errorMessage">
-        {{ conversations.length }}
-        {{ conversations.length === 1 ? 'Chat' : 'Chats' }}
-      </span>
-    </section>
-
-    <!-- Connection feedback: do not block access to existing chats. -->
-    <section
-      class="connection-card"
-      *ngIf="connectionState !== 'connected'"
-      [class.connection-offline]="connectionState === 'disconnected'"
-      role="status"
-      aria-live="polite"
-    >
-      <span
-        class="connection-indicator"
-        [class.indicator-loading]="
-          connectionState === 'connecting' ||
-          connectionState === 'reconnecting'
-        "
-        aria-hidden="true"
-      ></span>
-
+    <div class="search-field">
+      <span class="search-symbol" aria-hidden="true">&#9906;</span>
+      <input type="search" [value]="searchTerm" (input)="onSearchInput($event)"
+        placeholder="Search conversations..." aria-label="Search conversations" autocomplete="off" />
+    </div>
+    <section class="connection-card" *ngIf="connectionState !== 'connected'"
+      [class.connection-offline]="connectionState === 'disconnected'" role="status" aria-live="polite">
+      <span class="connection-indicator" [class.indicator-loading]="connectionState === 'connecting' || connectionState === 'reconnecting'" aria-hidden="true"></span>
       <div class="connection-information">
-        <strong>
-          {{
-            connectionState === 'connecting'
-              ? 'Connecting to Live Updates'
-              : connectionState === 'reconnecting'
-                ? 'Reconnecting to Live Updates'
-                : 'Live Updates Unavailable'
-          }}
-        </strong>
-        <p>
-          {{
-            connectionState === 'disconnected'
-              ? 'Pull down or tap Refresh to check for messages.'
-              : 'Checking your chat connection...'
-          }}
-        </p>
+        <strong>{{ connectionState === 'connecting' ? 'Connecting...' : connectionState === 'reconnecting' ? 'Reconnecting...' : 'Live updates unavailable' }}</strong>
+        <p>{{ connectionState === 'disconnected' ? 'Pull down to refresh messages.' : 'Checking connection...' }}</p>
       </div>
     </section>
-
-    <!-- Loading state -->
+    <div class="inbox-section-heading" *ngIf="!loading && !errorMessage && conversations.length > 0">
+      <h1>Recent Conversations</h1>
+      <span class="unread-total" *ngIf="totalUnread > 0">{{ totalUnread }} Unread</span>
+    </div>
     <section class="loading-state" *ngIf="loading" role="status" aria-live="polite">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Loading conversations...</p>
+      <ion-spinner name="crescent"></ion-spinner><p>Loading conversations...</p>
     </section>
-
-    <!-- Error state -->
     <section class="error-state" *ngIf="!loading && errorMessage" role="alert">
-      <span class="error-symbol" aria-hidden="true">!</span>
-      <h2>Unable to Load Conversations</h2>
-      <p>{{ errorMessage }}</p>
-      <ion-button expand="block" fill="outline" (click)="loadConversations(true)">
-        Try Again
-      </ion-button>
+      <h2>Unable to load conversations</h2><p>{{ errorMessage }}</p>
+      <ion-button expand="block" fill="outline" (click)="loadConversations(true)">Try Again</ion-button>
     </section>
-
-    <!-- Empty state -->
-    <section
-      class="empty-state"
-      *ngIf="!loading && !errorMessage && conversations.length === 0"
-    >
-      <div class="empty-symbol" aria-hidden="true">
-        <span aria-hidden="true">&#128172;</span>
-      </div>
-      <h2>No Conversations Yet</h2>
-      <p>
-        Conversations about your claims and found-item responses will appear here.
-      </p>
-      <ion-button expand="block" fill="outline" (click)="goBack()">
-        Browse Reports
-      </ion-button>
+    <section class="empty-state" *ngIf="!loading && !errorMessage && conversations.length === 0">
+      <h2>No conversations yet</h2><p>Conversations about reported items will appear here.</p>
+      <ion-button expand="block" fill="outline" (click)="goBack()">Browse Reports</ion-button>
     </section>
-
-    <!-- Compact conversation list -->
-    <ion-list
-      class="conversation-list"
-      lines="none"
-      *ngIf="!loading && !errorMessage && conversations.length > 0"
-      aria-label="Your item conversations"
-    >
-      <ion-item
-        class="conversation-item"
-        *ngFor="let conversation of conversations; trackBy: trackById"
-        [class.unread-conversation]="(conversation.unread_count || 0) > 0"
-        [class.readonly-conversation]="!conversation.can_send"
-        button
-        detail="false"
-        (click)="openConversation(conversation)"
-      >
-        <!-- Avatar indicates whether the underlying report is Lost or Found. -->
-        <div
-          class="conversation-avatar"
-          slot="start"
-          [class.lost-avatar]="conversation.report_type === 'lost'"
-          [class.found-avatar]="conversation.report_type === 'found'"
-          aria-hidden="true"
-        >
-          <span>{{ conversation.report_type === 'lost' ? 'L' : 'F' }}</span>
+    <section class="empty-state" *ngIf="!loading && !errorMessage && conversations.length > 0 && filteredConversations.length === 0">
+      <h2>No matching conversations</h2><p>Try searching for another item.</p>
+    </section>
+    <ion-list class="conversation-list" lines="none"
+      *ngIf="!loading && !errorMessage && filteredConversations.length > 0" aria-label="Your conversations">
+      <ion-item *ngFor="let conversation of filteredConversations; trackBy: trackById"
+        class="conversation-item" [class.unread-conversation]="(conversation.unread_count || 0) > 0"
+        button detail="false" (click)="openConversation(conversation)">
+        <div slot="start" class="conversation-avatar" aria-hidden="true">
+          {{ initialsFor(conversation) }}
         </div>
-
         <ion-label class="conversation-body">
           <div class="conversation-top">
-            <h3>
-              {{ conversation.item_name || ('Report #' + conversation.report_id) }}
-            </h3>
+            <h2>{{ displayNameFor(conversation) }}</h2>
             <time
+              *ngIf="conversation.last_message_at || conversation.updated_at || conversation.created_at"
               class="conversation-date"
-              *ngIf="conversation.updated_at || conversation.created_at"
-            >
-              {{
-                (conversation.updated_at || conversation.created_at)
-                  | date:'mediumDate'
-              }}
-            </time>
+              [attr.datetime]="conversation.last_message_at || conversation.updated_at || conversation.created_at"
+              [attr.title]="fullActivityTimeFor(conversation)"
+              [attr.aria-label]="'Last conversation activity: ' + fullActivityTimeFor(conversation)"
+            >{{ relativeActivityTimeFor(conversation) }}</time>
           </div>
-
-          <p class="conversation-report-type">
-            {{ labelFor(conversation) }}
-            <span aria-hidden="true">·</span>
-            Claim #{{ conversation.claim_id }}
-          </p>
-
-          <div class="conversation-metadata">
-            <span
-              class="conversation-status"
-              [class.readonly-status]="!conversation.can_send"
-              [class.verification-status]="
-                conversation.can_send && conversation.claim_status === 'pending'
-              "
-              [class.approved-status]="
-                conversation.can_send && conversation.claim_status !== 'pending'
-              "
-            >
-              {{ statusFor(conversation) }}
-            </span>
-
-            <span class="readonly-notice" *ngIf="!conversation.can_send">
-              Read-only
-            </span>
-          </div>
-
-          <div class="conversation-bottom">
-            <span>
-              {{ conversation.can_send ? 'Open Conversation' : 'View Chat History' }}
-            </span>
-            <span aria-hidden="true">&#8594;</span>
-          </div>
+          <p class="conversation-item-name">{{ conversation.item_name || ('Report #' + conversation.report_id) }}</p>
+          <p class="conversation-preview">{{ previewFor(conversation) }}</p>
         </ion-label>
-
-        <ion-badge
-          slot="end"
-          color="primary"
-          class="unread-badge"
+        <ion-badge slot="end" color="primary" class="unread-badge"
           *ngIf="(conversation.unread_count || 0) > 0"
-          [attr.aria-label]="conversation.unread_count + ' unread messages'"
-        >
+          [attr.aria-label]="conversation.unread_count + ' unread messages'">
           {{ conversation.unread_count }}
         </ion-badge>
       </ion-item>
     </ion-list>
-
-    <!-- Show the reminder only when there are conversations. -->
-    <aside
-      class="inbox-privacy-note"
-      *ngIf="!loading && !errorMessage && conversations.length > 0"
-    >
-      <div>
-        <strong>Keep conversations private</strong>
-        <p>Never share passwords, payment details, or sensitive personal information.</p>
-      </div>
-    </aside>
   </main>
 </ion-content>

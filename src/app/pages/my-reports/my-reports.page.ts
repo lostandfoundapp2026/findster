@@ -186,6 +186,10 @@ export class MyReportsPage implements OnInit, OnDestroy {
   processingClaimId: number | null = null;
   openingChatClaimId: number | null = null;
 
+  // Hide a completed handover button immediately after the server confirms
+  // the action, until the refreshed claim carries the saved confirmation.
+  private readonly confirmedReturnRequestIds = new Set<number>();
+
   highlightedClaimId: number | null = null;
 
   private targetReportId: number | null = null;
@@ -346,36 +350,53 @@ export class MyReportsPage implements OnInit, OnDestroy {
   // LOAD RECEIVED CLAIMS
   // ============================================================
 
-  loadReceivedClaims(force = false): void {
+  loadReceivedClaims(force = false, silent = false): void {
     if (this.isLoadingClaims && !force) {
       return;
     }
 
     this.claimsRequestSubscription?.unsubscribe();
 
-    this.isLoadingClaims = true;
-    this.claimsErrorMessage = '';
-    this.refreshUI();
+    // Silent updates leave expanded cards and action controls in place.
+    // This prevents a completed action from looking like it needs another tap.
+    if (!silent) {
+      this.isLoadingClaims = true;
+      this.claimsErrorMessage = '';
+      this.refreshUI();
+    }
 
     this.claimsRequestSubscription = this.reportsService
       .getReceivedClaimRequests()
       .subscribe({
         next: (response) => {
           this.receivedClaims = response.claims ?? [];
-          this.claimDisplayLimit = this.itemsPerPage;
+          if (!silent) {
+            this.claimDisplayLimit = this.itemsPerPage;
+          }
           this.isLoadingClaims = false;
+          this.claimsErrorMessage = '';
+
+          // Retain temporary confirmed-return guards only while the GET
+          // response hasn't yet reflected the owner's confirmation.
+          for (const claim of this.receivedClaims) {
+            if (claim.owner_return_confirmed_at || claim.report_status === 'returned') {
+              this.confirmedReturnRequestIds.delete(claim.id);
+            }
+          }
 
           this.refreshUI();
           this.scheduleClaimFocus();
         },
         error: (error) => {
           console.error('Load received claims error:', error);
-
           this.isLoadingClaims = false;
-          this.claimsErrorMessage =
-            error?.error?.detail ||
-            'Unable to load claim requests. Please try again.';
-
+          if (!silent) {
+            this.claimsErrorMessage =
+              error?.error?.detail ||
+              'Unable to load claim requests. Please try again.';
+          }
+          // A successful action has already been acknowledged by the server.
+          // A failed background refresh must not replace the card with an error.
           this.refreshUI();
         },
       });
@@ -770,10 +791,10 @@ export class MyReportsPage implements OnInit, OnDestroy {
           this.refreshUI();
 
           if (conversation) {
-            void this.router.navigate([
-              '/chat',
-              conversation.id,
-            ]);
+            void this.router.navigate(
+              ['/chat', conversation.id],
+              { queryParams: { from: 'my-reports', claimId: claim.id } },
+            );
             return;
           }
 
@@ -916,11 +937,26 @@ export class MyReportsPage implements OnInit, OnDestroy {
       .decideClaimRequest(claimId, action)
       .subscribe({
         next: async () => {
+          // Only change the UI after the server confirms success.
+          // Keep all other claims server-authoritative; the background GET
+          // will pick up competing claims closed by an approval.
+          this.receivedClaims = this.receivedClaims.map((item) =>
+            item.id === claimId
+              ? {
+                  ...item,
+                  status: (action === 'approve' ? 'approved' : 'rejected') as ClaimRequest['status'],
+                  report_status: (action === 'approve' ? 'claimed' : item.report_status) as ClaimRequest['report_status'],
+                  ...(action === 'reject'
+                    ? { closure_reason: 'verification_failed' as const }
+                    : {}),
+                }
+              : item,
+          );
           this.processingClaimId = null;
+          this.refreshUI();
 
           this.loadMyReports(true);
-          this.loadReceivedClaims(true);
-          this.refreshUI();
+          this.loadReceivedClaims(true, true);
 
           await this.haptics.success();
 
@@ -1045,11 +1081,17 @@ export class MyReportsPage implements OnInit, OnDestroy {
       .markFinderResponseNotAMatch(claimId)
       .subscribe({
         next: async () => {
+          // Immediately close the confirmed response in the visible list.
+          this.receivedClaims = this.receivedClaims.map((item) =>
+            item.id === claimId
+              ? { ...item, status: 'rejected' as const, closure_reason: 'not_a_match' as const }
+              : item,
+          );
           this.processingClaimId = null;
-
-          this.loadReceivedClaims(true);
-          this.loadMyReports(true);
           this.refreshUI();
+
+          this.loadReceivedClaims(true, true);
+          this.loadMyReports(true);
 
           await this.haptics.success();
 
@@ -1104,7 +1146,8 @@ export class MyReportsPage implements OnInit, OnDestroy {
   canConfirmReturn(claim: ClaimRequest): boolean {
     if (
       this.processingClaimId !== null ||
-      claim.owner_return_confirmed_at
+      claim.owner_return_confirmed_at ||
+      this.confirmedReturnRequestIds.has(claim.id)
     ) {
       return false;
     }
@@ -1267,11 +1310,14 @@ export class MyReportsPage implements OnInit, OnDestroy {
       .confirmItemReturned(claimId)
       .subscribe({
         next: async (response) => {
+          // The confirmation was accepted by the server. Block another tap
+          // until the refreshed claim contains the authoritative timestamp.
+          this.confirmedReturnRequestIds.add(claimId);
           this.processingClaimId = null;
+          this.refreshUI();
 
           this.loadMyReports(true);
-          this.loadReceivedClaims(true);
-          this.refreshUI();
+          this.loadReceivedClaims(true, true);
 
           await this.haptics.success();
 

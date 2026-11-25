@@ -223,12 +223,22 @@ def _conversation_context(
             r.user_id AS owner_id,
             r.item_name,
             r.report_type,
-            r.status AS report_status
+            r.status AS report_status,
+            owner_user.first_name AS owner_first_name,
+            owner_user.middle_name AS owner_middle_name,
+            owner_user.last_name AS owner_last_name,
+            owner_user.full_name AS owner_full_name,
+            requester_user.first_name AS requester_first_name,
+            requester_user.middle_name AS requester_middle_name,
+            requester_user.last_name AS requester_last_name,
+            requester_user.full_name AS requester_full_name
         FROM chat_conversations AS cc
         JOIN claim_requests AS c
             ON c.id = cc.claim_id
         JOIN reports AS r
             ON r.id = c.report_id
+        LEFT JOIN users AS owner_user ON owner_user.id = r.user_id
+        LEFT JOIN users AS requester_user ON requester_user.id = c.requester_id
         WHERE cc.id = %s
         """,
         (conversation_id,),
@@ -272,7 +282,18 @@ def _may_send(context):
     )
 
 
-def _conversation_payload(row):
+def _public_chat_name(row, role: str) -> str:
+    """Show first and last names; use full_name for legacy accounts."""
+    first = str(row.get(f"{role}_first_name") or "").strip()
+    last = str(row.get(f"{role}_last_name") or "").strip()
+    full = str(row.get(f"{role}_full_name") or "").strip()
+    # Legacy records may have only full_name (no separate first/last columns).
+    if first and last:
+        return f"{first} {last}"
+    return full or " ".join(part for part in (first, last) if part) or "Findster User"
+
+
+def _conversation_payload(row, viewer_id: int):
     return {
         "id": row["conversation_id"],
         "claim_id": row["claim_id"],
@@ -283,6 +304,10 @@ def _conversation_payload(row):
         "report_status": row["report_status"],
         "report_owner_id": row["owner_id"],
         "requester_id": row["requester_id"],
+        "other_participant_name": _public_chat_name(
+            row,
+            "requester" if viewer_id == row["owner_id"] else "owner",
+        ),
         "can_send": _may_send(row),
         "created_at": _iso(
             row.get("conversation_created_at")
@@ -742,7 +767,7 @@ async def start_conversation(
         connection.commit()
 
         return _conversation_payload(
-            context
+            context, user["id"]
         )
 
     result = await asyncio.to_thread(
@@ -793,6 +818,17 @@ async def my_conversations(
                 r.item_name,
                 r.report_type,
                 r.status AS report_status,
+            owner_user.first_name AS owner_first_name,
+            owner_user.middle_name AS owner_middle_name,
+            owner_user.last_name AS owner_last_name,
+            owner_user.full_name AS owner_full_name,
+            requester_user.first_name AS requester_first_name,
+            requester_user.middle_name AS requester_middle_name,
+            requester_user.last_name AS requester_last_name,
+            requester_user.full_name AS requester_full_name,
+                last_msg.body AS last_message_body,
+                last_msg.message_type AS last_message_type,
+                last_msg.created_at AS last_message_at,
                 (
                     SELECT COUNT(*)
                     FROM chat_messages AS m
@@ -805,6 +841,15 @@ async def my_conversations(
                 ON c.id = cc.claim_id
             JOIN reports AS r
                 ON r.id = c.report_id
+            LEFT JOIN users AS owner_user ON owner_user.id = r.user_id
+            LEFT JOIN users AS requester_user ON requester_user.id = c.requester_id
+            LEFT JOIN chat_messages AS last_msg ON last_msg.id = (
+                SELECT lm.id
+                FROM chat_messages AS lm
+                WHERE lm.conversation_id = cc.id
+                ORDER BY lm.id DESC
+                LIMIT 1
+            )
             WHERE
                 c.requester_id = %s
                 OR r.user_id = %s
@@ -823,12 +868,18 @@ async def my_conversations(
 
         for row in cursor.fetchall():
             item = _conversation_payload(
-                row
+                row, user["id"]
             )
 
-            item["unread_count"] = row[
-                "unread_count"
-            ]
+            item["unread_count"] = row["unread_count"]
+            if row.get("last_message_type") == "image":
+                item["last_message_preview"] = "Photo sent"
+            else:
+                item["last_message_preview"] = (
+                    str(row.get("last_message_body") or "").strip()[:160]
+                    or None
+                )
+            item["last_message_at"] = _iso(row.get("last_message_at"))
 
             result.append(item)
 
@@ -891,7 +942,7 @@ async def conversation_for_claim(
         )
 
         return _conversation_payload(
-            context
+            context, user["id"]
         )
 
     return {

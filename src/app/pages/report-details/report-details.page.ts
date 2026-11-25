@@ -85,6 +85,32 @@ addIcons({
 })
 export class ReportDetailsPage implements OnDestroy {
 
+  // Format the incident time entered in Create Report, not the upload time.
+  // The backend typically returns a MySQL TIME value (HH:mm:ss).
+  get formattedIncidentTime(): string {
+    const value = (this.report as
+      | (LostFoundReport & { time_lost_found?: string | null })
+      | null)?.time_lost_found;
+
+    if (!value || !value.trim()) {
+      return 'Not specified';
+    }
+
+    const match = value.trim().match(/^(\d{1,2}):(\d{2})(?::\d{2}(?:\.\d+)?)?$/);
+    if (!match) {
+      return value;
+    }
+
+    const hour = Number(match[1]);
+    const minute = Number(match[2]);
+    if (hour > 23 || minute > 59) {
+      return value;
+    }
+
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${String(minute).padStart(2, '0')} ${hour < 12 ? 'AM' : 'PM'}`;
+  }
+
   // ==========================================
   // REPORT AND CLAIM STATE
   // ==========================================
@@ -1350,18 +1376,27 @@ export class ReportDetailsPage implements OnDestroy {
   }
 
   // ==========================================
-  // NAVIGATION CONTEXT
+  // BACK TO HOME
   // ==========================================
 
-  get isFromMyClaims(): boolean {
-    return this.route.snapshot.queryParamMap.get('from') === 'my-claims';
-  }
-
-  // Return to the page that opened this report.
   goBack(): void {
-    void this.router.navigateByUrl(
-      this.isFromMyClaims ? '/my-claims' : '/home'
-    );
+    const params = this.route.snapshot.queryParamMap;
+
+    if (params.get('from') === 'my-claims') {
+      // Return directly to the claim card the user was reviewing.
+      const claimId = Number(params.get('claimId'));
+      const filter = params.get('filter');
+      void this.router.navigate(['/my-claims'], {
+        queryParams: {
+          ...(Number.isSafeInteger(claimId) && claimId > 0 ? { claimId } : {}),
+          ...(filter === 'all' || filter === 'pending' ||
+              filter === 'approved' || filter === 'rejected' ? { filter } : {}),
+        },
+      });
+      return;
+    }
+
+    void this.router.navigateByUrl('/home');
   }
 
   // ==========================================

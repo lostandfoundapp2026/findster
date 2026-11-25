@@ -1,6 +1,3 @@
-// Save as: src/app/pages/profile/profile.page.ts
-// FINDSTER — Profile page. Existing auth/profile methods preserved.
-
 import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -15,8 +12,7 @@ import {
   IonInput,
   IonSelect,
   IonSelectOption,
-  IonToolbar,
-} from '@ionic/angular';
+  IonToolbar, IonRefresher, IonRefresherContent } from '@ionic/angular';
 
 import { addIcons } from 'ionicons';
 import {
@@ -39,7 +35,7 @@ import { NotificationsService } from '../../services/notifications';
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonRefresherContent, IonRefresher, 
     FormsModule,
     IonButton,
     IonContent,

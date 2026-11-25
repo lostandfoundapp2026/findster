@@ -166,8 +166,7 @@
             </ion-card-title>
 
             <ion-card-subtitle>
-              {{ report.report_type | titlecase }} item · {{ report.barangay }} ·
-              {{ report.created_at | date:'mediumDate' }}
+              {{ report.barangay }} · {{ report.created_at | date:'mediumDate' }}
             </ion-card-subtitle>
           </ion-card-header>
 
@@ -178,40 +177,9 @@
               {{ expandedReportId === report.id ? 'Hide Details' : 'View Details' }}
               <ion-icon [name]="expandedReportId === report.id ? 'chevron-up-outline' : 'chevron-down-outline'" aria-hidden="true"></ion-icon>
             </button>
-            <div class="expanded-card-details" *ngIf="expandedReportId === report.id">
-            <p class="report-description">
-              {{ report.description }}
-            </p>
-
-            <div class="report-info-list">
-              <div class="report-info-row">
-                <span class="info-label">Location</span>
-                <strong class="info-value">
-                  {{ report.barangay }}
-                  <span *ngIf="report.specific_location">
-                    — {{ report.specific_location }}
-                  </span>
-                </strong>
-              </div>
-
-              <div
-                class="report-info-row"
-                *ngIf="report.date_lost_found"
-              >
-                <span class="info-label">Item date</span>
-                <strong class="info-value">
-                  {{ report.date_lost_found | date:'mediumDate' }}
-                </strong>
-              </div>
-
-              <div class="report-info-row">
-                <span class="info-label">Posted</span>
-                <strong class="info-value">
-                  {{ report.created_at | date:'mediumDate' }}
-                </strong>
-              </div>
-            </div>
-
+            <div class="expanded-card-details item-expanded" *ngIf="expandedReportId === report.id">
+              <div class="item-primary-actions" *ngIf="report.status === 'active'">
+                <h3>Manage this report</h3>
             <div class="report-actions">
               <ion-button
                 expand="block"
@@ -246,12 +214,28 @@
               </ion-button>
             </div>
 
+              </div>
             <p
               class="report-restriction"
               *ngIf="report.status !== 'active'"
             >
               This report can no longer be edited or deleted.
             </p>
+              <!-- Optional item description; barangay/date already visible in the header. -->
+              <details class="priority-more-details" *ngIf="report.description?.trim() || report.specific_location || report.date_lost_found">
+                <summary>Item information <ion-icon name="chevron-down-outline" aria-hidden="true"></ion-icon></summary>
+                <div class="priority-more-content">
+                  <p class="report-description" *ngIf="report.description?.trim()">{{ report.description }}</p>
+                  <div class="report-info-row" *ngIf="report.specific_location">
+                    <span class="info-label">Specific location</span>
+                    <strong class="info-value">{{ report.specific_location }}</strong>
+                  </div>
+                  <div class="report-info-row" *ngIf="report.date_lost_found">
+                    <span class="info-label">Lost / found date</span>
+                    <strong class="info-value">{{ report.date_lost_found | date:'mediumDate' }}</strong>
+                  </div>
+                </div>
+              </details>
             </div>
           </ion-card-content>
         </ion-card>
@@ -366,8 +350,9 @@
 
               <ion-badge
                 [color]="getClaimStatusColor(claim)"
+                [title]="getClaimStatusLabel(claim)"
               >
-                {{ getClaimStatusLabel(claim) }}
+                {{ claim.report_status === 'returned' ? 'Returned' : (claim.status | titlecase) }}
               </ion-badge>
             </div>
 
@@ -394,95 +379,19 @@
               {{ expandedClaimId === claim.id ? 'Hide Request' : 'Review Request' }}
               <ion-icon [name]="expandedClaimId === claim.id ? 'chevron-up-outline' : 'chevron-down-outline'" aria-hidden="true"></ion-icon>
             </button>
-            <div class="expanded-card-details" *ngIf="expandedClaimId === claim.id">
-
-            <!-- REQUEST CONTEXT -->
-            <div class="request-explanation">
-              <p
-                *ngIf="getClaimReportType(claim) === 'found'"
-              >
-                Someone is claiming this found item. Check their proof before deciding.
+            <div class="expanded-card-details request-expanded-priority" *ngIf="expandedClaimId === claim.id">
+              <!-- One status badge already appears in the card header. -->
+              <p class="request-closure-note" *ngIf="claim.status === 'rejected'">
+                {{ getClaimClosureDescription(claim) }}
               </p>
-
-              <p
-                *ngIf="getClaimReportType(claim) === 'lost'"
-              >
-                Someone may have found your lost item. Verify the details in chat.
-              </p>
-            </div>
-
-            <!-- REQUESTER EMAIL -->
-            <div
-              class="claim-info-row"
-              *ngIf="claim.requester_email"
-            >
-              <span>Requester Email</span>
-              <strong>{{ claim.requester_email }}</strong>
-            </div>
-
-            <!-- PRIVATE VERIFICATION -->
-            <div
-              class="verification-details"
-              *ngIf="
-                claim.verification_details?.trim();
-                else legacyClaimNotice
-              "
-            >
-              <h3>Private Verification Details</h3>
-              <p class="private-verification-text">
-                {{ claim.verification_details }}
-              </p>
-              <ion-note>
-                Private information—do not share it publicly.
-              </ion-note>
-            </div>
-
-            <ng-template #legacyClaimNotice>
-              <div
-                class="verification-details missing-verification"
-              >
-                <h3>Verification Details Unavailable</h3>
-                <ion-note color="warning">
-                  No verification details provided. Confirm ownership before proceeding.
-                </ion-note>
-              </div>
-            </ng-template>
-
-            <!-- ADDITIONAL MESSAGE -->
-            <div
-              class="claim-message"
-              *ngIf="claim.message"
-            >
-              <h3>Additional Message</h3>
-              <p>{{ claim.message }}</p>
-            </div>
-
-            <!-- REQUEST CLOSURE -->
-            <div
-              class="claim-closure"
-              *ngIf="claim.status === 'rejected'"
-            >
-              <h3>Request Closure</h3>
-              <p>{{ getClaimClosureDescription(claim) }}</p>
-            </div>
-
-            <!-- SUBMITTED -->
-            <div
-              class="claim-info-row"
-              *ngIf="claim.created_at"
-            >
-              <span>Submitted</span>
-              <strong>
-                {{ claim.created_at | date:'medium' }}
-              </strong>
-            </div>
-
+              <!-- Main task first: chat, decision, matching, or handover according to status. -->
+              <div class="request-next-actions">
             <!-- PRIVATE CHAT -->
             <div
               class="claim-action-section"
               *ngIf="canOpenClaimChat(claim)"
             >
-              <h3>Private Conversation</h3>
+              <h3>Chat with requester</h3>
 
               <ion-button
                 expand="block"
@@ -502,26 +411,6 @@
                       )
                 }}
               </ion-button>
-
-              <p
-                class="action-helper"
-                *ngIf="
-                  (claim.status === 'pending' || claim.status === 'approved') &&
-                  claim.report_status !== 'returned'
-                "
-              >
-                Verify the item and arrange handover through chat.
-              </p>
-
-              <p
-                class="action-helper"
-                *ngIf="
-                  claim.status === 'rejected' ||
-                  claim.report_status === 'returned'
-                "
-              >
-                This conversation is read-only.
-              </p>
             </div>
 
             <!-- FOUND ITEM: APPROVAL / REJECTION -->
@@ -529,7 +418,7 @@
               class="claim-action-section decision-section"
               *ngIf="showDecisionActions(claim)"
             >
-              <h3>Ownership Verification</h3>
+              <h3>Review ownership</h3>
 
               <p>
                 Approve only after verifying ownership. Other pending claims will close.
@@ -569,7 +458,7 @@
               class="claim-action-section not-match-section"
               *ngIf="showNotAMatchAction(claim)"
             >
-              <h3>Item Verification</h3>
+              <h3>Does the item match?</h3>
 
               <p>
                 Not the right item? Close this request without affecting your report.
@@ -596,12 +485,15 @@
               class="return-confirmation-section"
               *ngIf="showHandoverSection(claim)"
             >
-              <h3>Item Handover</h3>
+              <h3>Handover progress</h3>
 
               <p class="handover-description">
                 {{ getReturnProgress(claim) }}
               </p>
 
+              <details class="handover-participants">
+                <summary>View both confirmations <ion-icon name="chevron-down-outline" aria-hidden="true"></ion-icon></summary>
+                <div class="handover-participants-body">
               <!-- REPORT OWNER CONFIRMATION -->
               <div class="handover-row">
                 <div>
@@ -674,6 +566,9 @@
                 </ion-badge>
               </div>
 
+                </div>
+              </details>
+
               <!-- HANDOVER CONFIRMATION -->
               <ion-button
                 *ngIf="canConfirmReturn(claim)"
@@ -705,6 +600,12 @@
               </p>
             </div>
 
+              </div>
+              <!-- Optional user message is the only additional claim detail displayed. -->
+              <section class="request-optional-message simple-request-message" *ngIf="claim.message?.trim()">
+                <h3>Additional Message</h3>
+                <p>{{ claim.message }}</p>
+              </section>
             </div>
           </ion-card-content>
         </ion-card>

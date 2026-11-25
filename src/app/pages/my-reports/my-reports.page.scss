@@ -2381,3 +2381,565 @@ ion-button:focus-visible,
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* =============================================================
+   FINDSTER — MY REPORTS: SPACIOUS MOBILE UI REFINEMENT
+   Presentation only. All HTML bindings and TS logic are retained.
+   Keep this block at the end so it takes precedence over older
+   layout overrides. Ionic content remains the sole scroll region.
+   ============================================================= */
+:host {
+  --fr-blue: #0758d3;
+  --fr-navy: #102b53;
+  --fr-text: #24344c;
+  --fr-muted: #596b82;
+  --fr-border: #e2e9f3;
+  --fr-bg: #f6f8fc;
+  --fr-shadow: 0 3px 14px rgba(18, 47, 89, .045);
+}
+
+.my-reports-content { --background: var(--fr-bg); --overflow: auto; }
+.reports-container {
+  max-width: 760px;
+  padding: 20px 18px calc(128px + env(safe-area-inset-bottom, 0px));
+  overflow: visible;
+}
+
+/* Calm hierarchy: no extra bordered card around the page intro. */
+.reports-intro {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 2px 0 0;
+  margin-bottom: 22px;
+  gap: 16px;
+}
+.reports-intro h1 { font-size: 23px; letter-spacing: -.55px; line-height: 1.25; margin-bottom: 7px; }
+.reports-intro p { font-size: 13px; line-height: 1.65; max-width: 370px; }
+.create-report-button {
+  --border-radius: 13px;
+  --box-shadow: none;
+  min-height: 50px;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+/* Distinct top-level views, roomy touch targets. */
+.reports-view-switch {
+  gap: 5px;
+  padding: 5px;
+  margin: 0 0 23px;
+  background: #eaf0f9;
+  border: 1px solid #e0e8f4;
+  border-radius: 15px;
+}
+.reports-view-tab { min-height: 46px; border-radius: 11px; font-size: 13px; gap: 8px; }
+.tab-count { min-width: 23px; min-height: 22px; border-radius: 8px; }
+.section-heading { margin-bottom: 16px; }
+.section-heading h2 { font-size: 18px; line-height: 1.35; margin-bottom: 5px; }
+.section-heading p { font-size: 13px; line-height: 1.55; }
+.reports-section, .requests-section { margin-bottom: 18px; }
+
+/* Filters are horizontally swipeable only when a narrow viewport
+   cannot fit all options. The whole card never gets its own scroll. */
+.report-filter-controls {
+  gap: 9px;
+  margin: 0 0 18px;
+  padding: 2px 1px 6px;
+}
+.report-filter-chip {
+  min-height: 40px;
+  padding: 9px 15px;
+  font-size: 12.5px;
+  border-color: #dbe5f1;
+}
+.report-filter-chip.is-active { background: #e9f1ff; border-color: #a7c6f5; }
+
+/* Cards: one quiet surface, generous but deliberate spacing. */
+.reports-list, .claims-list { gap: 14px; }
+.report-card, .claim-card {
+  border: 1px solid #e1e9f3;
+  border-radius: 17px;
+  box-shadow: 0 3px 15px rgba(15, 50, 93, .045);
+  background: #fff;
+  overflow: hidden;
+  min-width: 0;
+}
+.report-card ion-card-header, .claim-card ion-card-header {
+  padding: 19px 18px 15px;
+}
+.report-card ion-card-content.report-compact-content,
+.claim-card ion-card-content.claim-compact-content {
+  padding: 0 18px 15px;
+}
+.report-card-top, .claim-card-top {
+  gap: 10px;
+  margin-bottom: 13px;
+  align-items: flex-start;
+}
+.report-type-tag {
+  padding: 7px 10px;
+  font-size: 10px;
+  letter-spacing: .35px;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+.report-card-top ion-badge, .claim-card-top ion-badge {
+  padding: 7px 10px;
+  font-size: 10.5px;
+  line-height: 1.2;
+  border-radius: 8px;
+  text-align: center;
+  white-space: normal;
+  max-width: 62%;
+}
+.report-card ion-card-title, .claim-card ion-card-title {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.4;
+  margin-bottom: 7px;
+  color: var(--fr-navy);
+  overflow-wrap: anywhere;
+}
+.report-card ion-card-subtitle, .claim-card ion-card-subtitle {
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--fr-muted);
+  overflow-wrap: anywhere;
+}
+.card-expand-button {
+  min-height: 48px;
+  padding: 11px 2px 8px;
+  font-size: 13px;
+  border-top: 1px solid #edf1f7;
+}
+.card-expand-button ion-icon { font-size: 19px; }
+.expanded-card-details {
+  padding: 16px 0 4px;
+  border-top: 1px solid #edf1f7;
+  animation: fr-expand-in .16s ease-out;
+  overflow: visible;
+  max-height: none;
+}
+.report-description, .request-explanation p, .claim-message p,
+.claim-closure p, .claim-action-section > p, .handover-description,
+.action-helper, .handover-warning, .report-restriction {
+  font-size: 13px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.report-info-list { margin-top: 15px; }
+.report-info-row {
+  padding: 11px 0;
+  gap: 12px;
+  align-items: flex-start;
+}
+.info-label { font-size: 12px; line-height: 1.5; }
+.info-value { font-size: 13px; line-height: 1.6; text-align: right; overflow-wrap: anywhere; }
+.report-actions { gap: 11px; margin-top: 18px; }
+.report-actions ion-button,
+.claim-action-section ion-button,
+.confirm-return-button {
+  --border-radius: 12px;
+  --box-shadow: none;
+  min-height: 48px;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Request detail content: clear headings, fewer hard nested borders. */
+.claim-info-row { padding: 12px 0; gap: 12px; }
+.claim-info-row > span { font-size: 12px; line-height: 1.5; }
+.claim-info-row strong { font-size: 13px; line-height: 1.55; overflow-wrap: anywhere; }
+.verification-details, .claim-message, .claim-closure,
+.claim-action-section, .return-confirmation-section {
+  margin-top: 15px;
+  padding: 16px;
+  border-radius: 13px;
+  box-shadow: none;
+}
+.verification-details h3, .claim-message h3, .claim-closure h3,
+.claim-action-section h3, .return-confirmation-section h3 {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 9px;
+}
+.handover-row {
+  padding: 12px 0;
+  gap: 10px;
+  align-items: flex-start;
+}
+.handover-row strong { line-height: 1.4; }
+.handover-row span { line-height: 1.5; }
+.handover-row ion-badge { flex: 0 0 auto; }
+.report-load-more { margin-top: 20px; }
+.report-load-more ion-button { min-height: 47px; font-size: 13px; }
+
+/* Empty/error states should feel intentional, not cramped. */
+.loading-state, .error-state, .empty-state {
+  padding: 30px 21px;
+  border-radius: 16px;
+  box-shadow: none;
+}
+.loading-state p, .error-state p, .empty-state p {
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* Respect narrow phones without clipping content. */
+@media (max-width: 360px) {
+  .reports-container { padding-inline: 14px; }
+  .report-card ion-card-header, .claim-card ion-card-header { padding: 16px 14px 12px; }
+  .report-card ion-card-content.report-compact-content,
+  .claim-card ion-card-content.claim-compact-content { padding: 0 14px 13px; }
+  .reports-intro h1 { font-size: 21px; }
+  .reports-view-tab { font-size: 12px; }
+  .verification-details, .claim-message, .claim-closure,
+  .claim-action-section, .return-confirmation-section { padding: 13px; }
+}
+@media (min-width: 600px) {
+  .reports-container { padding-inline: 24px; }
+  .reports-intro { flex-direction: row; align-items: center; justify-content: space-between; }
+  .create-report-button { width: auto; min-width: 170px; }
+  .reports-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .claims-list { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .expanded-card-details { animation: none; }
+}
+
+
+/* =========================================================
+   FINDSTER — REQUESTS TAB: focused, compact expanded layout
+   Scope everything to claims so My Items keeps existing UI.
+   ========================================================= */
+.claim-card .expanded-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 15px 0 5px;
+  border-top: 1px solid #eaf0f7;
+  overflow: visible;
+  max-height: none;
+}
+.claim-card .request-status-summary {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.claim-card .request-status-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 7px;
+}
+.claim-card .request-detail-heading {
+  color: #0d2e59;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+.claim-card .request-status-top ion-badge {
+  max-width: 55%;
+  padding: 5px 9px;
+  font-size: 11px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.4;
+}
+.claim-card .request-status-summary > p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #54677e;
+  overflow-wrap: anywhere;
+}
+.claim-card .request-meta {
+  display: grid;
+  gap: 11px;
+  padding: 13px 0;
+  border-top: 1px solid #eaf0f7;
+  border-bottom: 1px solid #eaf0f7;
+}
+.claim-card .request-meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.claim-card .request-meta-row span {
+  color: #66788d;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.claim-card .request-meta-row strong {
+  color: #163657;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.claim-card .request-extra-details {
+  border: 1px solid #e1eaf4;
+  border-radius: 12px;
+  background: #f8fbff;
+  overflow: hidden;
+}
+.claim-card .request-extra-details > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  min-height: 48px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 650;
+  color: #144576;
+}
+.claim-card .request-extra-details > summary::-webkit-details-marker { display: none; }
+.claim-card .request-extra-details > summary::marker { content: ''; }
+.claim-card .request-extra-details > summary ion-icon {
+  flex: 0 0 auto;
+  font-size: 18px;
+  transition: transform .15s ease;
+}
+.claim-card .request-extra-details[open] > summary ion-icon { transform: rotate(180deg); }
+.claim-card .request-extra-content {
+  padding: 0 14px 14px;
+  display: grid;
+  gap: 13px;
+}
+.claim-card .request-extra-group + .request-extra-group {
+  padding-top: 12px;
+  border-top: 1px solid #e4ebf3;
+}
+.claim-card .request-extra-group h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #163657;
+}
+.claim-card .request-extra-group p,
+.claim-card .request-extra-group ion-note {
+  display: block;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+/* Keep all existing actions; remove repetitive nested card decoration. */
+.claim-card .claim-action-section,
+.claim-card .return-confirmation-section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.claim-card .claim-action-section + .claim-action-section,
+.claim-card .return-confirmation-section {
+  border-top: 1px solid #eaf0f7;
+  padding-top: 16px;
+}
+.claim-card .claim-action-section > h3,
+.claim-card .return-confirmation-section > h3 {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 9px;
+  color: #113762;
+}
+.claim-card .claim-action-section ion-button,
+.claim-card .return-confirmation-section ion-button {
+  min-height: 48px;
+  margin: 9px 0 0;
+  --border-radius: 12px;
+  --box-shadow: none;
+}
+.claim-card .claim-action-section .action-helper,
+.claim-card .return-confirmation-section .handover-warning {
+  margin: 7px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.claim-card .handover-row { padding: 11px 0; }
+@media (max-width: 360px) {
+  .claim-card .expanded-card-details { gap: 14px; }
+  .claim-card .request-extra-details > summary { padding: 12px; }
+  .claim-card .request-extra-content { padding: 0 12px 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .claim-card .request-extra-details > summary ion-icon { transition: none; }
+}
+
+
+/* =========================================================
+   REQUESTS V2 — single header status, message only when present
+   ========================================================= */
+/* Slightly tighter body while keeping comfortable reading space. */
+.claim-card .expanded-card-details {
+  gap: 14px;
+  padding-top: 14px;
+}
+.claim-card .request-meta {
+  padding: 0 0 13px;
+  border-top: 0;
+  border-bottom: 1px solid #eaf0f7;
+  gap: 12px;
+}
+.claim-card .request-meta-row { gap: 4px; }
+.claim-card .request-meta-row strong { font-size: 13px; line-height: 1.55; }
+/* Optional short note, never a collapsible verification card. */
+.claim-card .request-optional-message {
+  margin: 0;
+  padding: 13px 14px;
+  border: 1px solid #e7edf5;
+  border-radius: 12px;
+  background: #f7faff;
+}
+.claim-card .request-optional-message h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #163657;
+}
+.claim-card .request-optional-message p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #53687e;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+/* Closed request: succinct context text, not a separate status card. */
+.claim-card .request-closure-note {
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #617286;
+}
+/* Header is the only status marker. Allow long backend-derived status text to wrap. */
+.claim-card .claim-card-top { align-items: flex-start; gap: 8px; }
+.claim-card .claim-card-top ion-badge {
+  max-width: 62%;
+  white-space: normal;
+  line-height: 1.35;
+  text-align: center;
+}
+@media (max-width: 360px) {
+  .claim-card .request-optional-message { padding: 12px; }
+}
+
+
+/* =============================================================
+   FINDSTER — PRIORITY FIRST: MY ITEMS + REQUESTS
+   Keep Ionic page scrolling and all TS action conditions intact.
+   ============================================================= */
+.report-card .report-card-top,
+.claim-card .claim-card-top { align-items: center; gap: 8px; }
+.report-card ion-card-title,
+.claim-card ion-card-title { font-size: 17px; line-height: 1.35; font-weight: 750; }
+.report-card ion-card-subtitle,
+.claim-card ion-card-subtitle { font-size: 12px; line-height: 1.55; }
+.claim-card .claim-card-top ion-badge,
+.report-card .report-card-top ion-badge { max-width: 45%; font-size: 11px; white-space: nowrap; }
+.report-card .report-card-top .report-type-tag,
+.claim-card .claim-card-top .report-type-tag { font-size: 10px; line-height: 1.4; }
+/* Single action-oriented expanded content for both tabs */
+.report-card .item-expanded,
+.claim-card .request-expanded-priority {
+  display: flex; flex-direction: column; gap: 16px;
+  max-height: none; height: auto; overflow: visible;
+  padding: 15px 0 4px; border-top: 1px solid #e9eef6;
+}
+.report-card .item-primary-actions,
+.claim-card .request-next-actions { display: flex; flex-direction: column; gap: 14px; }
+.report-card .item-primary-actions h3 { margin: 0; font-size: 14px; color: #102f56; font-weight: 750; }
+.report-card .item-primary-actions .report-actions { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.report-card .item-primary-actions .report-actions ion-button { margin: 0; min-height: 46px; --border-radius: 11px; }
+.report-card .item-expanded .report-restriction { margin: 0; font-size: 12px; line-height: 1.6; }
+/* No nested visual cards: collapsible supplementary details only */
+.report-card .priority-more-details,
+.claim-card .priority-more-details,
+.claim-card .handover-participants { border-top: 1px solid #e9eef6; margin: 0; background: transparent; }
+.report-card .priority-more-details > summary,
+.claim-card .priority-more-details > summary,
+.claim-card .handover-participants > summary {
+  min-height: 48px; display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; cursor: pointer; list-style: none; color: #0758d3;
+  font-size: 13px; font-weight: 700; line-height: 1.45;
+}
+.report-card .priority-more-details > summary::-webkit-details-marker,
+.claim-card .priority-more-details > summary::-webkit-details-marker,
+.claim-card .handover-participants > summary::-webkit-details-marker { display:none; }
+.report-card .priority-more-details > summary::marker,
+.claim-card .priority-more-details > summary::marker,
+.claim-card .handover-participants > summary::marker { content: ''; }
+.report-card .priority-more-details > summary ion-icon,
+.claim-card .priority-more-details > summary ion-icon,
+.claim-card .handover-participants > summary ion-icon { font-size: 17px; transition: transform .16s ease; }
+.report-card .priority-more-details[open] > summary ion-icon,
+.claim-card .priority-more-details[open] > summary ion-icon,
+.claim-card .handover-participants[open] > summary ion-icon { transform: rotate(180deg); }
+.report-card .priority-more-content,
+.claim-card .priority-more-content { display: flex; flex-direction: column; gap: 13px; padding: 0 0 14px; }
+.report-card .priority-more-content .report-description { margin: 0; font-size: 13px; line-height: 1.65; overflow-wrap: anywhere; }
+.report-card .priority-more-content .report-info-list { margin: 0; }
+.claim-card .request-expanded-priority .request-closure-note { padding: 0; margin: 0; font-size: 13px; line-height: 1.55; }
+.claim-card .request-next-actions .claim-action-section,
+.claim-card .request-next-actions .return-confirmation-section { margin: 0; padding: 0; border: 0; background: transparent; border-radius: 0; box-shadow: none; }
+.claim-card .request-next-actions .claim-action-section + .claim-action-section,
+.claim-card .request-next-actions .return-confirmation-section:not(:first-child) { border-top: 1px solid #e9eef6; padding-top: 14px; }
+.claim-card .request-next-actions h3 { margin: 0 0 6px; font-size: 14px; font-weight: 750; color: #102f56; }
+.claim-card .request-next-actions p { font-size: 12px; line-height: 1.55; margin: 5px 0 9px; color: #5b6c81; }
+.claim-card .request-next-actions ion-button { min-height: 46px; margin: 8px 0 0; --border-radius: 11px; --box-shadow: none; }
+.claim-card .request-next-actions .decision-section { display: flex; flex-direction: column; gap: 3px; }
+.claim-card .request-next-actions .handover-participants { margin-top: 10px; }
+.claim-card .handover-participants-body { display: flex; flex-direction: column; gap: 4px; padding: 0 0 12px; }
+.claim-card .handover-participants-body .handover-row { padding: 7px 0; }
+.claim-card .request-expanded-priority .request-meta { padding: 0; margin: 0; border: 0; gap: 10px; }
+.claim-card .request-expanded-priority .request-optional-message { margin: 0; padding: 11px 13px; background: #f6f9fe; border: 1px solid #e5ecf7; }
+/* Preserve extra space for Chrome/Android bottom tabs */
+.reports-container { padding-bottom: calc(116px + env(safe-area-inset-bottom, 0px)); }
+@media (max-width: 360px) {
+  .report-card .item-primary-actions .report-actions { gap: 7px; }
+  .report-card .item-primary-actions .report-actions ion-button { font-size: 12px; }
+  .claim-card .claim-card-top ion-badge { font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+ .report-card .priority-more-details > summary ion-icon,
+ .claim-card .priority-more-details > summary ion-icon,
+ .claim-card .handover-participants > summary ion-icon { transition:none; }
+}
+
+/* Compact optional additional message, no nested card styling. */
+.request-expanded-priority .simple-request-message {
+  margin-top: 12px;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--fr-border);
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+.request-expanded-priority .simple-request-message h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.request-expanded-priority .simple-request-message p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}

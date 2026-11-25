@@ -945,3 +945,209 @@ ion-textarea.form-control {
     border-width: 2px;
   }
 }
+
+/* =========================================================
+   FINDSTER — EDIT REPORT MOBILE ACCORDION (2026-11-24)
+   Presentation only: preserve Angular bindings and save logic.
+   ========================================================= */
+.edit-report-content { --overflow: auto; }
+.edit-report-container {
+  width: 100%;
+  max-width: 480px;
+  padding: 12px 14px 18px;
+}
+.edit-intro { margin-bottom: 12px; }
+.edit-intro h1 { font-size: 18px; }
+.edit-intro > p { font-size: 11.5px; }
+.edit-report-form { display: flex; flex-direction: column; gap: 10px; }
+
+/* Compact numbered dropdown headers */
+.section-toggle {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px 13px;
+  margin: 0;
+  border: 1px solid #dfe8f1;
+  border-radius: 15px;
+  background: #fff;
+  color: var(--edit-navy);
+  text-align: left;
+  box-shadow: 0 2px 8px rgba(9,45,102,.035);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.section-toggle-number {
+  display: grid;
+  flex: 0 0 37px;
+  place-items: center;
+  width: 37px;
+  height: 37px;
+  border-radius: 11px;
+  background: #edf4ff;
+  color: #0758d3;
+  font-size: 13px;
+  font-weight: 800;
+}
+.section-toggle-copy {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.section-toggle-copy strong { font-size: 13px; font-weight: 800; line-height: 1.3; }
+.section-toggle-copy small { color: #708096; font-size: 10.5px; line-height: 1.4; }
+.section-toggle-chevron {
+  flex: 0 0 28px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #dbe8f8;
+  border-radius: 9px;
+  background: #f5f9ff;
+  color: #0758d3;
+  font-size: 18px;
+  font-weight: 700;
+}
+.section-toggle[aria-expanded="true"] {
+  border-color: #c9dbf2;
+  background: #f9fbff;
+  border-radius: 15px 15px 0 0;
+}
+.section-toggle:focus-visible { outline: 2px solid #0758d3; outline-offset: 2px; }
+
+/* Honor [hidden] even when .form-card's display styles change. */
+.form-card[hidden] { display: none !important; }
+.section-toggle + .form-card {
+  margin-top: -10px;
+  border-top: 0;
+  border-radius: 0 0 15px 15px;
+  box-shadow: none;
+}
+/* Report type + item information are one continuous open panel. */
+.type-card:not([hidden]) { border-bottom: 0; border-radius: 0; padding-bottom: 4px; }
+.type-card:not([hidden]) + .item-card:not([hidden]) {
+  margin-top: -10px;
+  border-top: 0;
+  border-radius: 0 0 15px 15px;
+}
+.form-card { padding: 13px 14px; }
+.card-heading { margin-bottom: 10px; }
+.card-heading h2 { font-size: 14px; }
+.card-heading p { font-size: 11px; }
+.field-group { gap: 6px; margin-bottom: 13px; }
+.field-label { font-size: 12px; }
+.form-control { min-height: 46px; font-size: 14px; }
+.description-control { min-height: 72px; }
+.incident-location-map { height: 225px; min-height: 225px; }
+.photo-preview img { max-height: 200px; }
+
+
+/* =========================================================
+   FINAL MOBILE ACCORDION + IN-FORM ACTIONS
+   Only ion-content scrolls, accordion groups expand naturally.
+   Cancel and Save Changes are at the end of the form.
+   ========================================================= */
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.edit-report-header { flex: 0 0 auto; }
+
+ion-content.edit-report-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  --overflow: auto;
+  --background: var(--edit-bg);
+}
+
+ion-content.edit-report-content::part(scroll) {
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.edit-report-container {
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+}
+
+.edit-report-form { min-height: 0; overflow: visible; }
+.accordion-panel[hidden] { display: none !important; }
+.accordion-panel:not([hidden]) {
+  display: block;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+  overscroll-behavior: auto;
+  touch-action: auto;
+  margin-top: -10px;
+  border: 1px solid #dfe8f1;
+  border-top: 0;
+  border-radius: 0 0 15px 15px;
+  background: #fff;
+}
+.accordion-panel > .form-card {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.accordion-panel > .type-card { padding-bottom: 4px; }
+.accordion-panel > .item-card { padding-top: 9px; }
+.accordion-panel > .form-card:last-child { padding-bottom: 18px; }
+
+/* Native page scrolling takes priority over dragging the Leaflet map. */
+.incident-location-map,
+.incident-location-map .leaflet-container { touch-action: pan-y; }
+
+.in-form-actions {
+  position: static;
+  display: block;
+  width: 100%;
+  margin: 14px 0 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.in-form-actions .action-buttons {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: 9px;
+}
+.in-form-actions ion-button {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  min-height: 46px;
+  margin: 0;
+}
+.in-form-actions ion-button::part(native) { min-height: 46px; }
+
+@media (max-width: 360px) {
+  .edit-report-container {
+    padding: 10px 10px calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+  .section-toggle { padding: 11px 10px; gap: 8px; }
+  .section-toggle-copy strong { font-size: 12px; }
+  .section-toggle-copy small { font-size: 10px; }
+  .in-form-actions { padding: 0; }
+  .in-form-actions .action-buttons { gap: 7px; }
+  .in-form-actions ion-button { font-size: 11px; }
+}

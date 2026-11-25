@@ -262,11 +262,6 @@
             }}
           </ion-card-title>
 
-          <!-- CLAIM REFERENCE -->
-          <ion-card-subtitle class="claim-reference">
-            Claim #{{ claim.id }}
-          </ion-card-subtitle>
-
           <!-- DATE -->
           <p
             class="claim-submitted-date"
@@ -321,238 +316,30 @@
           *ngIf="isClaimExpanded(claim.id)"
         >
 
-          <!-- SUBMITTED MESSAGE -->
-          <section
-            class="claim-information-section"
-            *ngIf="claim.message"
-          >
-            <h3>Your Message</h3>
+          <!-- Priority-first: status context and the actions the claimant needs now. -->
+          <div class="claim-next-step" role="status">
+            <strong *ngIf="claim.status === 'pending'">Awaiting review</strong>
+            <strong *ngIf="claim.status === 'approved' && claim.report_status !== 'returned'">Coordinate item handover</strong>
+            <strong *ngIf="claim.status === 'approved' && claim.report_status === 'returned'">Item returned successfully</strong>
+            <strong *ngIf="claim.status === 'rejected'">Request closed</strong>
 
-            <p class="submitted-message">
-              {{ claim.message }}
+            <p *ngIf="claim.status === 'pending' && claim.report_type === 'lost'">
+              Check with the report owner in private chat to confirm whether the item matches.
             </p>
-          </section>
-
-          <!-- PRIVATE VERIFICATION DETAILS -->
-          <section
-            class="verification-details"
-            *ngIf="claim.verification_details"
-          >
-            <h3>Private Verification Details</h3>
-
-            <p class="verification-text">
-              {{ claim.verification_details }}
+            <p *ngIf="claim.status === 'pending' && claim.report_type !== 'lost'">
+              Your claim is awaiting review. You can coordinate privately with the finder.
             </p>
-
-            <p class="privacy-caption">
-              Only claim participants should use these
-              details for verification.
+            <p *ngIf="claim.status === 'approved' && claim.report_status !== 'returned'">
+              Arrange the physical return in chat. Complete confirmation only after the exchange.
             </p>
-          </section>
-
-          <!-- ===========================================
-               PENDING FOUND-ITEM RESPONSE
-               =========================================== -->
-          <section
-            class="claim-guidance pending-guidance"
-            *ngIf="
-              claim.status === 'pending' &&
-              claim.report_type === 'lost'
-            "
-          >
-            <h3>Awaiting Item Verification</h3>
-
-            <p>
-              Verify the item privately with the owner before arranging a return.
+            <p *ngIf="claim.status === 'approved' && claim.report_status === 'returned'">
+              Both parties have confirmed the item return.
             </p>
-          </section>
+            <p *ngIf="claim.status === 'rejected'">{{ getClaimClosureDescription(claim) }}</p>
+          </div>
 
-          <!-- ===========================================
-               PENDING OWNERSHIP CLAIM
-               =========================================== -->
-          <section
-            class="claim-guidance pending-guidance"
-            *ngIf="
-              claim.status === 'pending' &&
-              claim.report_type !== 'lost'
-            "
-          >
-            <h3>Ownership Verification Pending</h3>
-
-            <p>
-              The finder is reviewing your request. Verify ownership in private chat.
-            </p>
-          </section>
-
-          <!-- ===========================================
-               CLOSED CLAIM
-               =========================================== -->
-          <section
-            class="claim-guidance closed-guidance"
-            *ngIf="claim.status === 'rejected'"
-          >
-            <h3>Request Closed</h3>
-
-            <p>
-              {{ getClaimClosureDescription(claim) }}
-            </p>
-
-          </section>
-
-          <!-- ===========================================
-               APPROVED FOUND-ITEM RESPONSE
-               =========================================== -->
-          <section
-            class="claim-guidance approved-guidance"
-            *ngIf="
-              claim.status === 'approved' &&
-              claim.report_type === 'lost' &&
-              claim.report_status !== 'returned'
-            "
-          >
-            <h3>Selected Finder</h3>
-
-            <p>
-              Coordinate the handover through private chat. Confirm it in View Report after returning the item.
-            </p>
-          </section>
-
-          <!-- ===========================================
-               APPROVED OWNERSHIP CLAIM
-               =========================================== -->
-          <section
-            class="claim-guidance approved-guidance"
-            *ngIf="
-              claim.status === 'approved' &&
-              claim.report_type !== 'lost' &&
-              claim.report_status !== 'returned'
-            "
-          >
-            <h3>Ownership Claim Approved</h3>
-
-            <p>
-              Arrange collection through private chat. Confirm receipt only after receiving the item.
-            </p>
-          </section>
-
-          <!-- ===========================================
-               ITEM HANDOVER
-               =========================================== -->
-          <section
-            class="handover-section"
-            *ngIf="claim.status === 'approved'"
-          >
-
-            <!-- HANDOVER HEADING -->
-            <div class="handover-heading">
-
-              <h3>Item Handover</h3>
-
-              <span
-                class="handover-complete-tag"
-                *ngIf="claim.report_status === 'returned'"
-              >
-                Completed
-              </span>
-
-            </div>
-
-            <!-- HANDOVER PROGRESS -->
-            <p class="handover-description">
-              {{ getReturnProgress(claim) }}
-            </p>
-
-            <!-- REPORT OWNER -->
-            <div class="handover-party">
-
-              <div class="handover-party-info">
-
-                <strong>
-                  {{
-                    claim.report_type === 'lost'
-                      ? 'Lost-Item Owner'
-                      : 'Found-Item Finder'
-                  }}
-                </strong>
-
-                <span
-                  class="confirmation-date"
-                  *ngIf="claim.owner_return_confirmed_at"
-                >
-                  Confirmed
-                  {{
-                    claim.owner_return_confirmed_at
-                      | date:'medium'
-                  }}
-                </span>
-
-              </div>
-
-              <ion-badge
-                [color]="
-                  claim.owner_return_confirmed_at
-                    ? 'success'
-                    : 'warning'
-                "
-              >
-                {{
-                  claim.owner_return_confirmed_at
-                    ? 'Confirmed'
-                    : 'Pending'
-                }}
-              </ion-badge>
-
-            </div>
-
-            <!-- REQUESTER -->
-            <div class="handover-party">
-
-              <div class="handover-party-info">
-
-                <strong>
-                  {{
-                    claim.report_type === 'lost'
-                      ? 'You (Finder)'
-                      : 'You (Item Owner)'
-                  }}
-                </strong>
-
-                <span
-                  class="confirmation-date"
-                  *ngIf="claim.requester_return_confirmed_at"
-                >
-                  Confirmed
-                  {{
-                    claim.requester_return_confirmed_at
-                      | date:'medium'
-                  }}
-                </span>
-
-              </div>
-
-              <ion-badge
-                [color]="
-                  claim.requester_return_confirmed_at
-                    ? 'success'
-                    : 'warning'
-                "
-              >
-                {{
-                  claim.requester_return_confirmed_at
-                    ? 'Confirmed'
-                    : 'Pending'
-                }}
-              </ion-badge>
-
-            </div>
-
-            </section>
-
-          <!-- ===========================================
-               ACTION BUTTONS
-               =========================================== -->
+          <!-- Most useful actions first; existing navigation and permissions retained. -->
           <div class="claim-actions" role="group" aria-label="Claim actions">
-
             <ion-button
               expand="block"
               fill="outline"
@@ -564,58 +351,73 @@
               {{
                 openingChatClaimId === claim.id
                   ? 'Opening Chat...'
-                  : (
-                      claim.status === 'rejected' ||
-                      claim.report_status === 'returned' ||
-                      claim.report_status === 'closed'
-                    )
+                  : (claim.status === 'rejected' || claim.report_status === 'returned' || claim.report_status === 'closed')
                     ? 'View Chat History'
                     : 'Open Private Chat'
               }}
             </ion-button>
-
             <ion-button
               expand="block"
               class="view-report-button"
-              (click)="viewReport(claim.report_id)"
+              (click)="viewReport(claim.report_id, claim.id)"
             >
               <ion-icon name="document-text-outline" slot="start" aria-hidden="true"></ion-icon>
               View Report
             </ion-button>
           </div>
 
-          <p
-            class="chat-notice"
-            *ngIf="chatNoticeClaimId === claim.id && chatNoticeMessage"
-            role="status"
-          >
+          <p class="chat-notice" *ngIf="chatNoticeClaimId === claim.id && chatNoticeMessage" role="status">
             {{ chatNoticeMessage }}
           </p>
+
+          <!-- Display handover progress only for approved claims. -->
+          <details class="claim-secondary-details" *ngIf="claim.status === 'approved'">
+            <summary>
+              <span>Handover progress</span>
+              <span class="details-indicator" aria-hidden="true"></span>
+            </summary>
+            <div class="secondary-details-body">
+              <p class="handover-description">{{ getReturnProgress(claim) }}</p>
+              <div class="handover-party">
+                <div class="handover-party-info">
+                  <strong>{{ claim.report_type === 'lost' ? 'Lost-Item Owner' : 'Found-Item Finder' }}</strong>
+                  <span class="confirmation-date" *ngIf="claim.owner_return_confirmed_at">
+                    Confirmed {{ claim.owner_return_confirmed_at | date:'medium' }}
+                  </span>
+                </div>
+                <ion-badge [color]="claim.owner_return_confirmed_at ? 'success' : 'warning'">
+                  {{ claim.owner_return_confirmed_at ? 'Confirmed' : 'Pending' }}
+                </ion-badge>
+              </div>
+              <div class="handover-party">
+                <div class="handover-party-info">
+                  <strong>{{ claim.report_type === 'lost' ? 'You (Finder)' : 'You (Item Owner)' }}</strong>
+                  <span class="confirmation-date" *ngIf="claim.requester_return_confirmed_at">
+                    Confirmed {{ claim.requester_return_confirmed_at | date:'medium' }}
+                  </span>
+                </div>
+                <ion-badge [color]="claim.requester_return_confirmed_at ? 'success' : 'warning'">
+                  {{ claim.requester_return_confirmed_at ? 'Confirmed' : 'Pending' }}
+                </ion-badge>
+              </div>
+            </div>
+          </details>
+
+          <!-- Optional message: never display a blank or legacy verification box. -->
+          <details class="claim-secondary-details" *ngIf="claim.message?.trim()">
+            <summary>
+              <span>Your additional message</span>
+              <span class="details-indicator" aria-hidden="true"></span>
+            </summary>
+            <div class="secondary-details-body">
+              <p class="submitted-message">{{ claim.message }}</p>
+            </div>
+          </details>
 
         </ion-card-content>
 
       </ion-card>
 
     </section>
-
-    <!-- ================================================
-         PRIVACY REMINDER
-         ================================================ -->
-    <div
-      class="claims-privacy-note"
-      *ngIf="
-        !isLoading &&
-        !errorMessage &&
-        claims.length > 0
-      "
-    >
-      <strong>Safe Item Returns</strong>
-
-      <p>
-        Verify ownership privately.
-        Confirm returns only after the physical exchange.
-      </p>
-    </div>
-
-  </main>
+</main>
 </ion-content>

@@ -156,9 +156,14 @@
           </ion-select>
         </div>
       </section>
-          <ion-button expand="block" type="button" class="submit-button step-next"
+          <!-- Step 1 navigation stays inside its original form step. -->
+          <ion-button
+            expand="block"
+            type="button"
+            class="submit-button step-next"
             (click)="nextReportStep()"
-            [disabled]="isSubmitting || isGettingLocation || isSelectingPhoto">
+            [disabled]="isSubmitting || isGettingLocation || isSelectingPhoto"
+          >
             Continue to Location
           </ion-button>
         </div>
@@ -245,7 +250,6 @@
           <div class="subsection-heading">
             <h3>
               GPS Location
-              <span>(Optional)</span>
             </h3>
 
             <p class="location-help">
@@ -310,11 +314,20 @@
           }
         </div>
       </section>
-          <ion-button expand="block" type="button" class="submit-button step-next"
-            (click)="nextReportStep()"
-            [disabled]="isSubmitting || isGettingLocation || isSelectingPhoto">
-            Continue to Photo
-          </ion-button>
+
+      <!-- STEP 2 ONLY: fixed bottom action, inside the location step.
+           This deliberately does not use ion-footer. -->
+      <div class="step2-bottom-action">
+        <ion-button
+          expand="block"
+          type="button"
+          class="submit-button step2-continue-button"
+          (click)="nextReportStep()"
+          [disabled]="isSubmitting || isGettingLocation || isSelectingPhoto"
+        >
+          Continue to Photo
+        </ion-button>
+      </div>
         </div>
       }
 

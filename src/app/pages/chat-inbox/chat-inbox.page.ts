@@ -52,6 +52,102 @@ import {
 })
 export class ChatInboxPage implements OnInit, OnDestroy {
   conversations: ChatConversation[] = [];
+  // Participant names and last-message previews come from the authenticated chat API.
+  searchTerm = '';
+
+  get filteredConversations(): ChatConversation[] {
+    const term = this.searchTerm.trim().toLocaleLowerCase();
+    if (!term) return this.conversations;
+    return this.conversations.filter(c =>
+      [this.displayNameFor(c), c.item_name, this.previewFor(c)]
+        .some(value => String(value ?? '').toLocaleLowerCase().includes(term))
+    );
+  }
+
+  get totalUnread(): number {
+    return this.conversations.reduce((sum, c) => sum + Math.max(0, c.unread_count ?? 0), 0);
+  }
+
+  onSearchInput(event: Event): void {
+    this.searchTerm = (event.target as HTMLInputElement | null)?.value ?? '';
+    this.safeDetectChanges();
+  }
+
+  displayNameFor(c: ChatConversation): string {
+    return c.other_participant_name?.trim() || 'Findster User';
+  }
+
+  initialsFor(c: ChatConversation): string {
+    const name = c.other_participant_name?.trim();
+    return name ? name.split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase() : '💬';
+  }
+
+  previewFor(c: ChatConversation): string {
+    return c.last_message_preview?.trim() ||
+      (c.can_send ? 'Open to view messages' : 'View chat history');
+  }
+
+  // Use the latest sent message, then conversation activity, then creation.
+  private activityTimestampFor(c: ChatConversation): number | null {
+    const raw = c.last_message_at || c.updated_at || c.created_at;
+    if (!raw) return null;
+
+    const normalized = raw.trim().replace(' ', 'T');
+    // The API serializes MySQL UTC DATETIME values without a timezone suffix.
+    // Treat these as UTC; do not accidentally shift them to device-local time.
+    const withTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(normalized)
+      ? normalized
+      : `${normalized}Z`;
+    const value = Date.parse(withTimezone);
+    return Number.isFinite(value) ? value : null;
+  }
+
+  relativeActivityTimeFor(c: ChatConversation): string {
+    const timestamp = this.activityTimestampFor(c);
+    if (timestamp === null) return '';
+
+    const minutes = Math.max(0, Math.floor((this.activityNow - timestamp) / 60000));
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m`;
+    if (minutes < 1440) return `${Math.floor(minutes / 60)}h`;
+    if (minutes < 2880) return 'Yesterday';
+    if (minutes < 10080) return `${Math.floor(minutes / 1440)}d`;
+    return new Date(timestamp).toLocaleDateString('en-PH', {
+      month: 'short',
+      day: 'numeric',
+      ...(new Date(timestamp).getFullYear() !== new Date(this.activityNow).getFullYear()
+        ? { year: 'numeric' as const }
+        : {}),
+      timeZone: 'Asia/Manila',
+    });
+  }
+
+  fullActivityTimeFor(c: ChatConversation): string {
+    const timestamp = this.activityTimestampFor(c);
+    if (timestamp === null) return 'Unknown time';
+    return new Date(timestamp).toLocaleString('en-PH', {
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Manila',
+    });
+  }
+
+  private startActivityClock(): void {
+    this.stopActivityClock();
+    this.activityNow = Date.now();
+    this.activityClock = setInterval(() => {
+      if (this.destroyed) return;
+      this.activityNow = Date.now();
+      this.safeDetectChanges();
+    }, 30_000);
+  }
+
+  private stopActivityClock(): void {
+    if (this.activityClock !== null) {
+      clearInterval(this.activityClock);
+      this.activityClock = null;
+    }
+  }
+
   loading = true;
   refreshing = false;
   errorMessage = '';
@@ -67,6 +163,10 @@ export class ChatInboxPage implements OnInit, OnDestroy {
   private initialized = false;
   private hasLoadedOnce = false;
   private requestVersion = 0;
+
+  // Re-render relative times without reloading conversations from the server.
+  private activityClock: ReturnType<typeof setInterval> | null = null;
+  private activityNow = Date.now();
 
   constructor(
     private readonly chat: ChatService,
@@ -108,13 +208,19 @@ export class ChatInboxPage implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter(): void {
+    this.startActivityClock();
     // Ionic can call this immediately after ngOnInit. Do not fetch twice.
     if (this.initialized && this.hasLoadedOnce) {
       this.loadConversations(false);
     }
   }
 
+  ionViewDidLeave(): void {
+    this.stopActivityClock();
+  }
+
   ngOnDestroy(): void {
+    this.stopActivityClock();
     this.destroyed = true;
     this.requestVersion += 1;
     this.reloadAfterCurrentRequest = false;
@@ -247,8 +353,8 @@ export class ChatInboxPage implements OnInit, OnDestroy {
     items: ChatConversation[],
   ): ChatConversation[] {
     return [...items].sort((a, b) => {
-      const aTime = Date.parse(a.updated_at ?? a.created_at ?? '') || 0;
-      const bTime = Date.parse(b.updated_at ?? b.created_at ?? '') || 0;
+      const aTime = this.activityTimestampFor(a) ?? 0;
+      const bTime = this.activityTimestampFor(b) ?? 0;
       return bTime - aTime;
     });
   }

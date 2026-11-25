@@ -14,7 +14,7 @@
         type="button"
         class="chat-back-button"
         (click)="goBack()"
-        aria-label="Back to Messages"
+        aria-label="Back to previous page"
       >
         <ion-icon
           name="arrow-back-outline"
@@ -24,10 +24,10 @@
 
       <!-- CHAT INFORMATION -->
       <div class="chat-header-info">
-        <strong>{{ chatTitle }}</strong>
+        <strong>{{ participantDisplayName }}</strong>
 
         <span *ngIf="conversation" class="chat-header-reference">
-          Claim #{{ conversation.claim_id }}
+          Regarding: {{ chatTitle }}
         </span>
       </div>
 
@@ -56,68 +56,9 @@
 >
   <main class="chat-layout">
 
-    <!-- COMPACT CONVERSATION SUMMARY -->
-    <section
-      class="conversation-summary"
-      *ngIf="conversation"
-    >
-      <div class="summary-top">
-        <span
-          class="report-type"
-          [class.lost-type]="
-            conversation.report_type === 'lost'
-          "
-          [class.found-type]="
-            conversation.report_type === 'found'
-          "
-        >
-          {{
-            conversation.report_type === 'lost'
-              ? 'Lost Item'
-              : 'Found Item'
-          }}
-        </span>
-
-        <span
-          class="chat-status"
-          [class.read-only]="!conversation.can_send"
-        >
-          {{ statusLabel }}
-        </span>
-      </div>
-
-      <p class="claim-reference">
-        Private conversation about this item
-      </p>
-
-      <!-- CONNECTION WARNING ONLY WHEN NEEDED -->
-      <div
-        class="connection-status"
-        *ngIf="connectionState !== 'connected'"
-        [class.disconnected]="
-          connectionState === 'disconnected'
-        "
-        aria-live="polite"
-      >
-        <span
-          class="connection-dot"
-          aria-hidden="true"
-        ></span>
-
-        <span [ngSwitch]="connectionState">
-          <ng-container *ngSwitchCase="'connecting'">
-            Connecting to live updates...
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'reconnecting'">
-            Reconnecting to live updates...
-          </ng-container>
-
-          <ng-container *ngSwitchDefault>
-            Live updates unavailable. Refresh to check messages.
-          </ng-container>
-        </span>
-      </div>
+    <!-- Only show a brief status when it changes what the user can do. -->
+    <section class="conversation-summary" *ngIf="conversation && !conversation.can_send">
+      <span class="chat-status read-only">Read-only conversation</span>
     </section>
 
     <!-- LOADING -->
@@ -157,12 +98,6 @@
 
     <!-- CONVERSATION -->
     <ng-container *ngIf="!loading && conversation">
-
-      <!-- LIGHTWEIGHT SAFETY REMINDER -->
-      <aside class="chat-privacy-note" aria-label="Chat safety reminder">
-        <span class="privacy-indicator" aria-hidden="true">i</span>
-        <p>Verify item details privately. Confirm a return only after handover.</p>
-      </aside>
 
       <!-- OLDER MESSAGES -->
       <ion-infinite-scroll
