@@ -1996,3 +1996,76 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+/* ============================================================
+   FINDSTER — MY CLAIMS PRIORITY-FIRST DESIGN REFINEMENT
+   Overrides intentionally scoped to My Claims; no API changes.
+   ============================================================ */
+.my-claims-container {
+  max-width: 680px;
+  padding: 20px 16px calc(104px + env(safe-area-inset-bottom, 0px));
+}
+.page-heading { margin-bottom: 20px; }
+.page-heading h1 { font-size: 23px; line-height: 1.3; margin-bottom: 6px; }
+.page-heading p { font-size: 14px; line-height: 1.55; }
+.claims-filter-section { margin-bottom: 20px; }
+.claims-list { gap: 15px; }
+.claim-card { border-radius: 17px; overflow: hidden; }
+.claim-card-header { padding: 18px 17px 14px; }
+.claim-header-top { gap: 10px; margin-bottom: 12px; }
+.claim-type-tag, .claim-status-badge { font-size: 11px; line-height: 1.35; }
+.claim-item-title { font-size: 18px; line-height: 1.35; }
+.claim-submitted-date { margin: 9px 0 0; font-size: 12px; line-height: 1.4; }
+.claim-expand-container { padding: 0 17px; }
+.claim-expand-button { min-height: 47px; }
+.claim-card-content { padding: 18px 17px 21px; border-top: 1px solid #eaf0f6; }
+.claim-next-step { padding: 0; margin: 0 0 17px; }
+.claim-next-step strong { display: block; color: #092d66; font-size: 15px; font-weight: 800; line-height: 1.4; margin-bottom: 6px; }
+.claim-next-step p { margin: 0; color: #53657d; font-size: 13px; line-height: 1.65; overflow-wrap: anywhere; }
+.claim-actions { border-top: none; padding-top: 0; gap: 10px; margin: 0 0 15px; }
+.claim-actions ion-button { min-height: 49px; font-size: 13px; font-weight: 750; }
+.claim-actions ion-button::part(native) { min-height: 49px; padding-inline: 12px; }
+.claim-secondary-details { border-top: 1px solid #e9eef6; margin-top: 2px; color: #24344c; }
+.claim-secondary-details summary {
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; list-style: none; min-height: 49px; padding: 12px 1px;
+  font-weight: 700; font-size: 13px; color: #0758d3;
+}
+.claim-secondary-details summary::-webkit-details-marker { display: none; }
+.claim-secondary-details summary:focus-visible { outline: 2px solid #0758d3; outline-offset: 2px; border-radius: 5px; }
+.details-indicator { width: 8px; height: 8px; flex: 0 0 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .15s ease; margin-right: 5px; }
+.claim-secondary-details[open] .details-indicator { transform: rotate(225deg); }
+.secondary-details-body { padding: 2px 0 16px; }
+.secondary-details-body .handover-description { margin-bottom: 13px; font-size: 13px; line-height: 1.55; }
+.secondary-details-body .handover-party { padding: 12px 0; }
+.secondary-details-body .handover-party-info strong { font-size: 13px; }
+.secondary-details-body .submitted-message { padding: 0; border: none; background: transparent; font-size: 13px; line-height: 1.65; }
+.chat-notice { margin: 0 0 12px; }
+@media (max-width: 370px) {
+  .my-claims-container { padding-left: 13px; padding-right: 13px; }
+  .claim-card-header { padding-left: 15px; padding-right: 15px; }
+  .claim-card-content { padding-left: 15px; padding-right: 15px; }
+  .claim-expand-container { padding-left: 15px; padding-right: 15px; }
+}
+@media (prefers-reduced-motion: reduce) { .details-indicator { transition: none; } }
+
+/* ===============================================
+   My Claims: keep expand action inside the card
+   with visible spacing and room for Ionic content.
+   =============================================== */
+.claim-expand-container {
+  padding: 0 17px 18px;
+  box-sizing: border-box;
+}
+.claim-expand-button {
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  box-sizing: border-box;
+}
+.claim-card {
+  overflow: hidden;
+}
+@media (max-width: 370px) {
+  .claim-expand-container { padding: 0 15px 17px; }
+}

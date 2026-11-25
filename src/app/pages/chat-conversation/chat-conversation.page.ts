@@ -1230,6 +1230,11 @@ export class ChatConversationPage
     return message.id;
   }
 
+  // Display the other authorized participant's name from the chat API.
+  get participantDisplayName(): string {
+    return this.conversation?.other_participant_name?.trim() || 'Findster User';
+  }
+
   get chatTitle(): string {
     return (
       this.conversation?.item_name ||
@@ -1346,10 +1351,29 @@ export class ChatConversationPage
   // ==========================================
 
   goBack(): void {
-    void this.router.navigateByUrl(
-      '/chat',
-    );
+  const from =
+    this.route.snapshot.queryParamMap.get('from');
+
+  if (from === 'my-reports') {
+    const claimId = Number(this.route.snapshot.queryParamMap.get('claimId'));
+    // Return to the same Requests card. My Reports already knows how to
+    // expand and focus an incoming claim from a claimId query parameter.
+    void this.router.navigate(['/tabs/my-reports'], {
+      queryParams: Number.isSafeInteger(claimId) && claimId > 0
+        ? { claimId }
+        : undefined,
+    });
+    return;
   }
+
+  if (from === 'my-claims') {
+    void this.router.navigateByUrl('/my-claims');
+    return;
+  }
+
+  // Conversations opened from Messages still return to Messages.
+  void this.router.navigateByUrl('/chat');
+}
 
   // ==========================================
   // REQUEST VALIDATION

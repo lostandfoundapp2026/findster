@@ -19,6 +19,7 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonFooter,
   IonInput,
   IonSelect,
   IonSelectOption,
@@ -82,6 +83,7 @@ type BoundaryCollection = {
     CommonModule,
     FormsModule,
     IonHeader,
+    IonFooter,
     IonToolbar,
     IonTitle,
     IonContent,
@@ -96,6 +98,27 @@ type BoundaryCollection = {
   ],
 })
 export class EditReportPage implements OnInit, OnDestroy {
+
+  // UI-only section selection; does not modify report data or submission logic.
+  expandedSection: 'item' | 'location' | 'photo' | null = 'item';
+
+  toggleEditSection(section: 'item' | 'location' | 'photo'): void {
+    if (this.isSubmitting || this.isGettingLocation || this.isLoading) return;
+    this.expandedSection = this.expandedSection === section ? null : section;
+    if (this.expandedSection === 'location') {
+      // Leaflet needs a size recalculation after its hidden section becomes visible.
+      setTimeout(() => {
+        if (this.destroyed || this.expandedSection !== 'location') return;
+        this.incidentMap?.invalidateSize();
+        if (this.latitude !== null && this.longitude !== null &&
+            this.validCoordinates(this.latitude, this.longitude)) {
+          this.incidentMap?.setView([this.latitude, this.longitude], 15);
+        } else if (this.boundaryLayer) {
+          this.incidentMap?.fitBounds(this.boundaryLayer.getBounds().pad(0.1));
+        }
+      }, 180);
+    }
+  }
 
   // Map is created when the form becomes visible (after API load).
   @ViewChild('incidentMap')

@@ -6,7 +6,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import {
   Subscription,
@@ -187,6 +187,7 @@ export class MyClaimsPage implements OnDestroy {
     private reportsService: ReportsService,
     private chatService: ChatService,
     private router: Router,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -195,6 +196,22 @@ export class MyClaimsPage implements OnDestroy {
      ============================================================ */
 
   ionViewWillEnter(): void {
+    // Restore the claim that was opened before visiting Report Details.
+    // Do this before loading so the card expands as soon as its data returns.
+    const params = this.route.snapshot.queryParamMap;
+    const claimId = Number(params.get('claimId'));
+    const filter = params.get('filter');
+
+    if (Number.isSafeInteger(claimId) && claimId > 0) {
+      this.expandedClaimId = claimId;
+      if (filter === 'all' || filter === 'pending' ||
+          filter === 'approved' || filter === 'rejected') {
+        this.selectedFilter = filter;
+      } else {
+        this.selectedFilter = 'all';
+      }
+    }
+
     this.loadClaims();
   }
 
@@ -721,21 +738,23 @@ export class MyClaimsPage implements OnDestroy {
      VIEW REPORT DETAILS
      ============================================================ */
 
-  viewReport(reportId: number): void {
-
+  viewReport(reportId: number, claimId: number): void {
     if (
-      !Number.isSafeInteger(reportId) ||
-      reportId <= 0
+      !Number.isSafeInteger(reportId) || reportId <= 0 ||
+      !Number.isSafeInteger(claimId) || claimId <= 0
     ) {
       return;
     }
 
-    // Preserve the navigation source so Report Details can
-    // show a focused view and return to My Claims.
+    // Keep the source, expanded claim, and selected status filter.
     void this.router.navigate(
       ['/report-details', reportId],
       {
-        queryParams: { from: 'my-claims' },
+        queryParams: {
+          from: 'my-claims',
+          claimId,
+          filter: this.selectedFilter,
+        },
       },
     );
   }

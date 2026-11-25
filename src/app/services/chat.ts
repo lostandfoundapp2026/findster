@@ -20,6 +20,11 @@ export interface ChatConversation {
   created_at: string | null;
   updated_at: string | null;
   unread_count?: number;
+  /** Name of the other authorized participant, supplied by chat API. */
+  other_participant_name?: string | null;
+  /** Latest message preview only on /api/chat/mine. */
+  last_message_preview?: string | null;
+  last_message_at?: string | null;
 }
 export interface ChatMessage {
   id: number;

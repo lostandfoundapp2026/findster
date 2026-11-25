@@ -50,7 +50,7 @@
 <ion-content [fullscreen]="false" class="home-content">
   <main class="home-container">
 
-    <!-- INTRODUCTION AND PRIMARY ACTIONS -->
+    <!-- PRIMARY ACTION: REPORT AN ITEM / MY CLAIMS -->
     <section class="welcome-section">
       <div class="welcome-copy">
 
@@ -62,8 +62,8 @@
           San Leonardo, Nueva Ecija
         </span>
 
-        <h1>Find what matters.</h1>
-        <p>Report an item or explore what your community has found.</p>
+        <h1>Lost something? Found something?</h1>
+        <p>Share a report or browse items posted by your community.</p>
       </div>
 
       <div class="welcome-actions">
@@ -93,98 +93,6 @@
           My Claims
         </ion-button>
       </div>
-    </section>
-
-    <!-- NEAR ME -->
-    <section
-      class="nearby-section"
-      aria-labelledby="nearby-heading"
-    >
-      <ion-card class="near-me-card">
-        <ion-card-content>
-
-          <div class="near-me-top">
-            <span class="near-me-icon" aria-hidden="true">
-              <ion-icon name="navigate-outline"></ion-icon>
-            </span>
-
-            <div class="near-me-copy">
-              <h2 id="nearby-heading">Find Reports Near Me</h2>
-              <p>See items reported nearby.</p>
-            </div>
-          </div>
-
-          <ion-button
-            expand="block"
-            class="near-me-button"
-            (click)="useNearMe()"
-            [disabled]="isGettingLocation"
-          >
-            <ion-icon
-              name="location-outline"
-              slot="start"
-              aria-hidden="true"
-            ></ion-icon>
-
-            {{
-              isGettingLocation
-                ? 'Getting Your Location...'
-                : isNearMeActive
-                  ? 'Refresh Location'
-                  : 'Use Near Me'
-            }}
-          </ion-button>
-
-          <div
-            class="near-me-active"
-            *ngIf="isNearMeActive"
-          >
-            <p class="near-me-info">
-              <ion-icon
-                name="checkmark-circle-outline"
-                aria-hidden="true"
-              ></ion-icon>
-              Showing reports within {{ nearbyRadiusKm }} km
-            </p>
-
-            <ion-item class="radius-select" lines="none">
-              <ion-label>Search Radius</ion-label>
-
-              <ion-select
-                interface="popover"
-                [value]="nearbyRadiusKm"
-                (ionChange)="nearbyRadiusKm = $event.detail.value; cdr.detectChanges()"
-              >
-                <ion-select-option [value]="1">1 km</ion-select-option>
-                <ion-select-option [value]="3">3 km</ion-select-option>
-                <ion-select-option [value]="5">5 km</ion-select-option>
-                <ion-select-option [value]="10">10 km</ion-select-option>
-                <ion-select-option [value]="20">20 km</ion-select-option>
-                <ion-select-option [value]="50">50 km</ion-select-option>
-              </ion-select>
-            </ion-item>
-
-            <ion-button
-              expand="block"
-              fill="outline"
-              color="medium"
-              class="near-me-clear-button"
-              (click)="clearNearMe()"
-            >
-              Turn Off Near Me
-            </ion-button>
-          </div>
-
-          <p
-            class="location-error"
-            role="alert"
-            *ngIf="locationError"
-          >
-            {{ locationError }}
-          </p>
-
-        </ion-card-content>
-      </ion-card>
     </section>
 
     <!-- EXPLORE -->
@@ -310,6 +218,99 @@
       </div>
     </section>
 
+    <!-- NEAR ME -->
+    <section
+      class="nearby-section"
+      aria-labelledby="nearby-heading"
+    >
+      <ion-card class="near-me-card">
+        <ion-card-content>
+
+          <div class="near-me-top">
+            <span class="near-me-icon" aria-hidden="true">
+              <ion-icon name="navigate-outline"></ion-icon>
+            </span>
+
+            <div class="near-me-copy">
+              <h2 id="nearby-heading">Find Reports Near Me</h2>
+              <p>Find reports around your location.</p>
+            </div>
+          </div>
+
+          <ion-button
+            expand="block"
+            class="near-me-button"
+            (click)="useNearMe()"
+            [disabled]="isGettingLocation"
+          >
+            <ion-icon
+              name="location-outline"
+              slot="start"
+              aria-hidden="true"
+            ></ion-icon>
+
+            {{
+              isGettingLocation
+                ? 'Getting Your Location...'
+                : isNearMeActive
+                  ? 'Refresh Location'
+                  : 'Use Near Me'
+            }}
+          </ion-button>
+
+          <div
+            class="near-me-active"
+            *ngIf="isNearMeActive"
+          >
+            <p class="near-me-info">
+              <ion-icon
+                name="checkmark-circle-outline"
+                aria-hidden="true"
+              ></ion-icon>
+              Showing reports within {{ nearbyRadiusKm }} km
+            </p>
+
+            <ion-item class="radius-select" lines="none">
+              <ion-label>Search Radius</ion-label>
+
+              <ion-select
+                interface="popover"
+                [value]="nearbyRadiusKm"
+                (ionChange)="nearbyRadiusKm = $event.detail.value; cdr.detectChanges()"
+              >
+                <ion-select-option [value]="1">1 km</ion-select-option>
+                <ion-select-option [value]="3">3 km</ion-select-option>
+                <ion-select-option [value]="5">5 km</ion-select-option>
+                <ion-select-option [value]="10">10 km</ion-select-option>
+                <ion-select-option [value]="20">20 km</ion-select-option>
+                <ion-select-option [value]="50">50 km</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-button
+              expand="block"
+              fill="outline"
+              color="medium"
+              class="near-me-clear-button"
+              (click)="clearNearMe()"
+            >
+              Turn Off Near Me
+            </ion-button>
+          </div>
+
+          <p
+            class="location-error"
+            role="alert"
+            *ngIf="locationError"
+          >
+            {{ locationError }}
+          </p>
+
+        </ion-card-content>
+      </ion-card>
+    </section>
+
+
     <!-- COMMUNITY REPORTS -->
     <section
       class="reports-section"
@@ -323,7 +324,7 @@
           </h2>
 
           <p>
-            {{ displayedReports.length }} shown
+            {{ displayedReports.length }} {{ displayedReports.length === 1 ? 'item' : 'items' }}
           </p>
         </div>
 
@@ -493,9 +494,22 @@
 
           <!-- TITLE / LOCATION -->
           <ion-card-header>
-            <ion-card-title>
-              {{ report.item_name }}
-            </ion-card-title>
+            <div class="report-heading-row">
+              <ion-card-title>
+                {{ report.item_name }}
+              </ion-card-title>
+
+              <!-- Relative time since the report was posted (created_at). -->
+              <time
+                *ngIf="report.created_at"
+                class="report-posted-time"
+                [attr.datetime]="report.created_at"
+                [attr.title]="formatPostedDate(report.created_at)"
+                [attr.aria-label]="'Posted ' + formatPostedDate(report.created_at)"
+              >
+                {{ formatTimeAgo(report.created_at) }}
+              </time>
+            </div>
 
             <ion-card-subtitle>
               <ion-icon
@@ -508,11 +522,6 @@
 
           <ion-card-content>
 
-            <!-- DESCRIPTION -->
-            <p class="report-description">
-              {{ report.description }}
-            </p>
-
             <!-- META -->
             <div class="report-meta">
 
@@ -522,14 +531,6 @@
                   aria-hidden="true"
                 ></ion-icon>
                 <span>{{ report.category }}</span>
-              </p>
-
-              <p *ngIf="report.specific_location">
-                <ion-icon
-                  name="pin-outline"
-                  aria-hidden="true"
-                ></ion-icon>
-                <span>{{ report.specific_location }}</span>
               </p>
 
               <p *ngIf="report.date_lost_found">

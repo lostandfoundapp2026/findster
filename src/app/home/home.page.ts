@@ -126,6 +126,10 @@ export class HomePage implements OnInit, OnDestroy {
   private reportsRequestSubscription?: Subscription;
   private reportsLoadGeneration = 0;
 
+  // Refresh relative post-time labels without reloading the reports list.
+  private relativeTimeTimer?: ReturnType<typeof setInterval>;
+  private relativeTimeNow = Date.now();
+
   selectedType: 'all' | 'lost' | 'found' = 'all';
   selectedCategory = 'all';
   selectedBarangay = 'all';
@@ -194,18 +198,40 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.stopRelativeTimeUpdates();
     this.unreadCountSubscription?.unsubscribe();
     this.reportsRequestSubscription?.unsubscribe();
   }
 
   ionViewWillEnter(): void {
+    this.startRelativeTimeUpdates();
     // Reload whenever Home becomes active, including when returning
     // from another page while Ionic keeps this page cached.
     this.loadReports(true);
     this.loadUnreadNotificationCount();
   }
 
-  // Notifications
+  ionViewDidLeave(): void {
+    this.stopRelativeTimeUpdates();
+  }
+
+  private startRelativeTimeUpdates(): void {
+    this.stopRelativeTimeUpdates();
+    this.relativeTimeNow = Date.now();
+    this.relativeTimeTimer = setInterval(() => {
+      this.relativeTimeNow = Date.now();
+      this.cdr.detectChanges();
+    }, 30_000);
+  }
+
+  private stopRelativeTimeUpdates(): void {
+    if (this.relativeTimeTimer !== undefined) {
+      clearInterval(this.relativeTimeTimer);
+      this.relativeTimeTimer = undefined;
+    }
+  }
+
+  // Notification count
   loadUnreadNotificationCount(): void {
     this.notificationsService.getUnreadCount().subscribe({
       error: (error) => {
@@ -274,6 +300,40 @@ export class HomePage implements OnInit, OnDestroy {
     });
   }
 
+  // Relative age of the report POST, not the date/time the item was lost or found.
+  // The API's timezone-less MySQL datetime is treated as local time, consistent
+  // with the existing Home newest/oldest sorting logic.
+  formatTimeAgo(createdAt: string | null | undefined): string {
+    if (!createdAt) return '';
+
+    const posted = this.parsePostedTime(createdAt);
+    if (posted === null) return '';
+
+    const ageSeconds = Math.max(0, Math.floor((this.relativeTimeNow - posted) / 1000));
+    if (ageSeconds < 60) return 'Just now';
+    if (ageSeconds < 3600) return `${Math.floor(ageSeconds / 60)}m`;
+    if (ageSeconds < 86400) return `${Math.floor(ageSeconds / 3600)}h`;
+    if (ageSeconds < 604800) return `${Math.floor(ageSeconds / 86400)}d`;
+    if (ageSeconds < 2592000) return `${Math.floor(ageSeconds / 604800)}w`;
+    if (ageSeconds < 31536000) return `${Math.floor(ageSeconds / 2592000)}mo`;
+    return `${Math.floor(ageSeconds / 31536000)}y`;
+  }
+
+  formatPostedDate(createdAt: string | null | undefined): string {
+    const posted = this.parsePostedTime(createdAt);
+    if (posted === null) return 'Posting time unavailable';
+    return new Date(posted).toLocaleString('en-PH', {
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit',
+    });
+  }
+
+  private parsePostedTime(value: string | null | undefined): number | null {
+    if (!value) return null;
+    const timestamp = Date.parse(value.trim().replace(' ', 'T'));
+    return Number.isFinite(timestamp) ? timestamp : null;
+  }
+
   private getReportTimestamp(report: LostFoundReport): number {
     const value = report.created_at;
 
@@ -281,8 +341,7 @@ export class HomePage implements OnInit, OnDestroy {
       return 0;
     }
 
-    const timestamp = new Date(value).getTime();
-    return Number.isFinite(timestamp) ? timestamp : 0;
+    return this.parsePostedTime(value) ?? 0;
   }
 
   goToCreateReport(): void {
